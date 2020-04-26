@@ -1,0 +1,43 @@
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:12.13.0
+      - image: circleci/postgres:12
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: cxa_test
+    working_directory: ~/repo
+    steps:
+      - checkout
+      # BUILD UP
+      - restore_cache:
+          keys:
+            - v1-dependencies-database-{{ checksum "database/package.json" }}
+      - restore_cache:
+          keys:
+            - v1-dependencies-server-{{ checksum "server/package.json" }}
+      - run: cd database && yarn install
+      - run: sudo apt update && sudo apt install postgresql-client
+
+      # run tests!
+      - run: cd database && yarn tslint
+      - run: cd database && yarn test
+      - run: cd server && yarn install
+      - run: cd server && yarn tslint
+      - run: cd server && yarn coverage-test
+      - run: cd server && yarn report
+
+      # save caches
+      - save_cache:
+          paths:
+            - database/node_modules
+          key: v1-dependencies-database-{{ checksum "database/package.json" }}
+      - save_cache:
+          paths:
+            - server/node_modules
+          key: v1-dependencies-server-{{ checksum "server/package.json" }}

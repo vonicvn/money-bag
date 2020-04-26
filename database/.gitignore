@@ -1,0 +1,13 @@
+node_modules
+
+yarn-error.log
+
+### Environment files
+.env
+.DS_Store
+
+latest.sql
+
+.idea*
+
+yarn-error.log

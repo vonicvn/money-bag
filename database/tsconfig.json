@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "noImplicitAny": false,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "es2016.array.include",
+      "es6",
+      "dom",
+      "esnext"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ]
+  }
+}

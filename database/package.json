@@ -1,0 +1,31 @@
+{
+  "name": "database",
+  "version": "0.0.1",
+  "license": "UNLICENSED",
+  "scripts": {
+    "db:reset": "node --require dotenv/config db-reset.js",
+    "db:init": "node --require dotenv/config init-database.js",
+    "knex:latest": "node_modules/.bin/knex migrate:latest --knexfile knexfile.ts",
+    "knex:make": "node_modules/.bin/knex migrate:make -x ts --knexfile knexfile.ts",
+    "knex:rollback": "node_modules/.bin/knex migrate:rollback --knexfile knexfile.ts",
+    "knex:rollback:all": "node_modules/.bin/knex migrate:rollback --all --knexfile knexfile.ts",
+    "test": "DOTENV_CONFIG_PATH=test.env npm run db:reset",
+    "tslint": "tslint --project tsconfig.json --config tslint.json"
+  },
+  "dependencies": {
+    "dotenv": "^6.2.0",
+    "knex": "^0.19.5",
+    "lodash": "^4.17.13",
+    "moment": "^2.18.1",
+    "pg": "^7.11.0"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^6.1.0",
+    "@types/knex": "^0.15.2",
+    "@types/lodash": "^4.14.150",
+    "@types/node": "^11.11.1",
+    "ts-node": "^8.0.3",
+    "tslint": "^5.18.0",
+    "typescript": "3.5.1"
+  }
+}
