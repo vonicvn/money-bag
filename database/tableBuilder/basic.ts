@@ -27,3 +27,17 @@ export const addPrimaryKey = (table: Knex.CreateTableBuilder, name: string): voi
     .unsigned()
     .primary()
 }
+
+export const addCurrencyValue = async (tableName: string, columnName: string, knex: Knex) => {
+  await knex.schema.alterTable(tableName, table => {
+    table
+      .decimal(columnName, 18, 8)
+      .notNullable()
+      .defaultTo(0)
+  })
+  const sql = `
+    ALTER TABLE "${tableName}"
+    ADD CONSTRAINT "${tableName}_${columnName}_must_be_positive" CHECK (${columnName} >= 0)
+  `
+  return knex.schema.raw(sql)
+}

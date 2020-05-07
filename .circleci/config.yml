@@ -10,7 +10,7 @@ jobs:
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: cxa_test
+          POSTGRES_DB: ethereum_api_test
     working_directory: ~/repo
     steps:
       - checkout
