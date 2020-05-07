@@ -6,9 +6,6 @@ export async function up(knex: Knex): Promise<void> {
     addPrimaryKey(table, 'factory_contract_id')
     addCascadeForeignKey(table, 'partner', {})
     table
-      .string('name', 256)
-      .unique()
-    table
       .string('address', 256)
       .unique()
     table
