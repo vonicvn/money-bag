@@ -3,6 +3,7 @@ export enum EEnvKey {
   PORT = 'PORT',
   JWT_SECRET_KEY = 'JWT_SECRET_KEY',
   NODE_ENV = 'NODE_ENV',
+  ADMIN_API_KEY = 'ADMIN_API_KEY',
 }
 
 export enum EEnviroment {

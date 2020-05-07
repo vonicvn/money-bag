@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import { IUserContext } from './user-context'
+import { IPartnerContext } from './partner-context'
 
 export enum EMethod {
   GET = 'get',
@@ -20,7 +20,7 @@ export interface IRequest {
 
 export interface IApiService {
   process(): Promise<unknown>
-  setContext(req: IRequest, userContext: IUserContext): IApiService
+  setContext(req: IRequest, partnerContext: IPartnerContext): IApiService
 }
 
 export interface IRoute {

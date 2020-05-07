@@ -1,4 +1,4 @@
-import { IUser, User, UserContext, IUserContext } from '../global'
+import { IPartner, Partner, PartnerContext, IPartnerContext } from '../global'
 
 export class TestUtils {
   public static getTestTitle(filename: string) {
@@ -8,24 +8,23 @@ export class TestUtils {
   }
 }
 
-export class TestUserContextBuilder {
-  private user: Partial<IUser>
+export class TestPartnerContextBuilder {
+  private partner: Partial<IPartner>
 
-  static create(userInput: Partial<IUser>) {
-    return new TestUserContextBuilder().create(userInput)
+  static create(partnerInput: Partial<IPartner>) {
+    return new TestPartnerContextBuilder().create(partnerInput)
   }
 
-  create(userInput: Partial<IUser>) {
-    const defaultUser = {
-      email: 'example@gmail.com',
-      name: 'Testing Account',
+  create(partnerInput: Partial<IPartner>) {
+    const defaultPartner = {
+      name: 'Testing Partner',
     }
-    this.user = { ...defaultUser, ...userInput }
+    this.partner = { ...defaultPartner, ...partnerInput }
     return this.save()
   }
 
-  private async save(): Promise<IUserContext> {
-    const user = await User.create(this.user)
-    return new UserContext(user)
+  private async save(): Promise<IPartnerContext> {
+    const partner = await Partner.create(this.partner)
+    return new PartnerContext(partner)
   }
 }

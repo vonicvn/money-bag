@@ -1,9 +1,8 @@
 import td from 'testdouble'
-import { User, Password, knex } from './global'
+import { knex, Partner } from './global'
 
 beforeEach(async () => {
-  await User.deleteMany({})
-  await Password.deleteMany({})
+  await Partner.deleteMany({})
 })
 
 afterEach(() => {

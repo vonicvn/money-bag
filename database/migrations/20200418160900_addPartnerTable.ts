@@ -8,8 +8,13 @@ export async function up(knex: Knex): Promise<void> {
       .string('name', 256)
       .unique()
     table
+      .string('api_key', 256)
+      .unique()
+    table
       .string('secret_key', 256)
       .unique()
+    table
+      .boolean('is_admin').defaultTo(false)
     table
       .enum('status', ['ENABLED', 'DISABLED']).defaultTo('ENABLED')
     addCreated(table, knex)

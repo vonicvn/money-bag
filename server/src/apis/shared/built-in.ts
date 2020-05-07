@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express'
 import {
-  IRequest, IAbstractInputGetter, IRoute, UserContextManager, IUserContext,
+  IRequest, IAbstractInputGetter, IRoute, PartnerContextManager, IPartnerContext,
   makeSure, EHttpStatusCode, AbstractInputValidator, IApiService, EMethod,
 } from '.'
 
@@ -27,28 +27,51 @@ export abstract class DefaultRoute extends BaseRoute {
   getMidlewares(): RequestHandler[] { return [] }
 }
 
-export abstract class UserContextLoadedRoute extends DefaultRoute {
+export abstract class PartnerContextLoadedRoute extends DefaultRoute {
   getMidlewares(): RequestHandler[] {
     return [
       ...super.getMidlewares(),
       async (req: IRequest, _, next) => {
-        req.headers.userContext = await UserContextManager.getUserContext(req)
+        req.headers.partnerContext = await PartnerContextManager.getPartnerContext(req)
         next()
       },
     ]
   }
 }
 
-export abstract class OnlyUserRoute extends UserContextLoadedRoute {
+export abstract class OnlyPartnerRoute extends PartnerContextLoadedRoute {
   getMidlewares(): RequestHandler[] {
     return [
       ...super.getMidlewares(),
       async (req: IRequest, _, next) => {
         try {
           makeSure(
-            (req.headers.userContext as IUserContext).isUser,
+            (req.headers.partnerContext as IPartnerContext).isPartner,
             {
               message: 'Permission denied. Please login then try again.',
+              code: 'PERMISSION_DENIED',
+              statusCode: EHttpStatusCode.FORBIDDEN,
+            }
+          )
+          next()
+        } catch (error) {
+          next(error)
+        }
+      },
+    ]
+  }
+}
+
+export abstract class OnlyAdminRoute extends OnlyPartnerRoute {
+  getMidlewares(): RequestHandler[] {
+    return [
+      ...super.getMidlewares(),
+      async (req: IRequest, _, next) => {
+        try {
+          makeSure(
+            (req.headers.partnerContext as IPartnerContext).partner.isAdmin,
+            {
+              message: 'Permission denied. Please login with admin account',
               code: 'PERMISSION_DENIED',
               statusCode: EHttpStatusCode.FORBIDDEN,
             }

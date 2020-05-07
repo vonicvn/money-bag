@@ -1,4 +1,4 @@
-import { IUserContext, UserContext } from './user-context'
+import { IPartnerContext, PartnerContext } from './partner-context'
 import { IRequest, IApiService } from '.'
 
 export interface IAbstractInputGetter<T> {
@@ -7,11 +7,11 @@ export interface IAbstractInputGetter<T> {
 
 export abstract class AbstractInputValidator<Input> {
   protected input: Input
-  protected userContext: IUserContext
+  protected partnerContext: IPartnerContext
 
-  validate(input: Input, userContext: IUserContext = new UserContext()): Promise<void> {
+  validate(input: Input, partnerContext: IPartnerContext = new PartnerContext()): Promise<void> {
     this.input = input
-    this.userContext = userContext
+    this.partnerContext = partnerContext
     return this.check()
   }
 
@@ -20,24 +20,24 @@ export abstract class AbstractInputValidator<Input> {
 
 export abstract class BaseApiService implements IApiService {
   protected req: IRequest
-  protected userContext: IUserContext
+  protected partnerContext: IPartnerContext
 
   abstract process(): Promise<unknown>
 
-  public setContext(req: IRequest, userContext: IUserContext = new UserContext()) {
+  public setContext(req: IRequest, partnerContext: IPartnerContext = new PartnerContext()) {
     this.req = req
-    this.userContext = userContext
+    this.partnerContext = partnerContext
     return this
   }
 }
 
 export abstract class AbstractApiExcutor<Input, Output> extends BaseApiService {
   protected input: Input
-  protected userContext: IUserContext
+  protected partnerContext: IPartnerContext
 
-  excute(input: Input, userContext: IUserContext = new UserContext()): Promise<Output> {
+  excute(input: Input, partnerContext: IPartnerContext = new PartnerContext()): Promise<Output> {
     this.input = input
-    this.userContext = userContext
+    this.partnerContext = partnerContext
     return this.process()
   }
 
@@ -52,8 +52,8 @@ export abstract class ApiService<Input = void, Output = void> extends BaseApiSer
 
   public async process(): Promise<Output> {
     this.input = this.inputGetter.getInput(this.req)
-    await this.inputValidator.validate(this.input, this.userContext)
-    return this.excutor.excute(this.input, this.userContext)
+    await this.inputValidator.validate(this.input, this.partnerContext)
+    return this.excutor.excute(this.input, this.partnerContext)
   }
 }
 

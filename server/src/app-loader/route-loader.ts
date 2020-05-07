@@ -27,7 +27,7 @@ export class RouteLoader {
     app[route.method](route.path, ...route.getMidlewares(), async (req: IRequest, res, next) => {
       new route
           .Service()
-          .setContext(req, req.headers.userContext)
+          .setContext(req, req.headers.partnerContext)
           .process()
           .then(res.send.bind(res))
           .catch(next)
