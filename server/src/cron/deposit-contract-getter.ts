@@ -13,7 +13,7 @@ export class DepositContractGetter {
   public async get() {
     const lastScannedBlock = await this.getLastScannedBlock()
     const logs = await this.getEthereumLogsByBlock(lastScannedBlock)
-    return map(logs, this.parseLog)
+    return map(logs, this.parseLog.bind(this))
   }
 
   getLastScannedBlock() {
@@ -28,12 +28,13 @@ export class DepositContractGetter {
     return this.ethereumFactoryContract.getEthereumLogs(lastScannedBlock + 1, EVENT_NAME)
   }
 
-  private parseLog(log: EthereumEventLog): { address: string, block: number } {
+  private parseLog(log: EthereumEventLog): { address: string, block: number, factoryContractId: number } {
     // tslint:disable-next-line: no-any
     const { returnValues: { bank: address } } = log as any
     return {
       address: address.toString().toLowerCase(),
       block: log.blockNumber,
+      factoryContractId: this.ethereumFactoryContract.factoryContract.factoryContractId,
     }
   }
 }

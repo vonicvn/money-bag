@@ -56,8 +56,8 @@ describe(TEST_TITLE, () => {
     deepEqual(
       await depositContractGetter.get(),
       [
-        { address: '0xe5c5427ce3caa2420a0c2bda4eec76619dc0e251', block: 9831014 },
-        { address: '0x506b95fca4fc5018650e432199d30f047d26794e', block: 9831014 },
+        { address: '0xe5c5427ce3caa2420a0c2bda4eec76619dc0e251', block: 9831014, factoryContractId: 1 },
+        { address: '0x506b95fca4fc5018650e432199d30f047d26794e', block: 9831014, factoryContractId: 1 },
       ]
     )
   })

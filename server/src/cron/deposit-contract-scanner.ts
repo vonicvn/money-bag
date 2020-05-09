@@ -1,4 +1,3 @@
-import { map } from 'lodash'
 import { DepositContract } from '../global'
 import { OneAtMomemnt } from './one-at-moment'
 import { EthereumFactoryContract } from './ethereum-factory-contract'
@@ -11,13 +10,8 @@ export class DepositContractScanner extends OneAtMomemnt {
 
   async do() {
     for (let index = 0; index < this.ethereumFactoryContracts.length; index++) {
-      await this.scanForOneContract(this.ethereumFactoryContracts[index])
+      const depositContracts = await DepositContractGetter.get(this.ethereumFactoryContracts[index])
+      await DepositContract.createMany(depositContracts)
     }
-  }
-
-  async scanForOneContract(ethereumFactoryContract: EthereumFactoryContract) {
-    const depositContracts = await DepositContractGetter.get(ethereumFactoryContract)
-    const { factoryContractId } = ethereumFactoryContract.factoryContract
-    await DepositContract.createMany(map(depositContracts, contract => ({ ...contract, factoryContractId })))
   }
 }
