@@ -11,7 +11,6 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@db:15432/ethereum_api_dev
       - NODE_ENV=${NODE_ENV}
       - PORT=${PORT}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
   db:
     image: postgres:12
     container_name: app-db
