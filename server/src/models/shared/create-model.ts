@@ -125,10 +125,10 @@ export function createModel<T>(tableName: string, primaryKey = `${tableName}Id`)
       return Number(result.count)
     }
 
-    static async max(field: keyof T, builder?: IBuilderFunction): Promise<number>
-    static async max(field: keyof T, trx?: KnexTransaction): Promise<number>
-    static async max(field: keyof T, trx: KnexTransaction, builder?: IBuilderFunction): Promise<number>
-    static async max(field: keyof T, arg1: KnexTransaction | IBuilderFunction, arg2?: IBuilderFunction): Promise<number> {
+    static async max(field: keyof T | string, builder?: IBuilderFunction): Promise<number>
+    static async max(field: keyof T | string, trx?: KnexTransaction): Promise<number>
+    static async max(field: keyof T | string, trx: KnexTransaction, builder?: IBuilderFunction): Promise<number>
+    static async max(field: keyof T | string, arg1: KnexTransaction | IBuilderFunction, arg2?: IBuilderFunction): Promise<number> {
       const { trx, builder } = this.getParams(arg1, arg2)
       const [{ max: result }] = await builder(trx(tableName).max(field as string))
       return defaultTo(result, 0)

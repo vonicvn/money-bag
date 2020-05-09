@@ -1,4 +1,4 @@
-import { map } from 'lodash'
+  import { map } from 'lodash'
 import { EthereumFactoryContract } from './ethereum-factory-contract'
 import { EventLog as EthereumEventLog } from 'web3/node_modules/web3-core/types'
 import { Transaction } from '../global'
@@ -24,8 +24,8 @@ export class TransactionGetter {
     return map(logs, this.parseLog)
   }
 
-  private getLastScannedBlock() {
-   return Transaction.max('block', builder => {
+  getLastScannedBlock() {
+   return Transaction.max('transaction.block', builder => {
       return builder
         .where('depositContract.factoryContractId', '=', this.ethereumFactoryContract.factoryContract.factoryContractId)
         .innerJoin('depositContract', 'depositContract.depositContractId', 'transaction.depositContractId')

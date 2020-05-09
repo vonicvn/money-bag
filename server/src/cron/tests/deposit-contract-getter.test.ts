@@ -38,7 +38,6 @@ describe(TEST_TITLE, () => {
       {
         blockNumber: 9831014,
         returnValues: {
-          '0': '0xe5c5427CE3Caa2420a0c2bda4EEC76619dc0E251',
           bank: '0xe5c5427CE3Caa2420a0c2bda4EEC76619dc0E251',
         },
         event: 'CreateBanker',
@@ -46,7 +45,6 @@ describe(TEST_TITLE, () => {
       {
         blockNumber: 9831014,
         returnValues: {
-          '0': '0x506B95FCA4FC5018650e432199d30f047d26794e',
           bank: '0x506B95FCA4FC5018650e432199d30f047d26794e',
         },
         event: 'CreateBanker',
