@@ -5,7 +5,7 @@ import request from 'supertest'
 import { deepEqual } from 'assert'
 import {
   TestUtils, EHttpStatusCode, EEnviroment, EMethod, IRoute,
-  makeSure, Env, handleUnexpectedError, BaseApiService,
+  makeSure, Env, ErrorHandler, BaseApiService,
 } from '../../global'
 import { RouteLoader } from '../route-loader'
 
@@ -35,8 +35,7 @@ describe(TEST_TITLE, () => {
   }
 
   beforeEach(TEST_TITLE, () => {
-    // tslint:disable-next-line: no-require-imports
-    td.replace(require('../../global'), 'handleUnexpectedError')
+    td.replace(ErrorHandler, 'handle')
   })
 
   it(`${TEST_TITLE} RouteLoader works`, async () => {
@@ -72,7 +71,7 @@ describe(TEST_TITLE, () => {
         status: EHttpStatusCode.INTERNAL_SERVER_ERROR,
       }
     )
-    td.verify(handleUnexpectedError(new Error('INVALID_PARAM_A')))
+    td.verify(ErrorHandler.handle(new Error('INVALID_PARAM_A')))
 
     // unhandled error in prod env
     td.replace(Env, 'get', () => EEnviroment.PRODUCTION)

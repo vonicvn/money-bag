@@ -1,4 +1,6 @@
 /* istanbul ignore file */
-export function handleUnexpectedError(error: Error) {
-  console.log(error)
+export class ErrorHandler {
+  static handle(error: Error) {
+    console.log(error)
+  }
 }

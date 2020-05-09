@@ -2,7 +2,7 @@ import { isNil } from 'lodash'
 import { Express, Request, Response, NextFunction } from 'express'
 import {
   Env, EEnvKey, EEnviroment, IRequest, IRoute,
-  ApiError, EHttpStatusCode, handleUnexpectedError,
+  ApiError, EHttpStatusCode, ErrorHandler,
 } from '../global'
 
 export class RouteLoader {
@@ -17,7 +17,7 @@ export class RouteLoader {
 
     app.use((error: ApiError, _: Request, res: Response, __: NextFunction) => {
       const isUnexpectedError = isNil(error.statusCode)
-      if (isUnexpectedError) handleUnexpectedError(error)
+      if (isUnexpectedError) ErrorHandler.handle(error)
       const statusCode = isUnexpectedError ? EHttpStatusCode.INTERNAL_SERVER_ERROR : error.statusCode
       res.status(statusCode).send({ code: error.code, message: this.getErrorMessage(error) })
     })

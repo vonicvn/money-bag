@@ -9,7 +9,7 @@ interface IBuilderFunction {
 
 export const defaultBuilderFunction: IBuilderFunction = query => query
 
-export function createModel<T>(tableName: string, primaryKey = `id`) {
+export function createModel<T>(tableName: string, primaryKey = `${tableName}Id`) {
   return class {
     static get knex(): QueryBuilder {
       return knex(tableName)
