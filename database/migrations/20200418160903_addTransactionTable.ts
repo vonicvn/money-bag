@@ -6,6 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     addPrimaryKey(table, 'transaction_id')
     addCascadeForeignKey(table, 'deposit_contract', {})
     table.string('hash', 256).unique()
+    table.string('coin_address', 256)
     table.integer('block', 10).defaultTo(0)
     addCreated(table, knex)
   })

@@ -3,10 +3,10 @@ import { EthereumFactoryContract } from './ethereum-factory-contract'
 import { EventLog as EthereumEventLog } from 'web3/node_modules/web3-core/types'
 import { Transaction } from '../global'
 
-interface IEthereumDeposit {
+export interface IEthereumDeposit {
   address: string
   transactionHash: string
-  value: number
+  value: string
   block: number
   coinAddress: string
 }
