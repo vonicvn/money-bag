@@ -8,7 +8,7 @@ const TEST_TITLE = TestUtils.getTestTitle(__filename)
 describe(TEST_TITLE, () => {
   const sampleInput: IInput = {
     factoryContractId: 1,
-    fromDepositContractId: 1,
+    fromTransactionId: 1,
   }
 
   it(`${TEST_TITLE} Given invalid factoryContractId, it should throw an error`, async () => {
@@ -18,11 +18,11 @@ describe(TEST_TITLE, () => {
     equal(error.code, EErrorCode.INVALID_FACTORY_CONTRACT_ID)
   })
 
-  it(`${TEST_TITLE} Given invalid fromDepositContractId, it should throw an error`, async () => {
+  it(`${TEST_TITLE} Given invalid fromTransactionId, it should throw an error`, async () => {
     const error = await new InputValidator()
-      .validate({ ...sampleInput, fromDepositContractId: NaN })
+      .validate({ ...sampleInput, fromTransactionId: NaN })
       .catch(error => error)
-    equal(error.code, EErrorCode.INVALID_FACTORY_CONTRACT_ID)
+    equal(error.code, EErrorCode.INVALID_FROM_TRANSACTION_ID)
   })
 
   it(`${TEST_TITLE} InputValidator works with valid input`, async () => {
@@ -33,7 +33,7 @@ describe(TEST_TITLE, () => {
     })
     await new InputValidator().validate({
       factoryContractId: 1,
-      fromDepositContractId: 1,
+      fromTransactionId: 1,
     }, partnerContext)
   })
 
@@ -49,7 +49,7 @@ describe(TEST_TITLE, () => {
       name: 'Testing partner 2',
     })
     const error = await new InputValidator()
-      .validate({ factoryContractId: 1, fromDepositContractId: 1 }, partnerContext)
+      .validate({ factoryContractId: 1, fromTransactionId: 1 }, partnerContext)
       .catch(error => error)
 
     equal(error.code, EErrorCode.FACTORY_CONTRACT_NOT_FOUND)

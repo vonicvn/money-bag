@@ -9,9 +9,9 @@ describe(TEST_TITLE, () => {
     deepEqual(
       new InputGetter().getInput({
         params: { factoryContractId: ' 1' },
-        query: { fromDepositContractId: '  2 ' },
+        query: { fromTransactionId: '  2 ' },
       }),
-      { factoryContractId: 1, fromDepositContractId: 2 }
+      { factoryContractId: 1, fromTransactionId: 2 }
     )
 
     deepEqual(
@@ -19,7 +19,7 @@ describe(TEST_TITLE, () => {
         params: { factoryContractId: ' 1' },
         query: {},
       }),
-      { factoryContractId: 1, fromDepositContractId: 0 }
+      { factoryContractId: 1, fromTransactionId: 0 }
     )
   })
 })

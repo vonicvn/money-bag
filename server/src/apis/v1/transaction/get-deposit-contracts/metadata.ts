@@ -1,14 +1,14 @@
-import { IDepositContract } from '../../../../global'
+import { ITransaction } from '../../../../global'
 
 export interface IInput {
   factoryContractId: number
-  fromDepositContractId: number
+  fromTransactionId: number
 }
 
-export type IOutput = IDepositContract[]
+export type IOutput = ITransaction[]
 
 export enum EErrorCode {
   INVALID_FACTORY_CONTRACT_ID = 'INVALID_FACTORY_CONTRACT_ID',
-  INVALID_FROM_DEPOSIT_CONTRACT_ID = 'INVALID_FROM_DEPOSIT_CONTRACT_ID',
+  INVALID_FROM_TRANSACTION_ID = 'INVALID_FROM_TRANSACTION_ID',
   FACTORY_CONTRACT_NOT_FOUND = 'FACTORY_CONTRACT_NOT_FOUND',
 }
