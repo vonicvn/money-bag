@@ -6,7 +6,7 @@ export interface ITransaction extends ITimed {
   hash: string
   coinAddress: string
   block: number
-  value: string
+  value: number
 }
 
 export class Transaction extends createModel<ITransaction>(ETable.TRANSACTION) {}

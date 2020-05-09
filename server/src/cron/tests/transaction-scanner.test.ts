@@ -24,7 +24,7 @@ describe(TEST_TITLE, () => {
       {
         address: '0xe76d0caa64ec7ebd5d0c531119ada6986adb3c61',
         block: 10018668,
-        value: '100000000000000000000',
+        value: 10,
         transactionHash: '0x58e511d7afc439db65233f9033c7abacd59ea09759ec9663676779b4d26d0024',
         coinAddress: '0x5c4e325d2c570443f4ea3ed5623c58de221e9475',
       },
@@ -39,7 +39,7 @@ describe(TEST_TITLE, () => {
     td.verify(Transaction.create({
       depositContractId: 1,
       block: 10018668,
-      value: '100000000000000000000',
+      value: 10,
       hash: '0x58e511d7afc439db65233f9033c7abacd59ea09759ec9663676779b4d26d0024',
       coinAddress: '0x5c4e325d2c570443f4ea3ed5623c58de221e9475',
     }))

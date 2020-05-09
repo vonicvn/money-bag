@@ -6,7 +6,7 @@ import { Transaction } from '../global'
 export interface IEthereumDeposit {
   address: string
   transactionHash: string
-  value: string
+  value: number
   block: number
   coinAddress: string
 }
@@ -40,10 +40,11 @@ export class TransactionGetter {
   private parseLog(log: EthereumEventLog): IEthereumDeposit {
     // tslint:disable-next-line: no-any
     const { returnValues: { bank: address, value, coinAddress } } = log as any
+    const ONE_ETHER = 1e18
     return {
       address: address.toString().toLowerCase(),
       block: log.blockNumber,
-      value,
+      value: value / ONE_ETHER,
       transactionHash: log.transactionHash,
       coinAddress: coinAddress.toLowerCase(),
     }
