@@ -25,10 +25,10 @@ describe(TEST_TITLE, () => {
     ])
 
     await Transaction.createMany([
-      { transactionId: 1, depositContractId: 1, hash: '0x1' },
-      { transactionId: 2, depositContractId: 1, hash: '0x2' },
-      { transactionId: 3, depositContractId: 2, hash: '0x3' },
-      { transactionId: 4, depositContractId: 3, hash: '0x4' },
+      { transactionId: 1, depositContractId: 1, hash: '0x1', coinAddress: '0xa' },
+      { transactionId: 2, depositContractId: 1, hash: '0x2', coinAddress: '0xa' },
+      { transactionId: 3, depositContractId: 2, hash: '0x3', coinAddress: '0xb' },
+      { transactionId: 4, depositContractId: 3, hash: '0x4', coinAddress: '0xb' },
     ])
   })
 
@@ -39,9 +39,9 @@ describe(TEST_TITLE, () => {
     deepEqual(
       deepOmit(response, ['created', 'modified', 'block']),
       [
-        { transactionId: 1, depositContractId: 1, value: 0, hash: '0x1' },
-        { transactionId: 2, depositContractId: 1, value: 0, hash: '0x2' },
-        { transactionId: 3, depositContractId: 2, value: 0, hash: '0x3' },
+        { transactionId: 1, depositContractId: 1, value: 0, hash: '0x1', coinAddress: '0xa' },
+        { transactionId: 2, depositContractId: 1, value: 0, hash: '0x2', coinAddress: '0xa' },
+        { transactionId: 3, depositContractId: 2, value: 0, hash: '0x3', coinAddress: '0xb' },
       ]
     )
   })
