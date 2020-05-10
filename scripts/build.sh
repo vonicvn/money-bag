@@ -1,1 +1,1 @@
-cd database && yarn install && cd ../server && yarn install && yarn tsc
+cd ../database && yarn install && cd ../server && yarn install && yarn tsc

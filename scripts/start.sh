@@ -1,1 +1,1 @@
-cd database && yarn db:init && cd ../server && yarn start
+cd ../database && yarn db:init && cd ../server && yarn start

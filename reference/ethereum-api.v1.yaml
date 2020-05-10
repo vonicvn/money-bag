@@ -1,0 +1,153 @@
+openapi: 3.0.0
+info:
+  title: Ethereum API
+  version: '1.0'
+  description: Get deposit addresses and deposit transactions
+servers:
+  - url: 'http://scaneth.g-exchange.com'
+paths:
+  '/api/v1/transactions/:factoryContractId':
+    get:
+      summary: GET transactions
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+              examples:
+                example:
+                  value:
+                    - transactionId: 1
+                      depositContractId: 1
+                      value: 10
+                      hash: '0x4a879e1efce1b70d45d8db072c53a932aa12736edf1f2c3141c32eac205dd9c7'
+                      coinAddress: '0x78b28e13b184ff62417e151929ad8fa36e7680cf'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                example:
+                  value:
+                    code: PERMISSION_DENIED
+                    message: Permission denied. Please login then try again.
+      operationId: 'get-api-v1-transactions-:factoryContractId'
+      description: Get deposit transactions
+      parameters:
+        - schema:
+            type: number
+          in: query
+          name: fromDepositContractId
+          required: true
+  '/api/v1/deposit-contracts/:factoryContractId':
+    get:
+      summary: GET deposit contracts
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DepositContract'
+              examples:
+                example:
+                  value:
+                    - depositContractId: 3
+                      factoryContractId: 1
+                      address: '0xcabef506b76fad6b1f30feaf22c86c09ea155536'
+                      block: 6422226
+                      created: '2020-05-10T05:26:12.775Z'
+                      modified: '2020-05-10T05:26:12.775Z'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                example:
+                  value:
+                    code: PERMISSION_DENIED
+                    message: Permission denied. Please login then try again.
+      operationId: 'get-api-v1-deposit-contracts-:factoryContractId'
+      description: Get deposit contracts
+      parameters:
+        - schema:
+            type: number
+          in: query
+          name: fromDepositContractId
+          required: true
+components:
+  schemas:
+    Transaction:
+      title: Transaction
+      type: object
+      properties:
+        coinAddress:
+          type: string
+        hash:
+          type: string
+        value:
+          type: number
+        depositContractId:
+          type: number
+        transactionId:
+          type: number
+      description: Deposit transaction
+      x-examples:
+        example:
+          transactionId: 1
+          depositContractId: 1
+          value: 10
+          hash: '0x4a879e1efce1b70d45d8db072c53a932aa12736edf1f2c3141c32eac205dd9c7'
+          coinAddress: '0x78b28e13b184ff62417e151929ad8fa36e7680cf'
+    DepositContract:
+      type: object
+      properties:
+        depositContractId:
+          type: integer
+        factoryContractId:
+          type: integer
+        address:
+          type: integer
+        block:
+          type: integer
+        created:
+          type: string
+        modified:
+          type: string
+      x-examples:
+        example:
+          depositContractId: 3
+          factoryContractId: 1
+          address: '0xcabef506b76fad6b1f30feaf22c86c09ea155536'
+          block: 6422226
+          created: '2020-05-10T05:26:12.775Z'
+          modified: '2020-05-10T05:26:12.775Z'
+      title: DepositContract
+      description: DepositContract model
+  securitySchemes:
+    X-API-KEY:
+      name: API Key
+      type: apiKey
+      in: header
