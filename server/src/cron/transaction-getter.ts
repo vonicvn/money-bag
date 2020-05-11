@@ -9,6 +9,7 @@ export interface IEthereumDeposit {
   value: number
   block: number
   coinAddress: string
+  created: Date
 }
 
 export class TransactionGetter {
@@ -21,7 +22,11 @@ export class TransactionGetter {
   public async get() {
     const lastScannedBlock = await this.getLastScannedBlock()
     const logs = await this.getEthereumLogsByBlock(lastScannedBlock)
-    return map(logs, this.parseLog)
+    const result: IEthereumDeposit[] = []
+    for (let index = 0; index < logs.length; index++) {
+      result.push(await this.parseLog(logs[index]))
+    }
+    return result
   }
 
   getLastScannedBlock() {
@@ -37,7 +42,7 @@ export class TransactionGetter {
     return this.ethereumFactoryContract.getEthereumLogs(lastScannedBlock + 1, EVENT_NAME)
   }
 
-  private parseLog(log: EthereumEventLog): IEthereumDeposit {
+  private async parseLog(log: EthereumEventLog): Promise<IEthereumDeposit> {
     // tslint:disable-next-line: no-any
     const { returnValues: { bank: address, value, coinAddress } } = log as any
     const ONE_ETHER = 1e18
@@ -47,6 +52,12 @@ export class TransactionGetter {
       value: value / ONE_ETHER,
       transactionHash: log.transactionHash,
       coinAddress: coinAddress.toLowerCase(),
+      created: await this.getBlockTime(log.blockNumber),
     }
+  }
+
+  private async getBlockTime(blockNumber: number) {
+    const block = await this.ethereumFactoryContract.web3.eth.getBlock(blockNumber)
+    return new Date(Number(block.timestamp) * 1000)
   }
 }

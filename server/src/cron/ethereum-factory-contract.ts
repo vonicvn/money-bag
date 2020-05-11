@@ -7,7 +7,7 @@ import { IFactoryContract } from '../global'
 import { factoryAbi } from './abi'
 
 export class EthereumFactoryContract {
-  private web3: Web3
+  public web3: Web3
   public ethereumContract: Contract
 
   constructor(public factoryContract: IFactoryContract) {

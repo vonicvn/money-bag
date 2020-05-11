@@ -25,6 +25,7 @@ export class TransactionScanner extends OneAtMomemnt {
       block: transaction.block,
       value: transaction.value,
       coinAddress: transaction.coinAddress,
+      created: transaction.created,
     })
   }
 }
