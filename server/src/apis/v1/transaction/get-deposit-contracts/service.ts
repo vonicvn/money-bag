@@ -54,7 +54,7 @@ export class ApiExcutor extends AbstractApiExcutor<IInput, IOutput> {
   async process(): Promise<IOutput> {
     return Transaction.findAll({}, builder => {
       return builder
-        .select(['transactionId', 'transaction.depositContractId', 'value', 'hash', 'coinAddress'])
+        .select(['transactionId', 'transaction.depositContractId', 'value', 'hash', 'coinAddress', 'transaction.created'])
         .where('transactionId', '>=', this.input.fromTransactionId)
         .where('depositContract.factoryContractId', '=', this.input.factoryContractId)
         .innerJoin('depositContract', 'depositContract.depositContractId', 'transaction.depositContractId')
