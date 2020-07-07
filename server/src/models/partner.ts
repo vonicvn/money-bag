@@ -4,8 +4,9 @@ export interface IPartner extends ITimed {
   partnerId: number
   name: string
   apiKey: string
-  secretKey: string
   isAdmin: boolean
+  ethereumWallet?: string
+  bitcoinWallet?: string
   status: 'ENABLED' | 'DISABLED'
 }
 

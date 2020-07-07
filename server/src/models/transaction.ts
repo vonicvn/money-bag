@@ -2,9 +2,10 @@ import { ITimed, ETable, createModel } from './'
 
 export interface ITransaction extends ITimed {
   transactionId: number
-  depositContractId: number
+  partnerId: number
   hash: string
-  coinAddress: string
+  tokenAddress: string
+  tokenId: string
   block: number
   value: number
 }

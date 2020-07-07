@@ -4,9 +4,10 @@ import { addPrimaryKey, addCreated, addModified, addCascadeForeignKey, addCurren
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('transaction', table => {
     addPrimaryKey(table, 'transaction_id')
-    addCascadeForeignKey(table, 'deposit_contract', {})
-    table.string('hash', 256).unique()
-    table.string('coin_address', 256)
+    addCascadeForeignKey(table, 'partner', {})
+    addCascadeForeignKey(table, 'token', {})
+    table.string('hash', 256)
+    table.string('token_address', 256)
     table.integer('block', 10).defaultTo(0)
     addCreated(table, knex)
   })

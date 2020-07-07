@@ -7,11 +7,10 @@ export async function up(knex: Knex): Promise<void> {
     table
       .string('name', 256)
       .unique()
+    table.string('ethereum_wallet', 256)
+    table.string('bitcoin_wallet', 256)
     table
       .string('api_key', 256)
-      .unique()
-    table
-      .string('secret_key', 256)
       .unique()
     table
       .boolean('is_admin').defaultTo(false)
