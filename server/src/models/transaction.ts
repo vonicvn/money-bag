@@ -1,4 +1,4 @@
-import { ITimed, ETable, createModel } from './shared'
+import { ITimed, ETable, createModel } from './'
 
 export interface ITransaction extends ITimed {
   transactionId: number

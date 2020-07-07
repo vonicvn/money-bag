@@ -5,7 +5,7 @@ export interface ITimed {
 
 export enum ETable {
   PARTNER = 'partner',
-  FACTORY_CONTRACT = 'factory_contract',
-  DEPOSIT_CONTRACT = 'deposit_contract',
+  WALLET = 'wallet',
   TRANSACTION = 'transaction',
+  TOKEN = 'token',
 }
