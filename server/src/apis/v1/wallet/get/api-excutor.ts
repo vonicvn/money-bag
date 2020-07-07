@@ -10,6 +10,7 @@ export class ApiExcutor extends AbstractApiExcutor<IInput, IOutput> {
         return builder
           .where('walletId', '>=', this.input.fromWalletId)
           .offset((this.input.page - 1) * this.input.limit)
+          .limit(this.input.limit)
           .orderBy('walletId')
       }
     )

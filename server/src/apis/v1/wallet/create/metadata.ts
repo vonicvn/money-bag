@@ -1,11 +1,10 @@
-import { IWallet } from '../../../../global'
-
 export interface IInput {
-  numberOfNewWallets: number
+  partnerId: number
+  quantity: number
 }
 
-export type IOutput = IWallet[]
+export type IOutput = void
 
 export enum EErrorCode {
-  NUMBER_OF_WALLET_TOO_BIG = 'NUMBER_OF_WALLET_TOO_BIG',
+  WALLET_CREATOR_BUSY = 'WALLET_CREATOR_BUSY',
 }

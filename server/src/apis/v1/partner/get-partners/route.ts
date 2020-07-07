@@ -1,5 +1,5 @@
 import { OnlyAdminRoute, EMethod, createService, SkippedInputValidator, NullInputGetter } from '../../../../apis/shared'
-import { ApiExcutor } from './service'
+import { ApiExcutor } from './api-excuter'
 
 export class Route extends OnlyAdminRoute {
   path = '/api/v1/partners'

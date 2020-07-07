@@ -1,10 +1,10 @@
 /* istanbul ignore file */
-import { FactoryContract } from '../global'
+// import { FactoryContract } from '../global'
 import { CronJob, CronCommand } from 'cron'
 import { map } from 'lodash'
-import { EthereumFactoryContract } from './ethereum-factory-contract'
-import { DepositContractScanner } from './deposit-contract-scanner'
-import { TransactionScanner } from './transaction-scanner'
+// import { EthereumFactoryContract } from './ethereum-factory-contract'
+// import { DepositContractScanner } from './deposit-contract-scanner'
+// import { TransactionScanner } from './transaction-scanner'
 
 function createJob(time: string, cb: CronCommand, runOnInit = false) {
   new CronJob(time, cb, null, true, null, undefined, runOnInit).start()
@@ -21,10 +21,10 @@ enum ECronTime {
 }
 
 export async function registerCronJobs() {
-  const factoryContracts = await FactoryContract.findAll({ status: 'ENABLED' })
-  const ethereumFactoryContracts = map(factoryContracts, contract => new EthereumFactoryContract(contract))
-  const depositContractScanner = new DepositContractScanner(ethereumFactoryContracts)
-  const transactionScannder = new TransactionScanner(ethereumFactoryContracts)
-  createJob(ECronTime.EVERY_TEN_MINUTES, () => depositContractScanner.process(), true)
-  createJob(ECronTime.EVERY_ONE_MINUTE, () => transactionScannder.process(), true)
+  // const factoryContracts = await FactoryContract.findAll({ status: 'ENABLED' })
+  // const ethereumFactoryContracts = map(factoryContracts, contract => new EthereumFactoryContract(contract))
+  // const depositContractScanner = new DepositContractScanner(ethereumFactoryContracts)
+  // const transactionScannder = new TransactionScanner(ethereumFactoryContracts)
+  // createJob(ECronTime.EVERY_TEN_MINUTES, () => depositContractScanner.process(), true)
+  // createJob(ECronTime.EVERY_ONE_MINUTE, () => transactionScannder.process(), true)
 }

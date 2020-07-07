@@ -4,7 +4,7 @@ import { IInput, IOutput } from './metadata'
 
 export class ApiExcutor extends AbstractApiExcutor<IInput, IOutput> {
   async process(): Promise<IOutput> {
-    const selectedFields = ['partnerId', 'name', 'created', 'modified', 'isAdmin', 'status']
+    const selectedFields = ['partnerId', 'name', 'created', 'modified', 'isAdmin', 'status', 'ethereumWallet', 'bitcoinWallet']
     return Partner.findAll({ }, builder => builder.select(selectedFields))
   }
 }

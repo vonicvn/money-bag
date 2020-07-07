@@ -1,6 +1,6 @@
 import { deepEqual } from 'assert'
-import { TestUtils, Partner, deepOmit } from '../../../../../global'
-import { ApiExcutor } from '../service'
+import { TestUtils, Partner, deepOmit } from '../../../../global'
+import { ApiExcutor } from './api-excuter'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
@@ -15,7 +15,7 @@ describe(TEST_TITLE, () => {
   it(`${TEST_TITLE} ApiExcutor works with not-followed users`, async () => {
     const response = await new ApiExcutor().excute()
     deepEqual(
-      deepOmit(response, ['created', 'modified']),
+      deepOmit(response, ['created', 'modified', 'bitcoinWallet', 'ethereumWallet']),
       [
         {
           partnerId: 1,
