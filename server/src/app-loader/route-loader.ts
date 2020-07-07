@@ -1,5 +1,6 @@
 import { isNil } from 'lodash'
 import { Express, Request, Response, NextFunction } from 'express'
+import { validationResult } from 'express-validator'
 import {
   Env, EEnvKey, EEnviroment, IRequest, IRoute,
   ApiError, EHttpStatusCode, ErrorHandler,
@@ -25,12 +26,20 @@ export class RouteLoader {
 
   private static async appendRoute(app: Express, route: IRoute) {
     app[route.method](route.path, ...route.getMidlewares(), async (req: IRequest, res, next) => {
-      new route
-          .Service()
-          .setContext(req, req.headers.partnerContext)
-          .process()
-          .then(res.send.bind(res))
-          .catch(next)
+      const errors = validationResult(req)
+
+      if (errors.isEmpty()) return new route
+        .Service()
+        .setContext(req, req.headers.partnerContext)
+        .process()
+        .then(res.send.bind(res))
+        .catch(next)
+
+      return res.status(422).json({
+        errors: errors.array(),
+        code: 'INVALID_PARAMETERS',
+        message: 'Some of parameters are invalid',
+      })
     })
   }
 

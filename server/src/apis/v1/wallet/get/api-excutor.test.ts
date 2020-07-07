@@ -2,8 +2,8 @@ import { deepEqual } from 'assert'
 import {
   TestUtils, Partner, deepOmit, IPartnerContext,
   TestPartnerContextBuilder, FactoryContract, DepositContract,
-} from '../../../../../global'
-import { ApiExcutor } from '../service'
+} from '../../../../global'
+import { ApiExcutor } from './api-excutor'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 

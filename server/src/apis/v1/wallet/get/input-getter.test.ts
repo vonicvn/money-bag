@@ -1,6 +1,6 @@
-import { TestUtils } from '../../../../../global'
-import { InputGetter } from '../service'
+import { TestUtils } from '../../../../global'
 import { deepEqual } from 'assert'
+import { InputGetter } from './input-getter'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 

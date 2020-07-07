@@ -1,6 +1,6 @@
-import { TestUtils, Partner, TestPartnerContextBuilder, FactoryContract } from '../../../../../global'
-import { InputValidator } from '../service'
-import { IInput, EErrorCode } from '../metadata'
+import { TestUtils, Partner, TestPartnerContextBuilder, FactoryContract } from '../../../../global'
+import { InputValidator } from './service'
+import { IInput, EErrorCode } from './metadata'
 import { equal } from 'assert'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
