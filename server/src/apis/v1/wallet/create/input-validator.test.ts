@@ -1,57 +1,22 @@
-// import { TestUtils, Partner, TestPartnerContextBuilder, FactoryContract } from '../../../../global'
-// import { InputValidator } from './api-excutor'
-// import { IInput, EErrorCode } from './metadata'
-// import { equal } from 'assert'
+import td from 'testdouble'
+import { TestUtils, Partner, Value, WalletService } from '../../../../global'
+import { IInput, EErrorCode } from './metadata'
+import { equal } from 'assert'
+import { InputValidator } from './input-validator'
 
-// const TEST_TITLE = TestUtils.getTestTitle(__filename)
+const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
-// describe(TEST_TITLE, () => {
-//   const sampleInput: IInput = {
-//     factoryContractId: 1,
-//     fromDepositContractId: 1,
-//   }
+describe(TEST_TITLE, () => {
+  it('run when #WalletService free', async () => {
+    await new InputValidator().validate(Value.NO_MATTER, Value.NO_MATTER)
+  })
 
-//   it(`${TEST_TITLE} Given invalid factoryContractId, it should throw an error`, async () => {
-//     const error = await new InputValidator()
-//       .validate({ ...sampleInput, factoryContractId: NaN })
-//       .catch(error => error)
-//     equal(error.code, EErrorCode.INVALID_FACTORY_CONTRACT_ID)
-//   })
+  it('does not run when #WalletService busy', async () => {
+    td.replace(WalletService, 'isCreatingWallet', true)
+    const error = await new InputValidator()
+      .validate(Value.NO_MATTER, Value.NO_MATTER)
+      .catch(error => error)
 
-//   it(`${TEST_TITLE} Given invalid fromDepositContractId, it should throw an error`, async () => {
-//     const error = await new InputValidator()
-//       .validate({ ...sampleInput, fromDepositContractId: NaN })
-//       .catch(error => error)
-//     equal(error.code, EErrorCode.INVALID_FACTORY_CONTRACT_ID)
-//   })
-
-//   it(`${TEST_TITLE} InputValidator works with valid input`, async () => {
-//     const partnerContext = await TestPartnerContextBuilder.create({ partnerId: 1 })
-//     await FactoryContract.create({
-//       factoryContractId: 1,
-//       partnerId: partnerContext.partner.partnerId,
-//     })
-//     await new InputValidator().validate({
-//       factoryContractId: 1,
-//       fromDepositContractId: 1,
-//     }, partnerContext)
-//   })
-
-//   it(`${TEST_TITLE} InputValidator works with valid input`, async () => {
-//     await Partner.create({ partnerId: 1, name: 'Testing partner 1' })
-//     await FactoryContract.create({
-//       factoryContractId: 1,
-//       partnerId: 1,
-//     })
-
-//     const partnerContext = await TestPartnerContextBuilder.create({
-//       partnerId: 2,
-//       name: 'Testing partner 2',
-//     })
-//     const error = await new InputValidator()
-//       .validate({ factoryContractId: 1, fromDepositContractId: 1 }, partnerContext)
-//       .catch(error => error)
-
-//     equal(error.code, EErrorCode.FACTORY_CONTRACT_NOT_FOUND)
-//   })
-// })
+    equal(error.code, EErrorCode.WALLET_CREATOR_BUSY)
+  })
+})
