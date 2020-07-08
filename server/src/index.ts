@@ -6,7 +6,8 @@ import { registerCronJobs } from './cron'
 async function start() {
   await runMigrations()
   await RouteLoader.load(app, await RouteFinder.find())
-  app.listen(Env.get(EEnvKey.PORT), () => console.log('Server started.'))
+  const PORT = Env.get(EEnvKey.PORT)
+  app.listen(PORT, () => console.log('Server started at port '.concat(PORT)))
   await registerCronJobs()
 }
 
