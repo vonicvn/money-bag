@@ -1,13 +1,14 @@
-import { IWallet } from '../../../../global'
+import { ITransaction } from '../../../../global'
 
 export interface IInput {
   page: number
   limit: number
-  fromWalletId: number
+  fromTransactionId: number
+  tokenId?: number
 }
 
 export type IOutput = {
-  wallets: IWallet[]
+  transactions: ITransaction[]
   total: number
 }
 
