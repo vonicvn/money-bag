@@ -49,8 +49,8 @@
   "scripts": {
     "start": "node --require dotenv/config dist/index.js",
     "dev": "nodemon --exec ts-node src/index.ts",
-    "test": "DOTENV_CONFIG_PATH=test.env nodemon --exec mocha dist/**/*.test.js -e ts --recursive",
-    "coverage-test": "DOTENV_CONFIG_PATH=test.env nyc mocha src/**/*.test.ts -e ts --recursive",
+    "test": "DOTENV_CONFIG_PATH=test.env mocha 'dist/**/*.test.js' --recursive",
+    "coverage-test": "DOTENV_CONFIG_PATH=test.env nyc mocha 'src/**/*.test.ts' --recursive",
     "tslint": "tslint --project tsconfig.json --config tslint.json",
     "report": "nyc report --reporter=text-lcov | coveralls"
   },
