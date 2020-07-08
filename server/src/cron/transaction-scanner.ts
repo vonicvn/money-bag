@@ -1,31 +1,34 @@
-// import { DepositContract, Transaction } from '../global'
-// import { OneAtMomemnt } from './one-at-moment'
-// import { EthereumFactoryContract } from './ethereum-factory-contract'
-// import { TransactionGetter, IEthereumDeposit } from './transaction-getter'
+import { defaultTo } from 'lodash'
+import { Redis, ITransaction, Transaction, web3 } from '../global'
+import { OneAtMomemnt } from './one-at-moment'
 
-// export class TransactionScanner extends OneAtMomemnt {
-//   constructor(private ethereumFactoryContracts: EthereumFactoryContract[]) {
-//     super()
-//   }
+export abstract class EthereumScanner extends OneAtMomemnt {
+  static SAFE_NUMBER_OF_COMFIRMATION = 7
 
-//   async do() {
-//     for (let index = 0; index < this.ethereumFactoryContracts.length; index++) {
-//       const transactions = await TransactionGetter.get(this.ethereumFactoryContracts[index])
-//       for (let index = 0; index < transactions.length; index++) {
-//         await this.saveDeposit(transactions[index])
-//       }
-//     }
-//   }
+  private currentBlock: number
+  private scannedBlock: number
 
-//   private async saveDeposit(transaction: IEthereumDeposit) {
-//     const depositContract = await DepositContract.findOne({ address: transaction.address })
-//     await Transaction.create({
-//       depositContractId: depositContract.depositContractId,
-//       hash: transaction.transactionHash,
-//       block: transaction.block,
-//       value: transaction.value,
-//       coinAddress: transaction.coinAddress,
-//       created: transaction.created,
-//     })
-//   }
-// }
+  protected async do() {
+    await this.init()
+
+    for (
+      let block = this.scannedBlock + 1;
+      block <= this.currentBlock - EthereumScanner.SAFE_NUMBER_OF_COMFIRMATION;
+      block++
+    ) {
+      const transactions = await this.scanBlock(block)
+      await Transaction.createMany(transactions)
+      await Redis.setJson<number>('ETHEREUM_SCANNED_BLOCK', block)
+    }
+  }
+
+  private async init() {
+    this.currentBlock = await web3.eth.getBlockNumber()
+    const scannedBlock = await Redis.getJson<number>('ETHEREUM_SCANNED_BLOCK')
+    this.scannedBlock = defaultTo(scannedBlock, this.currentBlock - EthereumScanner.SAFE_NUMBER_OF_COMFIRMATION - 1)
+  }
+
+  private async scanBlock(block: number): Promise<Partial<ITransaction>[]> {
+    return []
+  }
+}

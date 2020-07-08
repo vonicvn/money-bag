@@ -15,5 +15,5 @@ export abstract class OneAtMomemnt {
     this.isRunning = false
   }
 
-  abstract do(): Promise<void>
+  protected abstract do(): Promise<void>
 }

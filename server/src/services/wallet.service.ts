@@ -1,4 +1,3 @@
-import Web3 from 'web3'
 import HDWalletProvider from '@truffle/hdwallet-provider'
 import { ErrorHandler, Wallet, Env, EEnvKey, Redis } from '../global'
 import { defaultTo } from 'lodash'
@@ -29,14 +28,12 @@ export class WalletService {
 
   private async getAddressAtIndex(index: number) {
     // tslint:disable-next-line: no-any
-    const walletProvider: any = new HDWalletProvider(
+    return new HDWalletProvider(
       Env.get(EEnvKey.MNEMONIC),
       Env.get(EEnvKey.INFURA_URL),
       index,
       1
-    )
-    const [result] = await new Web3(walletProvider).eth.getAccounts()
-    return result
+    ).getAddress(0)
   }
 
   private saveAddressToRedis(address: string) {
