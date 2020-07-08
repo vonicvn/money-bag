@@ -1,6 +1,6 @@
 import td from 'testdouble'
 import { TestUtils, Partner, Value, WalletService } from '../../../../global'
-import { IInput, EErrorCode } from './metadata'
+import { EErrorCode } from './metadata'
 import { equal } from 'assert'
 import { InputValidator } from './input-validator'
 

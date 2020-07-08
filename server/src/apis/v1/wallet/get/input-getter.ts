@@ -12,7 +12,7 @@ export class InputGetter implements IAbstractInputGetter<IInput> {
         Number(defaultTo(req.query.limit, 10)),
         MAX_WALLET_PER_FETCH
       ),
-      fromWalletId: Number(defaultTo(req.query.fromWalletId, 0)),
+      fromWalletId: Number(defaultTo(req.query.fromWalletId, 1)),
     }
   }
 }

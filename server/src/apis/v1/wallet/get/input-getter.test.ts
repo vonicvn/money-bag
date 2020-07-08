@@ -4,22 +4,22 @@ import { InputGetter } from './input-getter'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
-xdescribe(TEST_TITLE, () => {
+describe(TEST_TITLE, () => {
   it(`${TEST_TITLE} InputGetter works`, async () => {
     deepEqual(
       new InputGetter().getInput({
-        params: { factoryContractId: ' 1' },
-        query: { fromDepositContractId: '  2 ' },
+        query: {
+          page: '1',
+          limit: ' 2',
+          fromWalletId: '3 ',
+        },
       }),
-      { factoryContractId: 1, fromDepositContractId: 2 }
+      { page: 1, limit: 2, fromWalletId: 3 }
     )
 
     deepEqual(
-      new InputGetter().getInput({
-        params: { factoryContractId: ' 1' },
-        query: {},
-      }),
-      { factoryContractId: 1, fromDepositContractId: 0 }
+      new InputGetter().getInput({ query: {} }),
+      { page: 1, limit: 10, fromWalletId: 1 }
     )
   })
 })
