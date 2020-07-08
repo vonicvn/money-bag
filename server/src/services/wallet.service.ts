@@ -20,7 +20,7 @@ export class WalletService {
   private async create(partnerId: number, quantity: number) {
     const wallet = await Wallet.findOne({}, builder => builder.orderBy('index', 'DESC'))
     for (let index = 0; index < quantity; index++) {
-      const addressIndex = index + defaultTo(wallet, { index }).index + 1
+      const addressIndex = index + defaultTo(wallet, { index: -1 }).index + 1
       const address = await this.getAddressAtIndex(addressIndex)
       await Wallet.create({ address, index: addressIndex, partnerId })
       await this.saveAddressToRedis(address)
