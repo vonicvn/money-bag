@@ -1,6 +1,6 @@
 import td from 'testdouble'
 import { equal, ok } from 'assert'
-import { TestUtils, Value, ErrorHandler, Wallet } from '../global'
+import { TestUtils, Value, ErrorHandler, Wallet, Redis } from '../global'
 import { WalletService } from './wallet.service'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
@@ -40,6 +40,7 @@ describe(TEST_TITLE, () => {
   it('#create', async () => {
     td.replace(Wallet, 'findOne', () => Promise.resolve({ index: 10 }))
     td.replace(Wallet, 'create')
+    td.replace(Redis, 'setJson')
     td.replace(WalletService.prototype, 'getAddressAtIndex')
 
     td.when(WalletService.prototype['getAddressAtIndex'](11)).thenResolve('address_index_11')
@@ -58,6 +59,9 @@ describe(TEST_TITLE, () => {
       index: 12,
       partnerId: 123,
     }))
+
+    td.verify(Redis.setJson(`SAVED_ADDRESS_address_index_11`, true))
+    td.verify(Redis.setJson(`SAVED_ADDRESS_address_index_12`, true))
   })
 
   it('#getAddressAtIndex', async () => {

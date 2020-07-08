@@ -1,6 +1,6 @@
 import Web3 from 'web3'
 import HDWalletProvider from '@truffle/hdwallet-provider'
-import { ErrorHandler, Wallet, Env, EEnvKey } from '../global'
+import { ErrorHandler, Wallet, Env, EEnvKey, Redis } from '../global'
 import { defaultTo } from 'lodash'
 
 export class WalletService {
@@ -23,6 +23,7 @@ export class WalletService {
       const addressIndex = index + defaultTo(wallet, { index }).index + 1
       const address = await this.getAddressAtIndex(addressIndex)
       await Wallet.create({ address, index: addressIndex, partnerId })
+      await this.saveAddressToRedis(address)
     }
   }
 
@@ -36,5 +37,13 @@ export class WalletService {
     )
     const [result] = await new Web3(walletProvider).eth.getAccounts()
     return result
+  }
+
+  private saveAddressToRedis(address: string) {
+    return Redis.setJson(`SAVED_ADDRESS_${address}`, true)
+  }
+
+  async isAddressExisted(address: string) {
+    return defaultTo(await Redis.getJson(`SAVED_ADDRESS_${address}`), false)
   }
 }

@@ -1,11 +1,12 @@
 import td from 'testdouble'
-import { knex, Partner, Wallet, Token, Transaction } from './global'
+import { knex, Partner, Wallet, Token, Transaction, Redis } from './global'
 
 beforeEach(async () => {
   await Partner.deleteMany({})
   await Wallet.deleteMany({})
   await Token.deleteMany({})
   await Transaction.deleteMany({})
+  await Redis.flushall()
 })
 
 afterEach(() => {
