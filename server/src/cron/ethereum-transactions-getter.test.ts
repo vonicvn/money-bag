@@ -6,7 +6,7 @@ import { EthereumTransactionsGetter } from './ethereum-transactions-getter'
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
 describe(TEST_TITLE, () => {
-  xit('#get', async () => {
+  it.only('#get', async () => {
     // td.replace(web3.eth, 'getBlock', () => ({ transactions: ['transaction1', 'transaction2'] }))
 
     // td.replace(EthereumTransactionsGetter.prototype, 'parseOneTransaction')
@@ -22,6 +22,6 @@ describe(TEST_TITLE, () => {
     //   await EthereumTransactionsGetter.prototype.get(),
     //   [{ hash: '0x1' }]
     // )
-    console.log(await web3.eth.getBlock(10425131, true))
+    console.log(await web3.eth.getPastLogs({ fromBlock: 10425131, toBlock: 10425131 }))
   })
 })

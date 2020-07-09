@@ -1,5 +1,8 @@
-import { compact, toLower } from 'lodash'
-import { ITransaction, web3, WalletService, Wallet } from '../global'
+import { compact, toLower, isNil } from 'lodash'
+import {
+  ITransaction, web3, WalletService, Wallet,
+  EDefaultWalletId, PartnerAsset, Asset, AssetService,
+} from '../global'
 import { Transaction as EthereumTransaction, Log as EthereumLog } from 'web3/node_modules/web3-core'
 
 export class EthereumTransactionsGetter {
@@ -24,14 +27,38 @@ export class EthereumTransactionsGetter {
     if (!shouldParse) return null
 
     const wallet = await Wallet.findOne({ address: toLower(transaction.to) })
+    if (isNil(wallet)) return null
+
+    const partnerWallet = await PartnerAsset.findOne({
+      assetId: EDefaultWalletId.ETH,
+      partnerId: wallet.partnerId,
+    })
+    if (isNil(partnerWallet)) return null
+
+    const asset = await Asset.findById(EDefaultWalletId.ETH)
     return {
       hash: transaction.hash,
-      assetId: 0,
+      assetId: EDefaultWalletId.ETH,
       partnerId: wallet.partnerId,
+      block: transaction.blockNumber,
+      value: Number(transaction.value) / Math.pow(10, asset.decimals),
     }
   }
 
   private async parseEthereumLog(log: EthereumLog): Promise<Partial<ITransaction> | null> {
-    return null
+    const isTransferLog = log.topics[0] === '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+    if (isTransferLog) return null
+    const toAddress = `0x${log.topics[2].substring(26)}`
+    if (!await AssetService.isAssetExisted(log.address)) return null
+    if (!await WalletService.isAddressExisted(toAddress)) return null
+    const wallet = await Wallet.findOne({ address: toAddress })
+    const asset = await Asset.findOne({ address: log.address })
+    return {
+      hash: log.transactionHash,
+      assetId: EDefaultWalletId.ETH,
+      partnerId: wallet.partnerId,
+      block: log.blockNumber,
+      value: Number(log.data) / Math.pow(10, asset.decimals),
+    }
   }
 }

@@ -5,4 +5,4 @@ export interface IPartnerAsset extends ITimed {
   partnerId: number
 }
 
-export class PartnerAsset extends createModel<IPartnerAsset>(ETable.ASSET) {}
+export class PartnerAsset extends createModel<IPartnerAsset>(ETable.PARTNER_ASSET) {}
