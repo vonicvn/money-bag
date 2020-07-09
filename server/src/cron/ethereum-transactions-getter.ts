@@ -47,15 +47,22 @@ export class EthereumTransactionsGetter {
 
   private async parseEthereumLog(log: EthereumLog): Promise<Partial<ITransaction> | null> {
     const isTransferLog = log.topics[0] === '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
-    if (isTransferLog) return null
-    const toAddress = `0x${log.topics[2].substring(26)}`
+    if (!isTransferLog) return null
     if (!await AssetService.isAssetExisted(log.address)) return null
+
+    const toAddress = `0x${log.topics[2].substring(26)}`
     if (!await WalletService.isAddressExisted(toAddress)) return null
     const wallet = await Wallet.findOne({ address: toAddress })
     const asset = await Asset.findOne({ address: log.address })
+    const partnerWallet = await PartnerAsset.findOne({
+      assetId: asset.assetId,
+      partnerId: wallet.partnerId,
+    })
+    if (isNil(partnerWallet)) return null
+
     return {
       hash: log.transactionHash,
-      assetId: EDefaultWalletId.ETH,
+      assetId: asset.assetId,
       partnerId: wallet.partnerId,
       block: log.blockNumber,
       value: Number(log.data) / Math.pow(10, asset.decimals),
