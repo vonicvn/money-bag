@@ -4,7 +4,7 @@ export interface IInput {
   page: number
   limit: number
   fromTransactionId: number
-  tokenId?: number
+  assetId?: number
 }
 
 export type IOutput = {

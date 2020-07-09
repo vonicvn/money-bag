@@ -5,9 +5,9 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('transaction', table => {
     addPrimaryKey(table, 'transaction_id')
     addCascadeForeignKey(table, 'partner', {})
-    addCascadeForeignKey(table, 'token', {})
+    addCascadeForeignKey(table, 'asset', {})
     table.string('hash', 256)
-    table.string('token_address', 256)
+    table.string('asset_address', 256)
     table.integer('block', 10).defaultTo(0)
     addCreated(table, knex)
   })

@@ -13,7 +13,7 @@ export class InputGetter implements IAbstractInputGetter<IInput> {
         MAX_WALLET_PER_FETCH
       ),
       fromTransactionId: Number(defaultTo(req.query.fromTransactionId, 1)),
-      ...exists(req.query.tokenId) && { tokenId: Number(req.query.tokenId) },
+      ...exists(req.query.assetId) && { assetId: Number(req.query.assetId) },
     }
   }
 }

@@ -4,8 +4,8 @@ export interface ITransaction extends ITimed {
   transactionId: number
   partnerId: number
   hash: string
-  tokenAddress: string
-  tokenId: number
+  assetAddress: string
+  assetId: number
   block: number
   value: number
 }

@@ -57,7 +57,7 @@ describe(TEST_TITLE, () => {
     equal(response.status, EHttpStatusCode.FORBIDDEN)
   })
 
-  it(`${TEST_TITLE} Given token of non existed user, it should throw an error`, async () => {
+  it(`${TEST_TITLE} Given asset of non existed user, it should throw an error`, async () => {
     const response = await request(app)
       .get('/api/v1/partners')
       .set({ 'X-API-KEY': 'NOT_EXISTED_API_KEY' })

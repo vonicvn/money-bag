@@ -12,7 +12,7 @@ export class Route extends OnlyPartnerRoute {
       query('page').isInt().optional(),
       query('limit').isInt().optional(),
       query('fromTransactionId').isInt().optional(),
-      query('tokenId').isInt().optional(),
+      query('assetId').isInt().optional(),
     ])
   }
 }

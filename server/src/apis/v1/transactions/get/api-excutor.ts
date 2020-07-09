@@ -23,12 +23,12 @@ export class ApiExcutor extends AbstractApiExcutor<IInput, IOutput> {
   }
 
   private getAllBuilder(builder: QueryBuilder) {
-    const { fromTransactionId, tokenId } = this.input
+    const { fromTransactionId, assetId } = this.input
     builder
       .where('transactionId', '>=', fromTransactionId)
       .where({ partnerId: this.partnerContext.partner.partnerId })
 
-    if (exists(tokenId)) builder.where({ tokenId })
+    if (exists(assetId)) builder.where({ assetId })
     return builder
   }
 }
