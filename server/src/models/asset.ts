@@ -4,6 +4,7 @@ export interface IAsset extends ITimed {
   assetId: number
   name: string
   address: string
+  decimals: number
   network: 'ETHEREUM' | 'BITCOIN'
 }
 

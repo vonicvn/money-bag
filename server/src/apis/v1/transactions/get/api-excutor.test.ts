@@ -16,14 +16,17 @@ describe(TEST_TITLE, () => {
       {
         assetId: 11,
         address: '_asset_address_1',
+        name: 'AS1',
       },
       {
         assetId: 12,
         address: '_asset_address_2',
+        name: 'AS2',
       },
       {
         assetId: 13,
         address: '_asset_address_3',
+        name: 'AS3',
       },
     ])
 

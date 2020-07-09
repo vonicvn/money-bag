@@ -61,7 +61,7 @@ describe(TEST_TITLE, () => {
     }))
 
     td.verify(Redis.setJson(`WALLET_address_index_11`, true))
-    // td.verify(Redis.setJson(`WALLET_address_index_12`, true))
+    td.verify(Redis.setJson(`WALLET_address_index_12`, true))
   })
 
   it('#getAddressAtIndex', async () => {
