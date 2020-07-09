@@ -1,5 +1,5 @@
 import { deepEqual } from 'assert'
-import { TestUtils, knex } from '../../global'
+import { TestUtils, knex } from '../global'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 

@@ -1,4 +1,4 @@
-import { compact, lowerCase } from 'lodash'
+import { compact, toLower } from 'lodash'
 import { ITransaction, web3, WalletService, Wallet } from '../global'
 import { Transaction as EthereumTransaction, Log as EthereumLog } from 'web3/node_modules/web3-core'
 
@@ -23,7 +23,7 @@ export class EthereumTransactionsGetter {
     const shouldParse = await WalletService.isAddressExisted(transaction.to)
     if (!shouldParse) return null
 
-    const wallet = await Wallet.findOne({ address: lowerCase(transaction.to) })
+    const wallet = await Wallet.findOne({ address: toLower(transaction.to) })
     return {
       hash: transaction.hash,
       assetId: 0,

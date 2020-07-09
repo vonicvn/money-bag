@@ -14,27 +14,24 @@ describe(TEST_TITLE, () => {
 
     await Asset.createMany([
       {
-        assetId: 1,
-        partnerId: 1,
+        assetId: 11,
         address: '_asset_address_1',
       },
       {
-        assetId: 2,
-        partnerId: 1,
+        assetId: 12,
         address: '_asset_address_2',
       },
       {
-        assetId: 3,
-        partnerId: 2,
+        assetId: 13,
         address: '_asset_address_3',
       },
     ])
 
     await Transaction.createMany([
-      { transactionId: 1, partnerId: 1, assetId: 1 },
-      { transactionId: 2, partnerId: 1, assetId: 2 },
-      { transactionId: 3, partnerId: 1, assetId: 1 },
-      { transactionId: 4, partnerId: 2, assetId: 3 },
+      { transactionId: 1, partnerId: 1, assetId: 11 },
+      { transactionId: 2, partnerId: 1, assetId: 12 },
+      { transactionId: 3, partnerId: 1, assetId: 11 },
+      { transactionId: 4, partnerId: 2, assetId: 13 },
     ])
   })
 
@@ -52,7 +49,7 @@ describe(TEST_TITLE, () => {
   it(`${TEST_TITLE} ApiExcutor works with assetId`, async () => {
     const response = await new ApiExcutor()
       .excute(
-        { fromTransactionId: 0, limit: 2, page: 1, assetId: 1 },
+        { fromTransactionId: 0, limit: 2, page: 1, assetId: 11 },
         Value.wrap({ partner: { partnerId: 1 } })
       )
 

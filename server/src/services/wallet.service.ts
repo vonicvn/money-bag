@@ -1,6 +1,6 @@
 import HDWalletProvider from '@truffle/hdwallet-provider'
 import { ErrorHandler, Wallet, Env, EEnvKey, Redis } from '../global'
-import { defaultTo, lowerCase } from 'lodash'
+import { defaultTo, toLower } from 'lodash'
 
 export class WalletService {
   public static isCreatingWallet = false
@@ -20,9 +20,9 @@ export class WalletService {
     const wallet = await Wallet.findOne({}, builder => builder.orderBy('index', 'DESC'))
     for (let index = 0; index < quantity; index++) {
       const addressIndex = index + defaultTo(wallet, { index: -1 }).index + 1
-      const address = lowerCase(await this.getAddressAtIndex(addressIndex))
+      const address = toLower(await this.getAddressAtIndex(addressIndex))
       await Wallet.create({ address, index: addressIndex, partnerId })
-      await this.saveAddressToRedis(address)
+      await this.cacheAddressOnRedis(address)
     }
   }
 
@@ -36,11 +36,11 @@ export class WalletService {
     ).getAddress(0)
   }
 
-  private saveAddressToRedis(address: string) {
-    return Redis.setJson(`SAVED_ADDRESS_${lowerCase(address)}`, true)
+  private cacheAddressOnRedis(address: string) {
+    return Redis.setJson(`WALLET_${toLower(address)}`, true)
   }
 
   static async isAddressExisted(address: string) {
-    return defaultTo(await Redis.getJson(`SAVED_ADDRESS_${lowerCase(address)}`), false)
+    return defaultTo(await Redis.getJson(`WALLET_${toLower(address)}`), false)
   }
 }

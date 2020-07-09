@@ -6,7 +6,7 @@ import { EthereumTransactionsGetter } from './ethereum-transactions-getter'
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
 describe(TEST_TITLE, () => {
-  it.only('#get', async () => {
+  xit('#get', async () => {
     // td.replace(web3.eth, 'getBlock', () => ({ transactions: ['transaction1', 'transaction2'] }))
 
     // td.replace(EthereumTransactionsGetter.prototype, 'parseOneTransaction')

@@ -8,4 +8,5 @@ export enum ETable {
   WALLET = 'wallet',
   TRANSACTION = 'transaction',
   ASSET = 'asset',
+  PARTNER_ASSET = 'partner_asset',
 }
