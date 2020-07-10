@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import { compact, toLower, isNil } from 'lodash'
 import {
   ITransaction, web3, WalletService, Wallet,
@@ -39,7 +40,7 @@ export class EthereumTransactionsGetter {
       assetId: EDefaultWalletId.ETH,
       partnerId: wallet.partnerId,
       block: transaction.blockNumber,
-      value: Number(transaction.value) / Math.pow(10, asset.decimals),
+      value: new BigNumber(transaction.value).div(Math.pow(10, asset.decimals)).toNumber(),
     }
   }
 
@@ -63,7 +64,7 @@ export class EthereumTransactionsGetter {
       assetId: asset.assetId,
       partnerId: wallet.partnerId,
       block: log.blockNumber,
-      value: Number(log.data) / Math.pow(10, asset.decimals),
+      value: new BigNumber(log.data).div(Math.pow(10, asset.decimals)).toNumber(),
     }
   }
 }

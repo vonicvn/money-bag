@@ -30,7 +30,6 @@ describe(TEST_TITLE, () => {
       await EthereumTransactionsGetter.prototype.get(),
       [{ hash: '0xtransaction1' }, { hash: '0xlog1' }]
     )
-    // console.log(await web3.eth.getPastLogs({ fromBlock: 10425131, toBlock: 10425131 }))
   })
 
   it('#parseEthereumLog case 1: not a token transfer', async () => {
@@ -95,7 +94,7 @@ describe(TEST_TITLE, () => {
       ],
       blockNumber: 101,
       transactionHash: '0xhash',
-      data: '0x111111111111',
+      data: '0x000000000000000000000000000000000000000000000af8042c176b07570000',
     })
 
     td.when(AssetService.isAssetExisted('watched_asset_address')).thenResolve(true)
@@ -106,7 +105,7 @@ describe(TEST_TITLE, () => {
       .thenResolve({ partnerId: 1 })
     td
       .when(Asset.findOne({ address: 'watched_asset_address' }))
-      .thenResolve({ assetId: 2, decimals: 6, address: 'watched_asset_address' })
+      .thenResolve({ assetId: 2, decimals: 18, address: 'watched_asset_address' })
 
     td
       .when(PartnerAsset.findOne({ assetId: 2, partnerId: 1 }))
@@ -119,7 +118,7 @@ describe(TEST_TITLE, () => {
         assetId: 2,
         partnerId: 1,
         block: log.blockNumber,
-        value: Number(log.data) / Math.pow(10, 6),
+        value: 51798.758,
       }
     )
   })
