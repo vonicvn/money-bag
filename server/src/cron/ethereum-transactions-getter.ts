@@ -27,8 +27,6 @@ export class EthereumTransactionsGetter {
     if (!shouldParse) return null
 
     const wallet = await Wallet.findOne({ address: toLower(transaction.to) })
-    if (isNil(wallet)) return null
-
     const partnerWallet = await PartnerAsset.findOne({
       assetId: EDefaultWalletId.ETH,
       partnerId: wallet.partnerId,

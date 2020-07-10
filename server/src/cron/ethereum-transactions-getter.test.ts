@@ -123,4 +123,69 @@ describe(TEST_TITLE, () => {
       }
     )
   })
+
+  it('#parseEthereumTransaction case 1: create transaction', async () => {
+    td.replace(WalletService, 'isAddressExisted', () => true)
+    td.replace(Wallet, 'findOne')
+    td.replace(PartnerAsset, 'findOne')
+    td
+      .when(Wallet.findOne({ address: '0x_watched_address' }))
+      .thenResolve({ partnerId: 1 })
+    td
+      .when(PartnerAsset.findOne({ assetId: EDefaultWalletId.ETH, partnerId: 1 }))
+      .thenResolve({})
+
+    const ethereumTransaction = Value.wrap({
+      to: '0x_watched_address',
+      value: '10000000000000000000',
+      hash: '0xhash',
+      assetId: EDefaultWalletId.ETH,
+      blockNumber: 9999,
+    })
+    deepEqual(
+      await EthereumTransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
+      {
+        assetId: 1,
+        block: 9999,
+        hash: '0xhash',
+        partnerId: 1,
+        value: 10,
+      }
+    )
+  })
+
+  it('#parseEthereumTransaction case 2: value = 0', async () => {
+    const ethereumTransaction = Value.wrap({ value: '0' })
+    equal(
+      await EthereumTransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
+      null
+    )
+  })
+
+  it('#parseEthereumTransaction case 2: not a watched address', async () => {
+    td.replace(WalletService, 'isAddressExisted', () => false)
+    const ethereumTransaction = Value.wrap({ value: '100' })
+    equal(
+      await EthereumTransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
+      null
+    )
+  })
+
+  it('#parseEthereumTransaction case 3: partner do not follow ETH transactions', async () => {
+    td.replace(WalletService, 'isAddressExisted', () => true)
+    td.replace(Wallet, 'findOne')
+    td.replace(PartnerAsset, 'findOne')
+    td
+      .when(Wallet.findOne({ address: '0x_watched_address' }))
+      .thenResolve({ partnerId: 1 })
+    td
+      .when(PartnerAsset.findOne({ assetId: EDefaultWalletId.ETH, partnerId: 1 }))
+      .thenResolve(null)
+
+    const ethereumTransaction = Value.wrap({ value: '100', to: '0x_watched_address' })
+    equal(
+      await EthereumTransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
+      null
+    )
+  })
 })
