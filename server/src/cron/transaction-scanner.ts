@@ -2,8 +2,14 @@ import { defaultTo } from 'lodash'
 import { Redis, ITransaction, Transaction, web3 } from '../global'
 import { OneAtMomemnt } from './one-at-moment'
 
+// 1. Scan ethereum transaction
+// 2. New transactions -> create new jobs
+// 3. Scan in_progress jobs -> create new jobs
+// 4. Assign jobs to admin accounts
+// 5. Process all assigned jobs
+
 export abstract class EthereumScanner extends OneAtMomemnt {
-  static SAFE_NUMBER_OF_COMFIRMATION = 7
+  static SAFE_NUMBER_OF_COMFIRMATION = 0
 
   private currentBlock: number
   private scannedBlock: number

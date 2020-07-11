@@ -1,10 +1,20 @@
 import BigNumber from 'bignumber.js'
 import { compact, toLower, isNil } from 'lodash'
 import {
-  ITransaction, web3, WalletService, Wallet,
-  EDefaultWalletId, PartnerAsset, Asset, AssetService,
+  Transaction as EthereumTransaction,
+  Log as EthereumLog,
+} from 'web3/node_modules/web3-core'
+import {
+  ITransaction,
+  web3,
+  WalletService,
+  Wallet,
+  EDefaultWalletId,
+  PartnerAsset,
+  Asset,
+  AssetService,
+  ETransactionStatus,
 } from '../global'
-import { Transaction as EthereumTransaction, Log as EthereumLog } from 'web3/node_modules/web3-core'
 
 export class EthereumTransactionsGetter {
   constructor(private block: number) {}
@@ -41,6 +51,7 @@ export class EthereumTransactionsGetter {
       partnerId: wallet.partnerId,
       block: transaction.blockNumber,
       value: new BigNumber(transaction.value).div(Math.pow(10, asset.decimals)).toNumber(),
+      status: ETransactionStatus.DETECTED,
     }
   }
 
@@ -65,6 +76,7 @@ export class EthereumTransactionsGetter {
       partnerId: wallet.partnerId,
       block: log.blockNumber,
       value: new BigNumber(log.data).div(Math.pow(10, asset.decimals)).toNumber(),
+      status: ETransactionStatus.DETECTED,
     }
   }
 }
