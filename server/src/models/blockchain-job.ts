@@ -27,6 +27,7 @@ export enum EBlockchainJobStatus {
   PROCESSING = 'PROCESSING',
   FAILED = 'FAILED',
   SUCCESS = 'SUCCESS',
+  ASSIGNED = 'ASSIGNED',
   CANCELED = 'CANCELED',
 }
 

@@ -20,6 +20,10 @@ export interface IJobChecker {
   check(job: IBlockchainJob): Promise<void>
 }
 
+export interface IJobExcutor {
+  excute(job: IBlockchainJob): Promise<void>
+}
+
 export interface IJobRetrier {
   retry(job: IBlockchainJob): Promise<void>
 }
@@ -29,4 +33,5 @@ export interface IJobProcessor {
   finisher: IJobFinisher
   checker: IJobChecker
   retrier: IJobRetrier
+  excutor: IJobExcutor
 }

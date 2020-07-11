@@ -12,6 +12,8 @@ export interface ITransaction extends ITimed {
   partnerId: number
   hash: string
   assetAddress: string
+  walletId: number
+  walletAddress: string
   status: ETransactionStatus
   assetId: number
   block: number

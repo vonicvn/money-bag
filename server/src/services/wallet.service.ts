@@ -27,7 +27,6 @@ export class WalletService {
   }
 
   private async getAddressAtIndex(index: number) {
-    // tslint:disable-next-line: no-any
     return new HDWalletProvider(
       Env.get(EEnvKey.MNEMONIC),
       Env.get(EEnvKey.INFURA_URL),
