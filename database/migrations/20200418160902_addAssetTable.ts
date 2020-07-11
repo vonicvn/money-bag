@@ -13,9 +13,25 @@ export async function up(knex: Knex): Promise<void> {
   await addModified('asset', knex)
 
   await knex('asset').insert([
-    { asset_id: 1, name: 'ETH', network: 'ETHEREUM', decimals: 18 },
-    { asset_id: 2, name: 'USDT', network: 'ETHEREUM', decimals: 6, address: '0xdac17f958d2ee523a2206206994597c13d831ec7' },
-    { asset_id: 3, name: 'BTC', network: 'BITCOIN', decimals: 9 },
+    {
+      asset_id: 1,
+      name: 'ETH',
+      network: 'ETHEREUM',
+      decimals: 18,
+    },
+    {
+      asset_id: 2,
+      name: 'USDT',
+      network: 'ETHEREUM',
+      decimals: 6,
+      address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    },
+    {
+      asset_id: 3,
+      name: 'BTC',
+      network: 'BITCOIN',
+      decimals: 9,
+    },
   ])
 }
 
