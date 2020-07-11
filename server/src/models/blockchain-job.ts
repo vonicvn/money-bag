@@ -2,7 +2,7 @@ import { ETable, createModel } from '.'
 
 export interface IBlockchainJob {
   blockchainJobId: number
-  parentJobId: number
+  transactionId: number
   network: EBlockchainNetwork
   hash: string
   status: EBlockchainJobStatus
@@ -26,6 +26,7 @@ export enum EBlockchainJobStatus {
   ON_PROCESSING = 'ON_PROCESSING',
   FAILED = 'FAILED',
   SUCCESS = 'SUCCESS',
+  CANCELED = 'CANCELED',
 }
 
 export class BlockchainJob extends createModel<IBlockchainJob>(ETable.BLOCKCHAIN_JOB) {}
