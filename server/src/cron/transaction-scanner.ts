@@ -1,6 +1,16 @@
 import { defaultTo } from 'lodash'
-import { Redis, ITransaction, Transaction, web3 } from '../global'
+import {
+  Redis,
+  ITransaction,
+  Transaction,
+  web3,
+  ETransactionStatus,
+  BlockchainJobService,
+  BlockchainJob,
+  EBlockchainJobStatus,
+} from '../global'
 import { OneAtMomemnt } from './one-at-moment'
+import { EthereumTransactionsGetter } from './ethereum-transactions-getter'
 
 // 1. Scan ethereum transaction
 // 2. New transactions -> create new jobs
@@ -11,15 +21,21 @@ import { OneAtMomemnt } from './one-at-moment'
 export abstract class EthereumScanner extends OneAtMomemnt {
   static SAFE_NUMBER_OF_COMFIRMATION = 0
 
-  private currentBlock: number
-  private scannedBlock: number
-
   protected async do() {
-    await this.init()
+    await this.detechNewTransactions()
+    await this.createJobsForNewTransactions()
+  }
+
+  private async detechNewTransactions() {
+    const currentBlock = await web3.eth.getBlockNumber()
+    const scannedBlock = defaultTo(
+      await Redis.getJson<number>('ETHEREUM_SCANNED_BLOCK'),
+      currentBlock - EthereumScanner.SAFE_NUMBER_OF_COMFIRMATION - 1
+    )
 
     for (
-      let block = this.scannedBlock + 1;
-      block <= this.currentBlock - EthereumScanner.SAFE_NUMBER_OF_COMFIRMATION;
+      let block = scannedBlock + 1;
+      block <= currentBlock - EthereumScanner.SAFE_NUMBER_OF_COMFIRMATION;
       block++
     ) {
       const transactions = await this.scanBlock(block)
@@ -28,13 +44,22 @@ export abstract class EthereumScanner extends OneAtMomemnt {
     }
   }
 
-  private async init() {
-    this.currentBlock = await web3.eth.getBlockNumber()
-    const scannedBlock = await Redis.getJson<number>('ETHEREUM_SCANNED_BLOCK')
-    this.scannedBlock = defaultTo(scannedBlock, this.currentBlock - EthereumScanner.SAFE_NUMBER_OF_COMFIRMATION - 1)
+  private async scanBlock(block: number): Promise<Partial<ITransaction>[]> {
+    return new EthereumTransactionsGetter(block).get()
   }
 
-  private async scanBlock(block: number): Promise<Partial<ITransaction>[]> {
-    return []
+  private async createJobsForNewTransactions() {
+    const detectedTransactions = await Transaction.findAll({ status: ETransactionStatus.DETECTED })
+    for (const transaction of detectedTransactions) {
+      await BlockchainJobService.createJob({ transaction })
+      await Transaction.findByIdAndUpdate(transaction.transactionId, { status: ETransactionStatus.PROCESSING })
+    }
+  }
+
+  private async scanProccessingJobs() {
+    const jobs = await BlockchainJob.findAll({ status: EBlockchainJobStatus.PROCESSING })
+    for (const job of jobs) {
+      //
+    }
   }
 }
