@@ -9,7 +9,7 @@ import { IncompleteJobsChecker } from './incomplete-jobs-checker'
 // 4. Assign jobs to admin accounts
 // 5. Process all assigned jobs
 
-export abstract class Scanner extends OneAtMomemnt {
+export class Scanner extends OneAtMomemnt {
   protected async do() {
     await new NewTransactionsLoader().load()
     await new NewJobsCreator().create()
