@@ -1,6 +1,6 @@
 import td from 'testdouble'
 import { equal, ok, deepEqual } from 'assert'
-import { TestUtils, Value, WalletService, Wallet, Redis, PartnerAsset, web3, Asset, EDefaultWalletId, Partner, AssetService } from '../global'
+import { ETransactionStatus, TestUtils, Value, WalletService, Wallet, Redis, PartnerAsset, web3, Asset, EDefaultWalletId, Partner, AssetService } from '../global'
 import { EthereumTransactionsGetter } from './ethereum-transactions-getter'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
@@ -119,6 +119,7 @@ describe(TEST_TITLE, () => {
         partnerId: 1,
         block: log.blockNumber,
         value: 51798.758,
+        status: ETransactionStatus.DETECTED,
       }
     )
   })
@@ -149,6 +150,7 @@ describe(TEST_TITLE, () => {
         hash: '0xhash',
         partnerId: 1,
         value: 10,
+        status: ETransactionStatus.DETECTED,
       }
     )
   })

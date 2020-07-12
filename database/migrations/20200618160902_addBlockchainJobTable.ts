@@ -9,6 +9,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('type', 128)
     table.string('hash', 128)
     table.string('network', 128)
+    table.dateTime('excutedAt')
     addCreated(table, knex)
   })
   await addModified('blockchain_job', knex)
