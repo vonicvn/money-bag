@@ -10,7 +10,7 @@ import {
 } from './transactions-getter'
 
 export class NewTransactionsLoader {
-  static SAFE_NUMBER_OF_COMFIRMATION = 0
+  static SAFE_NUMBER_OF_COMFIRMATION = 5
 
   async load() {
     const currentBlock = await web3.eth.getBlockNumber()

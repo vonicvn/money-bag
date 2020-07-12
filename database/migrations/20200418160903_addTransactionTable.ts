@@ -8,7 +8,6 @@ export async function up(knex: Knex): Promise<void> {
     addCascadeForeignKey(table, 'asset', {})
     table.enum('collecting_status', ['WAITING', 'PROCESSING', 'SUCCESS'])
     table.string('hash', 256)
-    table.boolean('is_confirmed').defaultTo(false)
     table.string('asset_address', 256)
     table.integer('block', 10).defaultTo(0)
     addCreated(table, knex)

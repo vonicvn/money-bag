@@ -14,7 +14,6 @@ export interface ITransaction extends ITimed {
   walletId: number
   walletAddress: string
   collectingStatus: ETransactionStatus
-  isConfirmed: boolean
   assetId: number
   block: number
   value: number
