@@ -33,3 +33,9 @@ export class WebInstanceManager {
     )
   }
 }
+
+export enum EEthereumTransactionStatus {
+  PENDING = 'PENDING',
+  FAILED = 'FAILED',
+  SUCCESS = 'SUCCESS',
+}

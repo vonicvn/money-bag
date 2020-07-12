@@ -5,6 +5,7 @@ export interface IBlockchainJob {
   transactionId: number
   network: EBlockchainNetwork
   hash: string
+  excutedAt: Date
   status: EBlockchainJobStatus
   type: EBlockchainJobType
 }

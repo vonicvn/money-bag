@@ -16,8 +16,16 @@ export interface IJobFinisher {
   finish(job: IBlockchainJob): Promise<void>
 }
 
+export enum EJobAction {
+  EXCUTE = 'EXCUTE',
+  FINISH = 'FINISH',
+  WAIT = 'WAIT',
+  CANCEL = 'CANCEL',
+  RETRY = 'RETRY',
+}
+
 export interface IJobChecker {
-  check(job: IBlockchainJob): Promise<void>
+  check(job: IBlockchainJob): Promise<EJobAction>
 }
 
 export interface IJobExcutor {

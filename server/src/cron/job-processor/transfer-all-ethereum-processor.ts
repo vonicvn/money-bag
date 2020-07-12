@@ -1,3 +1,4 @@
+import { isNil } from 'lodash'
 import BigNumber from 'bignumber.js'
 import {
   IJobProcessor,
@@ -7,6 +8,7 @@ import {
   IJobFinisher,
   IJobRetrier,
   IJobExcutor,
+  EJobAction,
 } from './metadata'
 import {
   BlockchainJob,
@@ -19,6 +21,9 @@ import {
   Transaction,
   Wallet,
   Partner,
+  web3,
+  EEthereumTransactionStatus,
+  TimeHelper,
 } from '../../global'
 
 export class JobCreator implements IJobCreator {
@@ -46,8 +51,26 @@ export class JobFinisher implements IJobFinisher {
 }
 
 export class JobChecker implements IJobChecker {
+  static RETRY_AFTER = 3 * 60 * 1000 // 3 minutes
   async check(job: IBlockchainJob) {
-    // awaz
+    const status = await this.getEthereumNetworkTransactionStatus(job.hash)
+    if (status === EEthereumTransactionStatus.SUCCESS) return EJobAction.FINISH
+    if (status === EEthereumTransactionStatus.FAILED) return EJobAction.CANCEL
+    if (status === EEthereumTransactionStatus.PENDING) {
+      const shouldWaitMore = TimeHelper.smallerThan(
+        TimeHelper.now(),
+        TimeHelper.after(JobChecker.RETRY_AFTER)
+      )
+      if (shouldWaitMore) return EJobAction.WAIT
+      return EJobAction.RETRY
+    }
+  }
+
+  private async getEthereumNetworkTransactionStatus(transactionHash: string) {
+    const receipt = await web3.eth.getTransactionReceipt(transactionHash)
+    if (isNil(receipt)) return EEthereumTransactionStatus.PENDING
+    if (receipt.status) return EEthereumTransactionStatus.SUCCESS
+    return EEthereumTransactionStatus.FAILED
   }
 }
 
