@@ -13,11 +13,11 @@ import {
   web3,
   WalletService,
   Wallet,
-  EDefaultWalletId,
+  EDefaultAssetId,
   PartnerAsset,
   Asset,
   AssetService,
-  ETransactionStatus,
+  ECollectingStatus,
 } from '../../global'
 
 export class TransactionsGetter {
@@ -43,19 +43,19 @@ export class TransactionsGetter {
 
     const wallet = await Wallet.findOne({ address: toLower(transaction.to) })
     const partnerWallet = await PartnerAsset.findOne({
-      assetId: EDefaultWalletId.ETH,
+      assetId: EDefaultAssetId.ETH,
       partnerId: wallet.partnerId,
     })
     if (isNil(partnerWallet)) return null
 
-    const asset = await Asset.findById(EDefaultWalletId.ETH)
+    const asset = await Asset.findById(EDefaultAssetId.ETH)
     return {
       hash: transaction.hash,
-      assetId: EDefaultWalletId.ETH,
+      assetId: EDefaultAssetId.ETH,
       partnerId: wallet.partnerId,
       block: transaction.blockNumber,
       value: new BigNumber(transaction.value).div(Math.pow(10, asset.decimals)).toNumber(),
-      collectingStatus: ETransactionStatus.WAITING,
+      collectingStatus: ECollectingStatus.WAITING,
     }
   }
 
@@ -80,7 +80,7 @@ export class TransactionsGetter {
       partnerId: wallet.partnerId,
       block: log.blockNumber,
       value: new BigNumber(log.data).div(Math.pow(10, asset.decimals)).toNumber(),
-      collectingStatus: ETransactionStatus.WAITING,
+      collectingStatus: ECollectingStatus.WAITING,
     }
   }
 }

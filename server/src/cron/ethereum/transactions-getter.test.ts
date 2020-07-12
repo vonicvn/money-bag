@@ -4,7 +4,7 @@ import {
   deepEqual,
 } from 'assert'
 import {
-  ETransactionStatus,
+  ECollectingStatus,
   TestUtils,
   Value,
   WalletService,
@@ -12,7 +12,7 @@ import {
   PartnerAsset,
   web3,
   Asset,
-  EDefaultWalletId,
+  EDefaultAssetId,
   AssetService,
 } from '../../global'
 import { TransactionsGetter } from './transactions-getter'
@@ -133,7 +133,7 @@ describe(TEST_TITLE, () => {
         partnerId: 1,
         block: log.blockNumber,
         value: 51798.758,
-        collectingStatus: ETransactionStatus.WAITING,
+        collectingStatus: ECollectingStatus.WAITING,
       }
     )
   })
@@ -146,14 +146,14 @@ describe(TEST_TITLE, () => {
       .when(Wallet.findOne({ address: '0x_watched_address' }))
       .thenResolve({ partnerId: 1 })
     td
-      .when(PartnerAsset.findOne({ assetId: EDefaultWalletId.ETH, partnerId: 1 }))
+      .when(PartnerAsset.findOne({ assetId: EDefaultAssetId.ETH, partnerId: 1 }))
       .thenResolve({})
 
     const ethereumTransaction = Value.wrap({
       to: '0x_watched_address',
       value: '10000000000000000000',
       hash: '0xhash',
-      assetId: EDefaultWalletId.ETH,
+      assetId: EDefaultAssetId.ETH,
       blockNumber: 9999,
     })
     deepEqual(
@@ -164,7 +164,7 @@ describe(TEST_TITLE, () => {
         hash: '0xhash',
         partnerId: 1,
         value: 10,
-        collectingStatus: ETransactionStatus.WAITING,
+        collectingStatus: ECollectingStatus.WAITING,
       }
     )
   })
@@ -194,7 +194,7 @@ describe(TEST_TITLE, () => {
       .when(Wallet.findOne({ address: '0x_watched_address' }))
       .thenResolve({ partnerId: 1 })
     td
-      .when(PartnerAsset.findOne({ assetId: EDefaultWalletId.ETH, partnerId: 1 }))
+      .when(PartnerAsset.findOne({ assetId: EDefaultAssetId.ETH, partnerId: 1 }))
       .thenResolve(null)
 
     const ethereumTransaction = Value.wrap({ value: '100', to: '0x_watched_address' })

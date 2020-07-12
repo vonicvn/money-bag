@@ -1,7 +1,7 @@
 import { isNil } from 'lodash'
 import {
   ITransaction,
-  EDefaultWalletId,
+  EDefaultAssetId,
   BlockchainJob,
   EBlockchainJobType,
   EBlockchainJobStatus,
@@ -42,8 +42,8 @@ export async function createJobFromJob(blockchainJob: IBlockchainJob) {
 }
 
 export function createJobFromTransaction(transaction: ITransaction) {
-  if (transaction.assetId === EDefaultWalletId.ETH) return collectEthereum(transaction)
-  if (transaction.assetId === EDefaultWalletId.BTC) return collectBitcoin(transaction)
+  if (transaction.assetId === EDefaultAssetId.ETH) return collectEthereum(transaction)
+  if (transaction.assetId === EDefaultAssetId.BTC) return collectBitcoin(transaction)
   return collectEthereumToken(transaction)
 }
 

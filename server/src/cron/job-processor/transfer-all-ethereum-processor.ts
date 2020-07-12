@@ -112,7 +112,7 @@ export class JobExcutor implements IJobExcutor {
   }
 }
 
-export class Processor implements IJobProcessor {
+export class JobProcessor implements IJobProcessor {
   creator = new JobCreator()
   finisher = new JobFinisher()
   checker = new JobChecker()

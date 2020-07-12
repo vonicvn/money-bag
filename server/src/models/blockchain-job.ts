@@ -1,6 +1,6 @@
-import { ETable, createModel } from '.'
+import { ETable, createModel, ITimed } from '.'
 
-export interface IBlockchainJob {
+export interface IBlockchainJob extends ITimed {
   blockchainJobId: number
   transactionId: number
   network: EBlockchainNetwork
