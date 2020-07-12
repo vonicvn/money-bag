@@ -8,6 +8,7 @@ export async function up(knex: Knex): Promise<void> {
     addCascadeForeignKey(table, 'transaction', {})
     table.string('type', 128)
     table.string('hash', 128)
+    table.bigInteger('block')
     table.string('network', 128)
     table.dateTime('excutedAt')
     addCreated(table, knex)

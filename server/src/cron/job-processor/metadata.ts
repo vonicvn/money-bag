@@ -20,7 +20,6 @@ export enum EJobAction {
   EXCUTE = 'EXCUTE',
   FINISH = 'FINISH',
   WAIT = 'WAIT',
-  CANCEL = 'CANCEL',
   RETRY = 'RETRY',
 }
 

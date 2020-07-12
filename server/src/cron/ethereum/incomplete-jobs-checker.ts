@@ -1,30 +1,37 @@
 import {
-  Transaction,
-  ECollectingStatus,
-  ITransaction,
-  EDefaultAssetId,
+  BlockchainJob,
+  IBlockchainJob,
 } from '../../global'
 import {
   TransferAllEthereumProcessor,
   IJobProcessor,
+  EJobAction,
 } from '../job-processor'
 
-export class IncompleteJobsProcessor {
-  async create() {
-    const transactions = await Transaction.findAll({ collectingStatus: ECollectingStatus.WAITING })
-    for (const transaction of transactions) {
-      const { creator } = await this.getJobProcessor(transaction)
-      await creator.create({ transaction })
-      await Transaction.findByIdAndUpdate(
-        transaction.transactionId,
-        { collectingStatus: ECollectingStatus.PROCESSING }
-      )
+export class IncompleteJobsChecker {
+  async checkAll() {
+    const jobs = await BlockchainJob.findAll({})
+    for (const job of jobs) {
+      const { checker, retrier, finisher, excutor } = await this.getJobProcessor(job)
+      const action = await checker.check(job)
+      if (action === EJobAction.WAIT) continue
+      if (action === EJobAction.RETRY) {
+        await retrier.retry(job)
+        continue
+      }
+      if (action === EJobAction.FINISH) {
+        await finisher.finish(job)
+        continue
+      }
+      if (action === EJobAction.EXCUTE) {
+        await excutor.excute(job)
+        continue
+      }
     }
   }
 
-  private async getJobProcessor(transaction: ITransaction): Promise<IJobProcessor> {
+  private async getJobProcessor(job: IBlockchainJob): Promise<IJobProcessor> {
     // TODO: implement
-    if (transaction.assetId === EDefaultAssetId.ETH) return new TransferAllEthereumProcessor()
-    if (transaction.assetId === EDefaultAssetId.BTC) return new TransferAllEthereumProcessor()
+    return new TransferAllEthereumProcessor()
   }
 }

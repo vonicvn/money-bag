@@ -55,7 +55,6 @@ export class JobChecker implements IJobChecker {
   async check(job: IBlockchainJob) {
     const status = await this.getEthereumNetworkTransactionStatus(job.hash)
     if (status === EEthereumTransactionStatus.SUCCESS) return EJobAction.FINISH
-    if (status === EEthereumTransactionStatus.FAILED) return EJobAction.CANCEL
     if (status === EEthereumTransactionStatus.PENDING) {
       const shouldWaitMore = TimeHelper.smallerThan(
         TimeHelper.now(),
@@ -64,6 +63,7 @@ export class JobChecker implements IJobChecker {
       if (shouldWaitMore) return EJobAction.WAIT
       return EJobAction.RETRY
     }
+    if (status === EEthereumTransactionStatus.FAILED) return EJobAction.RETRY
   }
 
   private async getEthereumNetworkTransactionStatus(transactionHash: string) {

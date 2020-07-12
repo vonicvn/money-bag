@@ -5,6 +5,7 @@ export interface IBlockchainJob extends ITimed {
   transactionId: number
   network: EBlockchainNetwork
   hash: string
+  block: number
   excutedAt: Date
   status: EBlockchainJobStatus
   type: EBlockchainJobType
