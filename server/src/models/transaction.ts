@@ -1,10 +1,9 @@
 import { ITimed, ETable, createModel } from './'
 
 export enum ETransactionStatus {
-  DETECTED = 'DETECTED',
+  WAITING = 'WAITING',
   PROCESSING = 'PROCESSING',
   SUCCESS = 'SUCCESS',
-  FAILED = 'FAILED',
 }
 
 export interface ITransaction extends ITimed {
@@ -14,7 +13,8 @@ export interface ITransaction extends ITimed {
   assetAddress: string
   walletId: number
   walletAddress: string
-  status: ETransactionStatus
+  collectingStatus: ETransactionStatus
+  isConfirmed: boolean
   assetId: number
   block: number
   value: number

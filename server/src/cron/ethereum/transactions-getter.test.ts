@@ -1,7 +1,21 @@
 import td from 'testdouble'
-import { equal, ok, deepEqual } from 'assert'
-import { ETransactionStatus, TestUtils, Value, WalletService, Wallet, Redis, PartnerAsset, web3, Asset, EDefaultWalletId, Partner, AssetService } from '../global'
-import { EthereumTransactionsGetter } from './ethereum-transactions-getter'
+import {
+  equal,
+  deepEqual,
+} from 'assert'
+import {
+  ETransactionStatus,
+  TestUtils,
+  Value,
+  WalletService,
+  Wallet,
+  PartnerAsset,
+  web3,
+  Asset,
+  EDefaultWalletId,
+  AssetService,
+} from '../../global'
+import { TransactionsGetter } from './transactions-getter'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
@@ -10,31 +24,31 @@ describe(TEST_TITLE, () => {
     td.replace(web3.eth, 'getBlock', () => ({ transactions: ['transaction1', 'transaction2'] }))
     td.replace(web3.eth, 'getPastLogs', () => (['log1', 'log2']))
 
-    td.replace(EthereumTransactionsGetter.prototype, 'parseEthereumTransaction')
+    td.replace(TransactionsGetter.prototype, 'parseEthereumTransaction')
     td
-      .when(EthereumTransactionsGetter.prototype['parseEthereumTransaction'](Value.wrap('transaction1')))
+      .when(TransactionsGetter.prototype['parseEthereumTransaction'](Value.wrap('transaction1')))
       .thenResolve({ hash: '0xtransaction1' })
     td
-      .when(EthereumTransactionsGetter.prototype['parseEthereumTransaction'](Value.wrap('transaction2')))
+      .when(TransactionsGetter.prototype['parseEthereumTransaction'](Value.wrap('transaction2')))
       .thenResolve(null)
 
-    td.replace(EthereumTransactionsGetter.prototype, 'parseEthereumLog')
+    td.replace(TransactionsGetter.prototype, 'parseEthereumLog')
     td
-      .when(EthereumTransactionsGetter.prototype['parseEthereumLog'](Value.wrap('log1')))
+      .when(TransactionsGetter.prototype['parseEthereumLog'](Value.wrap('log1')))
       .thenResolve({ hash: '0xlog1' })
     td
-      .when(EthereumTransactionsGetter.prototype['parseEthereumLog'](Value.wrap('log2')))
+      .when(TransactionsGetter.prototype['parseEthereumLog'](Value.wrap('log2')))
       .thenResolve(null)
 
     deepEqual(
-      await EthereumTransactionsGetter.prototype.get(),
+      await TransactionsGetter.prototype.get(),
       [{ hash: '0xtransaction1' }, { hash: '0xlog1' }]
     )
   })
 
   it('#parseEthereumLog case 1: not a token transfer', async () => {
     const log = Value.wrap({ topics: ['0x_wrong_topic'] })
-    equal(await EthereumTransactionsGetter.prototype['parseEthereumLog'](log), null)
+    equal(await TransactionsGetter.prototype['parseEthereumLog'](log), null)
   })
 
   it('#parseEthereumLog case 2: not watched asset', async () => {
@@ -43,7 +57,7 @@ describe(TEST_TITLE, () => {
       topics: ['0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'],
       address: 'not watched asset address',
     })
-    equal(await EthereumTransactionsGetter.prototype['parseEthereumLog'](log), null)
+    equal(await TransactionsGetter.prototype['parseEthereumLog'](log), null)
   })
 
   it('#parseEthereumLog case 3: not a watched wallet', async () => {
@@ -57,7 +71,7 @@ describe(TEST_TITLE, () => {
         '0x0000000000000000000000001cbdd8336800dc3fe27daf5fb5188f0502ac1fc7',
       ],
     })
-    equal(await EthereumTransactionsGetter.prototype['parseEthereumLog'](log), null)
+    equal(await TransactionsGetter.prototype['parseEthereumLog'](log), null)
   })
 
   it('#parseEthereumLog case 4: merchant does not subscribe for asset', async () => {
@@ -75,7 +89,7 @@ describe(TEST_TITLE, () => {
         '0x000000000000000000000000_watched_address',
       ],
     })
-    equal(await EthereumTransactionsGetter.prototype['parseEthereumLog'](log), null)
+    equal(await TransactionsGetter.prototype['parseEthereumLog'](log), null)
   })
 
   it('#parseEthereumLog case 5: create transaction', async () => {
@@ -112,14 +126,14 @@ describe(TEST_TITLE, () => {
       .thenResolve({})
 
     deepEqual(
-      await EthereumTransactionsGetter.prototype['parseEthereumLog'](log),
+      await TransactionsGetter.prototype['parseEthereumLog'](log),
       {
         hash: log.transactionHash,
         assetId: 2,
         partnerId: 1,
         block: log.blockNumber,
         value: 51798.758,
-        status: ETransactionStatus.DETECTED,
+        collectingStatus: ETransactionStatus.WAITING,
       }
     )
   })
@@ -143,14 +157,14 @@ describe(TEST_TITLE, () => {
       blockNumber: 9999,
     })
     deepEqual(
-      await EthereumTransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
+      await TransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
       {
         assetId: 1,
         block: 9999,
         hash: '0xhash',
         partnerId: 1,
         value: 10,
-        status: ETransactionStatus.DETECTED,
+        collectingStatus: ETransactionStatus.WAITING,
       }
     )
   })
@@ -158,7 +172,7 @@ describe(TEST_TITLE, () => {
   it('#parseEthereumTransaction case 2: value = 0', async () => {
     const ethereumTransaction = Value.wrap({ value: '0' })
     equal(
-      await EthereumTransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
+      await TransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
       null
     )
   })
@@ -167,7 +181,7 @@ describe(TEST_TITLE, () => {
     td.replace(WalletService, 'isAddressExisted', () => false)
     const ethereumTransaction = Value.wrap({ value: '100' })
     equal(
-      await EthereumTransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
+      await TransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
       null
     )
   })
@@ -185,7 +199,7 @@ describe(TEST_TITLE, () => {
 
     const ethereumTransaction = Value.wrap({ value: '100', to: '0x_watched_address' })
     equal(
-      await EthereumTransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
+      await TransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
       null
     )
   })

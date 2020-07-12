@@ -1,5 +1,9 @@
 import BigNumber from 'bignumber.js'
-import { compact, toLower, isNil } from 'lodash'
+import {
+  compact,
+  toLower,
+  isNil,
+} from 'lodash'
 import {
   Transaction as EthereumTransaction,
   Log as EthereumLog,
@@ -14,9 +18,9 @@ import {
   Asset,
   AssetService,
   ETransactionStatus,
-} from '../global'
+} from '../../global'
 
-export class EthereumTransactionsGetter {
+export class TransactionsGetter {
   constructor(private block: number) {}
 
   async get() {
@@ -51,7 +55,7 @@ export class EthereumTransactionsGetter {
       partnerId: wallet.partnerId,
       block: transaction.blockNumber,
       value: new BigNumber(transaction.value).div(Math.pow(10, asset.decimals)).toNumber(),
-      status: ETransactionStatus.DETECTED,
+      collectingStatus: ETransactionStatus.WAITING,
     }
   }
 
@@ -76,7 +80,7 @@ export class EthereumTransactionsGetter {
       partnerId: wallet.partnerId,
       block: log.blockNumber,
       value: new BigNumber(log.data).div(Math.pow(10, asset.decimals)).toNumber(),
-      status: ETransactionStatus.DETECTED,
+      collectingStatus: ETransactionStatus.WAITING,
     }
   }
 }
