@@ -25,6 +25,7 @@ import {
   TimeHelper,
   ECollectingStatus,
   Env,
+  EDefaultAssetId,
 } from '../../global'
 
 export class JobCreator implements IJobCreator {
@@ -85,6 +86,14 @@ export class JobChecker implements IJobChecker {
       return EEthereumTransactionStatus.SUCCESS
     }
     return EEthereumTransactionStatus.FAILED
+  }
+
+  private async isWalletBusy(job: IBlockchainJob) {
+    // const transaction = await Transaction.findById(job.transactionId)
+    // const blockedTransaction = await Transaction.findOne({
+    //   walletId: transaction.walletId,
+    //   assetId: EDefaultAssetId.ETH,
+    // })
   }
 }
 
