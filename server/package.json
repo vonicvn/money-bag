@@ -19,7 +19,7 @@
     "express-validator": "^6.6.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.20.15",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "pg": "^8.0.2",
     "redis": "^3.0.2",
     "web3": "^1.2.7"
