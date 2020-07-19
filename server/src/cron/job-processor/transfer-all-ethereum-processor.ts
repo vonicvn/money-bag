@@ -85,10 +85,8 @@ export class JobRetrier implements IJobRetrier {
 
 export class JobExcutor implements IJobExcutor {
   async excute(job: IBlockchainJob) {
-    console.log('excute', job)
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
     const { index, partnerId } = await Wallet.findById(transaction.walletId)
-    const { ethereumWallet } = await Partner.findById(partnerId)
     const web3 = Web3InstanceManager.getWeb3ByWalletIndex(index)
     const [account] = await web3.eth.getAccounts()
 
@@ -96,6 +94,8 @@ export class JobExcutor implements IJobExcutor {
     const gasPrice = await web3.eth.getGasPrice()
     const GAS_LIMIT = 21000
     const nonce = await web3.eth.getTransactionCount(account)
+    const { ethereumWallet } = await Partner.findById(partnerId)
+
     const hash = await new Promise<string>((resolve, reject) => {
       web3.eth.sendTransaction({
         from: account,
