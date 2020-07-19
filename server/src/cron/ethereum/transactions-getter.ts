@@ -24,6 +24,7 @@ export class TransactionsGetter {
   constructor(private block: number) {}
 
   async get() {
+    console.log('Scanning block ', this.block)
     const { transactions: ethereumTransactions } = await web3.eth.getBlock(this.block, true)
     const logs = await web3.eth.getPastLogs({ fromBlock: this.block, toBlock: this.block })
     const results = []

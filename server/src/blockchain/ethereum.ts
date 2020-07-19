@@ -8,7 +8,7 @@ export const web3 = new Web3(new HDWalletProvider(
 // tslint:disable-next-line: no-any
 ) as any)
 
-export class WebInstanceManager {
+export class Web3InstanceManager {
   static getWeb3ByKey(privateKeyOrMnemonic: string): Web3 {
     return new Web3(
       new HDWalletProvider(

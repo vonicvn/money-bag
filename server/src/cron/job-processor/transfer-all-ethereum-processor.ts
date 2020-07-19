@@ -17,7 +17,7 @@ import {
   EBlockchainNetwork,
   IBlockchainJob,
   AdminAccount,
-  WebInstanceManager,
+  Web3InstanceManager,
   Transaction,
   Wallet,
   Partner,
@@ -87,7 +87,7 @@ export class JobExcutor implements IJobExcutor {
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
     const { index, partnerId } = await Wallet.findById(transaction.walletId)
     const { ethereumWallet } = await Partner.findById(partnerId)
-    const web3 = WebInstanceManager.getWeb3ByWalletIndex(index)
+    const web3 = Web3InstanceManager.getWeb3ByWalletIndex(index)
     const [account] = await web3.eth.getAccounts()
 
     const balance = await web3.eth.getBalance(account)
