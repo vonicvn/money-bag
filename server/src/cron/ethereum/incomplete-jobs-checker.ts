@@ -1,6 +1,7 @@
 import {
   BlockchainJob,
   IBlockchainJob,
+  EBlockchainJobStatus,
 } from '../../global'
 import {
   TransferAllEthereumProcessor,
@@ -10,7 +11,11 @@ import {
 
 export class IncompleteJobsChecker {
   async checkAll() {
-    const jobs = await BlockchainJob.findAll({})
+    const jobs = await BlockchainJob.findAll({}, builder => {
+      return builder
+        .whereNotIn('status', [EBlockchainJobStatus.SUCCESS, EBlockchainJobStatus.CANCELED])
+        .orderBy('created')
+    })
     for (const job of jobs) {
       const { checker, retrier, finisher, excutor } = await this.getJobProcessor(job)
       const action = await checker.check(job)

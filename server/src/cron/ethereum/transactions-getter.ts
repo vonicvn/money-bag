@@ -24,7 +24,6 @@ export class TransactionsGetter {
   constructor(private block: number) {}
 
   async get() {
-    console.log('Scanning block ', this.block)
     const { transactions: ethereumTransactions } = await web3.eth.getBlock(this.block, true)
     const logs = await web3.eth.getPastLogs({ fromBlock: this.block, toBlock: this.block })
     const results = []
@@ -52,11 +51,14 @@ export class TransactionsGetter {
     const asset = await Asset.findById(EDefaultAssetId.ETH)
     return {
       hash: transaction.hash,
-      assetId: EDefaultAssetId.ETH,
       partnerId: wallet.partnerId,
       block: transaction.blockNumber,
       value: new BigNumber(transaction.value).div(Math.pow(10, asset.decimals)).toNumber(),
       collectingStatus: ECollectingStatus.WAITING,
+      assetId: EDefaultAssetId.ETH,
+      assetName: asset.name,
+      walletAddress: wallet.address,
+      walletId: wallet.walletId,
     }
   }
 
@@ -77,11 +79,15 @@ export class TransactionsGetter {
 
     return {
       hash: log.transactionHash,
-      assetId: asset.assetId,
       partnerId: wallet.partnerId,
       block: log.blockNumber,
       value: new BigNumber(log.data).div(Math.pow(10, asset.decimals)).toNumber(),
       collectingStatus: ECollectingStatus.WAITING,
+      assetId: asset.assetId,
+      assetAddress: asset.address,
+      assetName: asset.name,
+      walletAddress: wallet.address,
+      walletId: wallet.walletId,
     }
   }
 }

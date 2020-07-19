@@ -53,6 +53,7 @@ export class JobFinisher implements IJobFinisher {
 export class JobChecker implements IJobChecker {
   static RETRY_AFTER = 3 * 60 * 1000 // 3 minutes
   async check(job: IBlockchainJob) {
+    if (job.status === EBlockchainJobStatus.JUST_CREATED) return EJobAction.EXCUTE
     const status = await this.getEthereumNetworkTransactionStatus(job.hash)
     if (status === EEthereumTransactionStatus.SUCCESS) return EJobAction.FINISH
     if (status === EEthereumTransactionStatus.PENDING) {
@@ -84,6 +85,7 @@ export class JobRetrier implements IJobRetrier {
 
 export class JobExcutor implements IJobExcutor {
   async excute(job: IBlockchainJob) {
+    console.log('excute', job)
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
     const { index, partnerId } = await Wallet.findById(transaction.walletId)
     const { ethereumWallet } = await Partner.findById(partnerId)
