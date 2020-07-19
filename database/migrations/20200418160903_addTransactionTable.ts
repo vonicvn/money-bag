@@ -17,8 +17,8 @@ export async function up(knex: Knex): Promise<void> {
     table.string('hash', 256)
     table.integer('block', 10).defaultTo(0)
 
-    table.string('collectingHash', 256)
-    table.integer('collectingBlock', 10).defaultTo(0)
+    table.string('collecting_hash', 256)
+    table.integer('collecting_block', 10).defaultTo(0)
 
     table.string('asset_address', 256)
     table.string('asset_name', 256)
