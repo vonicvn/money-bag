@@ -1,3 +1,7 @@
+import {
+  defaultTo
+} from 'lodash'
+
 export enum EEnvKey {
   DATABASE_URL = 'DATABASE_URL',
   PORT = 'PORT',
@@ -17,5 +21,9 @@ export enum EEnviroment {
 export class Env {
   static get(key: EEnvKey) {
     return process.env[key]
+  }
+
+  static get SAFE_NUMBER_OF_COMFIRMATION() {
+    return Number(defaultTo(Env.get(EEnvKey.SAFE_NUMBER_OF_COMFIRMATION), 5))
   }
 }

@@ -36,6 +36,7 @@ export class Web3InstanceManager {
 
 export enum EEthereumTransactionStatus {
   PENDING = 'PENDING',
+  WAIT_FOR_MORE_COMFIRMATIONS = 'WAIT_FOR_MORE_COMFIRMATIONS',
   FAILED = 'FAILED',
   SUCCESS = 'SUCCESS',
 }

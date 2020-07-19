@@ -24,6 +24,7 @@ import {
   EEthereumTransactionStatus,
   TimeHelper,
   ECollectingStatus,
+  Env,
 } from '../../global'
 
 export class JobCreator implements IJobCreator {
@@ -60,7 +61,9 @@ export class JobChecker implements IJobChecker {
   async check(job: IBlockchainJob) {
     if (job.status === EBlockchainJobStatus.JUST_CREATED) return EJobAction.EXCUTE
     const status = await this.getEthereumNetworkTransactionStatus(job.hash)
+    console.log(`[ETHEREUM STATUS] Job ${job.blockchainJobId} hash ${job.hash} status ${status}`)
     if (status === EEthereumTransactionStatus.SUCCESS) return EJobAction.FINISH
+    if (status === EEthereumTransactionStatus.WAIT_FOR_MORE_COMFIRMATIONS) return EJobAction.WAIT
     if (status === EEthereumTransactionStatus.PENDING) {
       const shouldWaitMore = TimeHelper.smallerThan(
         TimeHelper.now(),
@@ -75,7 +78,12 @@ export class JobChecker implements IJobChecker {
   private async getEthereumNetworkTransactionStatus(transactionHash: string) {
     const receipt = await web3.eth.getTransactionReceipt(transactionHash)
     if (isNil(receipt)) return EEthereumTransactionStatus.PENDING
-    if (receipt.status) return EEthereumTransactionStatus.SUCCESS
+    if (receipt.status) {
+      const currentBlock = await web3.eth.getBlockNumber()
+      const shouldWaitForMoreConfirmations = currentBlock - receipt.blockNumber < Env.SAFE_NUMBER_OF_COMFIRMATION
+      if (shouldWaitForMoreConfirmations) return EEthereumTransactionStatus.WAIT_FOR_MORE_COMFIRMATIONS
+      return EEthereumTransactionStatus.SUCCESS
+    }
     return EEthereumTransactionStatus.FAILED
   }
 }
@@ -109,8 +117,8 @@ export class JobExcutor implements IJobExcutor {
         gasPrice,
         nonce,
       })
-      .on('transactionHash', resolve)
-      .on('error', reject)
+        .on('transactionHash', resolve)
+        .on('error', reject)
     })
     await BlockchainJob.findByIdAndUpdate(
       job.blockchainJobId,
