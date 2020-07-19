@@ -4,13 +4,15 @@ import {
   ITransaction,
   Transaction,
   web3,
+  Env,
+  EEnvKey,
 } from '../../global'
 import {
   TransactionsGetter,
 } from './transactions-getter'
 
 export class NewTransactionsLoader {
-  static SAFE_NUMBER_OF_COMFIRMATION = 1
+  static SAFE_NUMBER_OF_COMFIRMATION = Number(defaultTo(Env.get(EEnvKey.SAFE_NUMBER_OF_COMFIRMATION), 5))
 
   async load() {
     const currentBlock = await web3.eth.getBlockNumber()

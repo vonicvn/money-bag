@@ -4,6 +4,7 @@ export enum EEnvKey {
   NODE_ENV = 'NODE_ENV',
   MNEMONIC = 'MNEMONIC',
   INFURA_URL = 'INFURA_URL',
+  SAFE_NUMBER_OF_COMFIRMATION = 'SAFE_NUMBER_OF_COMFIRMATION',
 }
 
 export enum EEnviroment {
