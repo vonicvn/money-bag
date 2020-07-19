@@ -10,6 +10,8 @@ export interface ITransaction extends ITimed {
   transactionId: number
   partnerId: number
   hash: string
+  block: number
+  value: number
 
   assetAddress: string
   assetName: string
@@ -19,8 +21,8 @@ export interface ITransaction extends ITimed {
   walletAddress: string
   collectingStatus: ECollectingStatus
 
-  block: number
-  value: number
+  collectingHash: string
+  collectingBlock: number
 }
 
 export class Transaction extends createModel<ITransaction>(ETable.TRANSACTION) {}

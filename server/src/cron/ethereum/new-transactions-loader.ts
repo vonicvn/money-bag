@@ -10,7 +10,7 @@ import {
 } from './transactions-getter'
 
 export class NewTransactionsLoader {
-  static SAFE_NUMBER_OF_COMFIRMATION = 5
+  static SAFE_NUMBER_OF_COMFIRMATION = 1
 
   async load() {
     const currentBlock = await web3.eth.getBlockNumber()
@@ -31,6 +31,7 @@ export class NewTransactionsLoader {
   }
 
   private async scanBlock(block: number): Promise<Partial<ITransaction>[]> {
+    console.log(`[ETHEREUM SCAN BLOCK] ${block}`)
     return new TransactionsGetter(block).get()
   }
 }

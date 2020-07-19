@@ -16,7 +16,6 @@ import {
   EBlockchainJobStatus,
   EBlockchainNetwork,
   IBlockchainJob,
-  AdminAccount,
   Web3InstanceManager,
   Transaction,
   Wallet,
@@ -24,6 +23,7 @@ import {
   web3,
   EEthereumTransactionStatus,
   TimeHelper,
+  ECollectingStatus,
 } from '../../global'
 
 export class JobCreator implements IJobCreator {
@@ -39,13 +39,18 @@ export class JobCreator implements IJobCreator {
 
 export class JobFinisher implements IJobFinisher {
   async finish(job: IBlockchainJob) {
+    const { blockNumber } = await web3.eth.getTransactionReceipt(job.hash)
     await BlockchainJob.findByIdAndUpdate(
       job.blockchainJobId,
-      { status: EBlockchainJobStatus.SUCCESS }
+      { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
     )
-    await AdminAccount.findOneAndUpdate(
-      { currentJobId: job.blockchainJobId },
-      { currentJobId: null }
+    await Transaction.findByIdAndUpdate(
+      job.transactionId,
+      {
+        collectingStatus: ECollectingStatus.SUCCESS,
+        collectingBlock: blockNumber,
+        collectingHash: job.hash,
+      }
     )
   }
 }
@@ -109,7 +114,11 @@ export class JobExcutor implements IJobExcutor {
     })
     await BlockchainJob.findByIdAndUpdate(
       job.blockchainJobId,
-      { hash, status: EBlockchainJobStatus.PROCESSING }
+      {
+        status: EBlockchainJobStatus.PROCESSING,
+        excutedAt: new Date(TimeHelper.now()),
+        hash,
+      }
     )
   }
 }
