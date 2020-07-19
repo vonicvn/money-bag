@@ -1,6 +1,10 @@
 import pg from 'pg'
 import Knex from 'knex'
-import { Env, EEnvKey } from '../global'
+import {
+  Env,
+  EEnvKey,
+  EEnviroment,
+} from '../global'
 import { wrapIdentifier, postProcessResponse } from './transform'
 
 const PG_DECIMAL_OID = 1700
@@ -19,4 +23,11 @@ export const knex = Knex({
   wrapIdentifier,
   postProcessResponse,
   debug: false,
+})
+
+knex.on('query', ({ sql, bindings }) => {
+  if (Env.get(EEnvKey.NODE_ENV) !== EEnviroment.LOCAL) return
+  const query = knex.raw(sql, bindings).toString()
+  if (query.includes('select')) return
+  console.log(query)
 })

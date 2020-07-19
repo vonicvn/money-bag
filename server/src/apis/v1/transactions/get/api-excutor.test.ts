@@ -1,6 +1,6 @@
 import { deepEqual, equal } from 'assert'
 import { map } from 'lodash'
-import { TestUtils, Partner, Transaction, Value, Asset } from '../../../../global'
+import { TestUtils, Partner, Transaction, Value, Asset, Wallet } from '../../../../global'
 import { ApiExcutor } from './api-excutor'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
@@ -11,6 +11,8 @@ describe(TEST_TITLE, () => {
       { partnerId: 1 },
       { partnerId: 2 },
     ])
+
+    await Wallet.create({ walletId: 1, partnerId: 1, address:  '0x0' })
 
     await Asset.createMany([
       {
@@ -31,10 +33,10 @@ describe(TEST_TITLE, () => {
     ])
 
     await Transaction.createMany([
-      { transactionId: 1, partnerId: 1, assetId: 11 },
-      { transactionId: 2, partnerId: 1, assetId: 12 },
-      { transactionId: 3, partnerId: 1, assetId: 11 },
-      { transactionId: 4, partnerId: 2, assetId: 13 },
+      { transactionId: 1, partnerId: 1, assetId: 11, walletId: 1 },
+      { transactionId: 2, partnerId: 1, assetId: 12, walletId: 1 },
+      { transactionId: 3, partnerId: 1, assetId: 11, walletId: 1 },
+      { transactionId: 4, partnerId: 2, assetId: 13, walletId: 1 },
     ])
   })
 

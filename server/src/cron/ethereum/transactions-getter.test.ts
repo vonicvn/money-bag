@@ -116,10 +116,10 @@ describe(TEST_TITLE, () => {
 
     td
       .when(Wallet.findOne({ address: '0x_watched_address' }))
-      .thenResolve({ partnerId: 1 })
+      .thenResolve({ walletId: 111, partnerId: 1, address: '0x_watched_wallet_address' })
     td
       .when(Asset.findOne({ address: 'watched_asset_address' }))
-      .thenResolve({ assetId: 2, decimals: 18, address: 'watched_asset_address' })
+      .thenResolve({ assetId: 2, decimals: 18, address: 'watched_asset_address', name: 'super_asset' })
 
     td
       .when(PartnerAsset.findOne({ assetId: 2, partnerId: 1 }))
@@ -130,10 +130,14 @@ describe(TEST_TITLE, () => {
       {
         hash: log.transactionHash,
         assetId: 2,
+        assetAddress: 'watched_asset_address',
+        assetName: 'super_asset',
         partnerId: 1,
         block: log.blockNumber,
         value: 51798.758,
         collectingStatus: ECollectingStatus.WAITING,
+        walletAddress: '0x_watched_wallet_address',
+        walletId: 111,
       }
     )
   })
@@ -144,7 +148,7 @@ describe(TEST_TITLE, () => {
     td.replace(PartnerAsset, 'findOne')
     td
       .when(Wallet.findOne({ address: '0x_watched_address' }))
-      .thenResolve({ partnerId: 1 })
+      .thenResolve({ walletId: 111, partnerId: 1, address: '0x_watched_address' })
     td
       .when(PartnerAsset.findOne({ assetId: EDefaultAssetId.ETH, partnerId: 1 }))
       .thenResolve({})
@@ -160,6 +164,9 @@ describe(TEST_TITLE, () => {
       await TransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
       {
         assetId: 1,
+        assetName: 'ETH',
+        walletAddress: '0x_watched_address',
+        walletId: 111,
         block: 9999,
         hash: '0xhash',
         partnerId: 1,
