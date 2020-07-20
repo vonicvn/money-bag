@@ -25,7 +25,6 @@ import {
   TimeHelper,
   ECollectingStatus,
   Env,
-  exists,
 } from '../../global'
 
 export class JobCreator implements IJobCreator {
@@ -62,8 +61,10 @@ export class JobChecker implements IJobChecker {
   static RETRY_AFTER = 3 * 60 * 1000 // 3 minutes
   async check(job: IBlockchainJob) {
     if (job.status === EBlockchainJobStatus.JUST_CREATED) {
-      if (await this.isWalletBusy(job)) return EJobAction.WAIT
-      return EJobAction.EXCUTE
+      const isWalletAvailable = await this.isWalletAvailable(job)
+      console.log(`[WALLET AVAILABILITY] wallet ${job.walletId} is available? ${isWalletAvailable}`)
+      if (isWalletAvailable) return EJobAction.EXCUTE
+      return EJobAction.WAIT
     }
     const status = await this.getEthereumNetworkTransactionStatus(job.hash)
     console.log(`[ETHEREUM STATUS] Job ${job.blockchainJobId} hash ${job.hash} status ${status}`)
@@ -92,13 +93,13 @@ export class JobChecker implements IJobChecker {
     return EEthereumTransactionStatus.FAILED
   }
 
-  private async isWalletBusy(job: IBlockchainJob) {
+  private async isWalletAvailable(job: IBlockchainJob) {
     const transaction = await Transaction.findById(job.transactionId)
     const blockingJob = await BlockchainJob.findOne({
       walletId: transaction.walletId,
       status: EBlockchainJobStatus.PROCESSING,
     })
-    return exists(blockingJob)
+    return isNil(blockingJob)
   }
 }
 
