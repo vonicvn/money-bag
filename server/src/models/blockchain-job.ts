@@ -7,6 +7,8 @@ export interface IBlockchainJob extends ITimed {
   hash: string
   block: number
   excutedAt: Date
+  walletId: number
+  adminAccountId: number
   status: EBlockchainJobStatus
   type: EBlockchainJobType
 }
@@ -29,7 +31,6 @@ export enum EBlockchainJobStatus {
   PROCESSING = 'PROCESSING',
   FAILED = 'FAILED',
   SUCCESS = 'SUCCESS',
-  ASSIGNED = 'ASSIGNED',
   CANCELED = 'CANCELED',
 }
 

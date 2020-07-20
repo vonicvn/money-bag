@@ -12,6 +12,10 @@ export async function up(knex: Knex): Promise<void> {
     table.string('private_key', 256)
     table.string('public_key', 256)
   })
+
+  await knex.schema.alterTable('blockchain_job', table => {
+    addCascadeForeignKey(table, 'admin_account', { notNullable: false })
+  })
 }
 
 export async function down(knex: Knex): Promise<void> {

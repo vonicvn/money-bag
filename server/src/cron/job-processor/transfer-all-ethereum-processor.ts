@@ -25,7 +25,7 @@ import {
   TimeHelper,
   ECollectingStatus,
   Env,
-  EDefaultAssetId,
+  exists,
 } from '../../global'
 
 export class JobCreator implements IJobCreator {
@@ -35,6 +35,7 @@ export class JobCreator implements IJobCreator {
       network: EBlockchainNetwork.ETHEREUM,
       status: EBlockchainJobStatus.JUST_CREATED,
       type: EBlockchainJobType.TRANSFER_ALL_ETHEREUM,
+      walletId: transaction.walletId,
     })
   }
 }
@@ -60,7 +61,10 @@ export class JobFinisher implements IJobFinisher {
 export class JobChecker implements IJobChecker {
   static RETRY_AFTER = 3 * 60 * 1000 // 3 minutes
   async check(job: IBlockchainJob) {
-    if (job.status === EBlockchainJobStatus.JUST_CREATED) return EJobAction.EXCUTE
+    if (job.status === EBlockchainJobStatus.JUST_CREATED) {
+      if (await this.isWalletBusy(job)) return EJobAction.WAIT
+      return EJobAction.EXCUTE
+    }
     const status = await this.getEthereumNetworkTransactionStatus(job.hash)
     console.log(`[ETHEREUM STATUS] Job ${job.blockchainJobId} hash ${job.hash} status ${status}`)
     if (status === EEthereumTransactionStatus.SUCCESS) return EJobAction.FINISH
@@ -89,11 +93,12 @@ export class JobChecker implements IJobChecker {
   }
 
   private async isWalletBusy(job: IBlockchainJob) {
-    // const transaction = await Transaction.findById(job.transactionId)
-    // const blockedTransaction = await Transaction.findOne({
-    //   walletId: transaction.walletId,
-    //   assetId: EDefaultAssetId.ETH,
-    // })
+    const transaction = await Transaction.findById(job.transactionId)
+    const blockingJob = await BlockchainJob.findOne({
+      walletId: transaction.walletId,
+      status: EBlockchainJobStatus.PROCESSING,
+    })
+    return exists(blockingJob)
   }
 }
 

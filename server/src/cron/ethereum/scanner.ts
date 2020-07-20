@@ -7,7 +7,6 @@ import { IncompleteJobsChecker } from './incomplete-jobs-checker'
 // 2. New transactions -> create new jobs
 // 3. Scan in_progress jobs -> create new jobs
 // 4. Assign jobs to admin accounts
-// 5. Process all assigned jobs
 
 export class Scanner extends OneAtMomemnt {
   protected async do() {
