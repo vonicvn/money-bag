@@ -6,6 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     addPrimaryKey(table, 'blockchain_job_id')
     table.enum('status', ['JUST_CREATED', 'PROCESSING', 'FAILED', 'SUCCESS'])
     addCascadeForeignKey(table, 'wallet', { notNullable: false })
+    addCascadeForeignKey(table, 'admin_account', { notNullable: false })
     table.string('type', 128)
     table.string('hash', 128)
     table.bigInteger('block')

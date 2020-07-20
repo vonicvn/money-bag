@@ -3,7 +3,6 @@ import { EBlockchainNetwork } from './blockchain-job'
 
 export interface IAdminAccount {
   adminAccountId: number
-  currentJobId: number | null
   network: EBlockchainNetwork
   privateKey: string
   publicKey: string

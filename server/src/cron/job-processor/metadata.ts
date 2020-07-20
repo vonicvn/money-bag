@@ -36,7 +36,7 @@ export interface IJobRetrier {
 }
 
 export interface IJobProcessor {
-  creator: IJobCreator
+  creator?: IJobCreator
   finisher: IJobFinisher
   checker: IJobChecker
   retrier: IJobRetrier
