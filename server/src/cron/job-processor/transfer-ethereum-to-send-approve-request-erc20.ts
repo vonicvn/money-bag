@@ -1,4 +1,5 @@
-import { isNil } from 'lodash'
+import Web3 from 'web3'
+import { isNil, map } from 'lodash'
 import BigNumber from 'bignumber.js'
 import {
   IJobProcessor,
@@ -19,12 +20,13 @@ import {
   Web3InstanceManager,
   Transaction,
   Wallet,
-  Partner,
   web3,
   EEthereumTransactionStatus,
   TimeHelper,
   Env,
   AdminAccount,
+  Erc20Token,
+  Asset,
 } from '../../global'
 
 export class JobCreator implements IJobCreator {
@@ -103,21 +105,26 @@ export class JobRetrier implements IJobRetrier {
 export class JobExcutor implements IJobExcutor {
   async excute(job: IBlockchainJob) {
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
-    const { index, partnerId } = await Wallet.findById(transaction.walletId)
-    const web3 = Web3InstanceManager.getWeb3ByWalletIndex(index)
+    const { index, address: walletAddress } = await Wallet.findById(transaction.walletId)
+    const adminAccount = await this.getAdminAccount()
+    if (isNil(adminAccount)) {
+      console.log(`[ASSIGN ADMIN ACCOUNT] WAIT on job ${job.blockchainJobId} because all admin accounts are busy now`)
+      return
+    }
+
+    const web3 = Web3InstanceManager.getWeb3ByKey(adminAccount.privateKey)
     const [account] = await web3.eth.getAccounts()
 
-    const balance = await web3.eth.getBalance(account)
+    const { address: tokenAddress } = await Asset.findById(transaction.assetId)
+    const value = await this.getValueToTransfer(web3, tokenAddress, account)
     const gasPrice = await web3.eth.getGasPrice()
-    const GAS_LIMIT = 21000
     const nonce = await web3.eth.getTransactionCount(account)
-    const { ethereumWallet } = await Partner.findById(partnerId)
 
     const hash = await new Promise<string>((resolve, reject) => {
       web3.eth.sendTransaction({
         from: account,
-        value: new BigNumber(balance).minus(new BigNumber(GAS_LIMIT).multipliedBy(gasPrice)).toString(),
-        to: ethereumWallet,
+        value,
+        to: walletAddress,
         gasPrice: new BigNumber(gasPrice).multipliedBy(1.3).toNumber(),
         nonce,
       })
@@ -131,6 +138,32 @@ export class JobExcutor implements IJobExcutor {
         excutedAt: new Date(TimeHelper.now()),
         hash,
       }
+    )
+  }
+
+  private async getValueToTransfer(web3: Web3, tokenAddress: string, account: string) {
+    const gasLimitForApproveRequest = await new Erc20Token(web3, tokenAddress).getGasLimitForApproving(account)
+    const currentGasPrice = await web3.eth.getGasPrice()
+    return new BigNumber(gasLimitForApproveRequest).multipliedBy(currentGasPrice).multipliedBy(1.3).toNumber()
+  }
+
+  private async getAdminAccount() {
+    const busyAccounts = await BlockchainJob.findAll(
+      {
+        status: EBlockchainJobStatus.PROCESSING,
+        network: EBlockchainNetwork.ETHEREUM,
+      },
+      builder => builder
+        .whereNot({ adminAccountId: null })
+        .select('adminAccountId')
+    )
+
+    return AdminAccount.findOne(
+      {
+        isActive: true,
+        network: EBlockchainNetwork.ETHEREUM,
+      },
+      builder => builder.whereNotIn('adminAccountId', map(busyAccounts, 'adminAccountId'))
     )
   }
 }
