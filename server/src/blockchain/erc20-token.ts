@@ -26,8 +26,8 @@ export class Erc20Token {
       .estimateGas({ from: account })
   }
 
-  public async transferFrom(account: string, from: string, to: string, value: string): Promise<string> {
-    const gasPrice = await this.web3.eth.getGasPrice()
+  public async transferFrom(input: { account: string, from: string, to: string, value: number, gasPrice: string }): Promise<string> {
+    const { account, from, to, value, gasPrice } = input
     const nonce = await this.web3.eth.getTransactionCount(account)
     const spender = new this.web3.eth.Contract(
       spenderAbi,

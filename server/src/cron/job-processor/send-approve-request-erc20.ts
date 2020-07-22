@@ -21,9 +21,7 @@ import {
   EEthereumTransactionStatus,
   TimeHelper,
   Env,
-  AdminAccount,
   Erc20Token,
-  Asset,
 } from '../../global'
 
 export class JobFinisher implements IJobFinisher {
@@ -113,7 +111,6 @@ export class JobExcutor implements IJobExcutor {
       {
         status: EBlockchainJobStatus.PROCESSING,
         excutedAt: new Date(TimeHelper.now()),
-        walletId: transaction.walletId,
         hash,
       }
     )

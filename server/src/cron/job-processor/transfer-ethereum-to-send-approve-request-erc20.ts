@@ -48,11 +48,13 @@ export class JobFinisher implements IJobFinisher {
       { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
     )
 
+    const { walletId } = await Transaction.findById(job.transactionId)
     const newJob = await BlockchainJob.create({
       transactionId: job.transactionId,
       network: EBlockchainNetwork.ETHEREUM,
       status: EBlockchainJobStatus.JUST_CREATED,
       type: EBlockchainJobType.SEND_APPROVE_REQUEST_ERC20,
+      walletId,
     })
     console.log(`[CREATE NEW JOB]: ${JSON.stringify(newJob)}`)
   }
