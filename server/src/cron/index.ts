@@ -15,5 +15,6 @@ const EVERY_FIFTEEN_SECONDS = '*/15 * * * * *'
 // const EVERY_TEN_MINUTES = '0 */10 * * * *'
 
 export async function registerCronJobs() {
-  createJob(EVERY_FIFTEEN_SECONDS, () => new EthereumScanner().process())
+  const ethereumScanner = new EthereumScanner()
+  createJob(EVERY_FIFTEEN_SECONDS, () => ethereumScanner.process(), true)
 }

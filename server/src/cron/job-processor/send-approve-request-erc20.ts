@@ -103,7 +103,6 @@ export class JobExcutor implements IJobExcutor {
     const { index } = await Wallet.findById(transaction.walletId)
     const web3 = Web3InstanceManager.getWeb3ByWalletIndex(index)
     const [account] = await web3.eth.getAccounts()
-
     const gasPrice = await this.getGasPrice(job)
     const hash = await new Erc20Token(transaction.assetAddress, web3).approve(account, gasPrice)
     await BlockchainJob.findByIdAndUpdate(
@@ -122,7 +121,7 @@ export class JobExcutor implements IJobExcutor {
       .getGasLimitForApproving(transaction.walletAddress)
     const { hash } = await BlockchainJob.findOne({
       transactionId: job.transactionId,
-      type: EBlockchainJobType.SEND_APPROVE_REQUEST_ERC20,
+      type: EBlockchainJobType.TRANSFER_ETHEREUM_TO_SEND_APPROVE_REQUEST_ERC20,
     })
     const { value } = await defaultWeb3.eth.getTransaction(hash)
     return new BigNumber(value).dividedBy(gasLimitForApproveRequest).toNumber()
