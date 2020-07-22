@@ -48,10 +48,9 @@ export class Erc20Token {
     })
   }
 
-  public async approve(account: string): Promise<string> {
+  public async approve(account: string, gasPrice: number): Promise<string> {
     const balance = await this.web3.eth.getBalance(account)
     const gasLimit = await this.getGasLimitForApproving(account)
-    const gasPrice = new BigNumber(balance).dividedBy(gasLimit).toNumber()
     const nonce = await this.web3.eth.getTransactionCount(account)
     return new Promise<string>((resolve, reject) => {
       return this

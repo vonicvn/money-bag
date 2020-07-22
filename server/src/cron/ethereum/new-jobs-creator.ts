@@ -9,7 +9,7 @@ import {
   TransferAllEthereumProcessor,
   IJobProcessor,
   TransferEthereumToSendApproveRequestErc20,
-  CallErc20TransferFrom,
+  SendApproveRequestErc20,
 } from '../job-processor'
 
 export class NewJobsCreator {
@@ -33,7 +33,7 @@ export class NewJobsCreator {
 
   private async getJobProcessorForErc20(transaction: ITransaction): Promise<IJobProcessor> {
     const isApproved = await new Erc20Token(transaction.assetAddress).isApproved(transaction.walletAddress)
-    if (isApproved) return new CallErc20TransferFrom()
+    if (isApproved) return new SendApproveRequestErc20()
     return new TransferEthereumToSendApproveRequestErc20()
   }
 }

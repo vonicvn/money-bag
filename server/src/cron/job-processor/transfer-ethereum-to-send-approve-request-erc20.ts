@@ -1,4 +1,3 @@
-import Web3 from 'web3'
 import { isNil, map } from 'lodash'
 import BigNumber from 'bignumber.js'
 import {
