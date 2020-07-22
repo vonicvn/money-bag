@@ -29,13 +29,14 @@ import {
 
 export class JobCreator implements IJobCreator {
   async create({ transaction }: IBlockchainJobInput) {
-    await BlockchainJob.create({
+    const job = await BlockchainJob.create({
       transactionId: transaction.transactionId,
       network: EBlockchainNetwork.ETHEREUM,
       status: EBlockchainJobStatus.JUST_CREATED,
       type: EBlockchainJobType.TRANSFER_ALL_ETHEREUM,
       walletId: transaction.walletId,
     })
+    console.log(`[CREATE NEW JOB]: ${JSON.stringify(job)}`)
   }
 }
 
