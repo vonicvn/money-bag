@@ -24,7 +24,7 @@ export async function up(knex: Knex): Promise<void> {
       name: 'USDT',
       network: 'ETHEREUM',
       decimals: 6,
-      address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+      address: '0x70491aaa2f60268f9b6da2daaec062f40b79fb50',
     },
     {
       asset_id: 3,
