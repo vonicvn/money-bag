@@ -105,7 +105,7 @@ export class JobRetrier implements IJobRetrier {
 export class JobExcutor implements IJobExcutor {
   async excute(job: IBlockchainJob) {
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
-    const { index, address: walletAddress } = await Wallet.findById(transaction.walletId)
+    const { address: walletAddress } = await Wallet.findById(transaction.walletId)
     const adminAccount = await this.getAdminAccount()
     if (isNil(adminAccount)) {
       console.log(`[ASSIGN ADMIN ACCOUNT] WAIT on job ${job.blockchainJobId} because all admin accounts are busy now`)

@@ -6,11 +6,12 @@ import {
   Env,
   EEnvKey,
 } from '../global'
+import { web3 as defaultWeb3 } from './ethereum'
 
 export class Erc20Token {
   tokenContract: Contract
 
-  constructor(private web3: Web3, private tokenAddress: string) {
+  constructor(private tokenAddress: string, private web3 = defaultWeb3) {
     this.tokenContract = new this.web3.eth.Contract(
       tokenAbi,
       this.tokenAddress
@@ -64,5 +65,15 @@ export class Erc20Token {
         .on('transactionHash', resolve)
         .on('error', reject)
     })
+  }
+
+  public async isApproved(walletAddress: string) {
+    const allowance = await this
+      .tokenContract
+      .methods
+      .allowance(walletAddress, Env.get(EEnvKey.SPENDER_CONTRACT_ADDRESS))
+      .call()
+
+    return allowance !== 0
   }
 }

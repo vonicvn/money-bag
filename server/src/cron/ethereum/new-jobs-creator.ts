@@ -3,10 +3,13 @@ import {
   ECollectingStatus,
   ITransaction,
   EDefaultAssetId,
+  Erc20Token,
 } from '../../global'
 import {
   TransferAllEthereumProcessor,
   IJobProcessor,
+  TransferEthereumToSendApproveRequestErc20,
+  CallErc20TransferFrom,
 } from '../job-processor'
 
 export class NewJobsCreator {
@@ -23,8 +26,14 @@ export class NewJobsCreator {
   }
 
   private async getJobProcessor(transaction: ITransaction): Promise<IJobProcessor> {
-    // TODO: implement
     if (transaction.assetId === EDefaultAssetId.ETH) return new TransferAllEthereumProcessor()
     if (transaction.assetId === EDefaultAssetId.BTC) return new TransferAllEthereumProcessor()
+    return this.getJobProcessorForErc20(transaction)
+  }
+
+  private async getJobProcessorForErc20(transaction: ITransaction): Promise<IJobProcessor> {
+    const isApproved = await new Erc20Token(transaction.assetAddress).isApproved(transaction.walletAddress)
+    if (isApproved) return new CallErc20TransferFrom()
+    return new TransferEthereumToSendApproveRequestErc20()
   }
 }
