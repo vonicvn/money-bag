@@ -2,11 +2,15 @@ import {
   BlockchainJob,
   IBlockchainJob,
   EBlockchainJobStatus,
+  EBlockchainJobType,
 } from '../../global'
 import {
   TransferAllEthereumProcessor,
   IJobProcessor,
   EJobAction,
+  TransferEthereumToSendApproveRequestErc20,
+  SendApproveRequestErc20,
+  SendTransferFromRequestErc20,
 } from '../job-processor'
 
 export class IncompleteJobsChecker {
@@ -37,7 +41,12 @@ export class IncompleteJobsChecker {
   }
 
   private async getJobProcessor(job: IBlockchainJob): Promise<IJobProcessor> {
-    // TODO: implement
-    return new TransferAllEthereumProcessor()
+    const jobTypeToProcessor: { [key: string]: { new (): IJobProcessor } } = {
+      [EBlockchainJobType.TRANSFER_ALL_ETHEREUM]: TransferAllEthereumProcessor,
+      [EBlockchainJobType.TRANSFER_ETHEREUM_TO_SEND_APPROVE_REQUEST_ERC20]: TransferEthereumToSendApproveRequestErc20,
+      [EBlockchainJobType.SEND_APPROVE_REQUEST_ERC20]: SendApproveRequestErc20,
+      [EBlockchainJobType.SEND_TRANSFER_FROM_REQUEST_ERC20]: SendTransferFromRequestErc20,
+    }
+    return new jobTypeToProcessor[job.type as string]()
   }
 }
