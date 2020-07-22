@@ -19,6 +19,7 @@ export async function up(knex: Knex): Promise<void> {
 
   await knex('admin_account').insert({
     is_active: true,
+    network: 'ETHEREUM',
     private_key: 'a6fe07802bfcbfe7918254aec01c5519e3d72154b0c7bb7f5040dc337ee31499',
     public_key: '0x5D3E4F408c5052A6CA62ee0bC7b2071755B728Bf',
   })

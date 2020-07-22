@@ -22,7 +22,10 @@ export class Erc20Token {
     return this
       .tokenContract
       .methods
-      .apprrove()
+      .approve(
+        Env.get(EEnvKey.SPENDER_CONTRACT_ADDRESS),
+        '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
+      )
       .estimateGas({ from: account })
   }
 
@@ -49,14 +52,12 @@ export class Erc20Token {
   }
 
   public async approve(account: string, gasPrice: number): Promise<string> {
-    const balance = await this.web3.eth.getBalance(account)
-    const gasLimit = await this.getGasLimitForApproving(account)
     const nonce = await this.web3.eth.getTransactionCount(account)
     return new Promise<string>((resolve, reject) => {
       return this
         .tokenContract
         .methods
-        .apprrove(
+        .approve(
           Env.get(EEnvKey.SPENDER_CONTRACT_ADDRESS),
           '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
         )
@@ -73,6 +74,6 @@ export class Erc20Token {
       .allowance(walletAddress, Env.get(EEnvKey.SPENDER_CONTRACT_ADDRESS))
       .call()
 
-    return allowance !== 0
+    return Number(allowance) !== 0
   }
 }

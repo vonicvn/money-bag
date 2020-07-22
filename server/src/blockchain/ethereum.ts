@@ -14,7 +14,7 @@ export class Web3InstanceManager {
       new HDWalletProvider(
         privateKeyOrMnemonic,
         Env.get(EEnvKey.INFURA_URL),
-        1,
+        0,
         1
       // tslint:disable-next-line: no-any
       ) as any
