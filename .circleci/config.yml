@@ -10,7 +10,7 @@ jobs:
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: ethereum_api_test
+          POSTGRES_DB: money_bag_test
     working_directory: ~/repo
     steps:
       - checkout
