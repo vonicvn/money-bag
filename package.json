@@ -1,14 +1,14 @@
 {
-  "name": "ethereum-api",
+  "name": "money-bag",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/vonicvn/ethereum-api.git",
+  "repository": "https://github.com/vanpho93/money-bag.git",
   "author": "Pho Nguyen <vanpho02@gmail.com>",
   "license": "MIT",
   "scripts": {
     "build": "cd scripts && chmod u+x build.sh && ./build.sh",
     "start": "cd server && yarn start",
-    "deploy": "git push origin -f --no-verify HEAD:development"
+    "deploy": "git push origin -f --no-verify HEAD:master"
   },
   "engines": {
     "node": "^12.13.0"
