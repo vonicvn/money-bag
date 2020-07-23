@@ -4,7 +4,7 @@ import { addPrimaryKey, addCreated, addModified, addCascadeForeignKey } from '..
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('wallet', table => {
     addPrimaryKey(table, 'wallet_id')
-    addCascadeForeignKey(table, 'partner', {})
+    addCascadeForeignKey(table, 'partner', { notNullable: false })
     table
       .string('address', 256)
       .unique()

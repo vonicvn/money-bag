@@ -16,5 +16,5 @@ const EVERY_FIFTEEN_SECONDS = '*/15 * * * * *'
 
 export async function registerCronJobs() {
   const ethereumScanner = new EthereumScanner()
-  createJob(EVERY_FIFTEEN_SECONDS, () => ethereumScanner.process(), true)
+  // createJob(EVERY_FIFTEEN_SECONDS, () => ethereumScanner.process(), true)
 }
