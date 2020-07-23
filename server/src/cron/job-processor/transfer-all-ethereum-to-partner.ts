@@ -119,16 +119,21 @@ export class JobExcutor implements IJobExcutor {
     const web3 = Web3InstanceManager.getWeb3ByWalletIndex(index)
     const [account] = await web3.eth.getAccounts()
 
-    const balance = await defaultWeb3.eth.getBalance(account)
     const gasPrice = await defaultWeb3.eth.getGasPrice()
     const GAS_LIMIT = 21000
     const nonce = await defaultWeb3.eth.getTransactionCount(account)
     const { ethereumWallet } = await Partner.findById(partnerId)
+    const value = new BigNumber(transaction.value)
+      .multipliedBy(Math.pow(10, 18))
+      .minus(
+        new BigNumber(GAS_LIMIT).multipliedBy(gasPrice)
+      )
+      .toNumber()
 
     const hash = await new Promise<string>((resolve, reject) => {
       web3.eth.sendTransaction({
         from: account,
-        value: new BigNumber(balance).minus(new BigNumber(GAS_LIMIT).multipliedBy(gasPrice)).toString(),
+        value,
         to: ethereumWallet,
         gasPrice,
         nonce,
