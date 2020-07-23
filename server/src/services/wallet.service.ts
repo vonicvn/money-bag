@@ -5,23 +5,23 @@ import { defaultTo, toLower } from 'lodash'
 export class WalletService {
   public static isCreatingWallet = false
 
-  async createWallet(partnerId: number, quantity: number) {
+  async createWallet(quantity: number) {
     if (WalletService.isCreatingWallet) throw new Error('SERVICE_NOT_AVAILABLE')
     WalletService.isCreatingWallet = true
     try {
-      await this.create(partnerId, quantity)
+      await this.create(quantity)
     } catch (error) {
       ErrorHandler.handle(error)
     }
     WalletService.isCreatingWallet = false
   }
 
-  private async create(partnerId: number, quantity: number) {
+  private async create(quantity: number) {
     const wallet = await Wallet.findOne({}, builder => builder.orderBy('index', 'DESC'))
     for (let index = 0; index < quantity; index++) {
       const addressIndex = index + defaultTo(wallet, { index: -1 }).index + 1
       const address = toLower(await this.getAddressAtIndex(addressIndex))
-      await Wallet.create({ address, index: addressIndex, partnerId })
+      await Wallet.create({ address, index: addressIndex })
       await this.cacheAddressOnRedis(address)
     }
   }

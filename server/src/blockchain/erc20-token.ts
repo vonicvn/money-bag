@@ -1,7 +1,8 @@
-import Web3 from 'web3'
 import { Contract } from 'web3-eth/node_modules/web3-eth-contract'
-import { tokenAbi, spenderAbi } from './abis'
-import BigNumber from 'bignumber.js'
+import {
+  tokenAbi,
+  spenderAbi,
+} from './abis'
 import {
   Env,
   EEnvKey,

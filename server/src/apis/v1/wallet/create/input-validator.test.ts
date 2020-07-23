@@ -1,5 +1,9 @@
 import td from 'testdouble'
-import { TestUtils, Partner, Value, WalletService } from '../../../../global'
+import {
+  TestUtils,
+  Value,
+  WalletService,
+} from '../../../../global'
 import { EErrorCode } from './metadata'
 import { equal } from 'assert'
 import { InputValidator } from './input-validator'

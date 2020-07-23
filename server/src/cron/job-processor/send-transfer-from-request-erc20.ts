@@ -18,7 +18,6 @@ import {
   IBlockchainJob,
   Web3InstanceManager,
   Transaction,
-  Wallet,
   Partner,
   web3 as defaultWeb3,
   EEthereumTransactionStatus,

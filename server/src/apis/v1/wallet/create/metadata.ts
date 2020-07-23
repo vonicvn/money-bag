@@ -1,5 +1,4 @@
 export interface IInput {
-  partnerId: number
   quantity: number
 }
 

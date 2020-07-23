@@ -8,9 +8,9 @@ describe(TEST_TITLE, () => {
   it(`${TEST_TITLE} InputGetter works`, async () => {
     deepEqual(
       new InputGetter().getInput({
-        body: { partnerId: ' 1', quantity: '2 ' },
+        body: { quantity: '2 ' },
       }),
-      { partnerId: 1, quantity: 2 }
+      { quantity: 2 }
     )
   })
 })
