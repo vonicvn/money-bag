@@ -10,7 +10,7 @@ import {
 } from 'web3/node_modules/web3-core'
 import {
   ITransaction,
-  web3,
+  web3 as defaultWeb3,
   WalletService,
   Wallet,
   EDefaultAssetId,
@@ -18,21 +18,31 @@ import {
   Asset,
   AssetService,
   ECollectingStatus,
+  Fetch,
+  Env,
+  EEnvKey,
 } from '../../global'
 
 export class TransactionsGetter {
   constructor(private block: number) {}
 
   async get() {
-    const { transactions: ethereumTransactions } = await web3.eth.getBlock(this.block, true)
-    const logs = await web3.eth.getPastLogs({ fromBlock: this.block, toBlock: this.block })
     const results = []
+    const { transactions: ethereumTransactions } = await defaultWeb3.eth.getBlock(this.block, true)
     for (const ethereumTransaction of ethereumTransactions) {
       results.push(await this.parseEthereumTransaction(ethereumTransaction))
     }
+
+    const logs = await defaultWeb3.eth.getPastLogs({ fromBlock: this.block, toBlock: this.block })
     for (const log of logs) {
       results.push(await this.parseEthereumLog(log))
     }
+
+    const internalTransactions = await this.getInternalTransactions()
+    for (const ethereumTransaction of internalTransactions) {
+      results.push(await this.parseEthereumTransaction(ethereumTransaction))
+    }
+
     return compact(results)
   }
 
@@ -89,5 +99,15 @@ export class TransactionsGetter {
       walletAddress: wallet.address,
       walletId: wallet.walletId,
     }
+  }
+
+  private async getInternalTransactions(): Promise<EthereumTransaction[]> {
+    const url = `${Env.get(EEnvKey.ETHERSCAN_API_URL)}` +
+      '/api?module=account' +
+      `&action=txlistinternal&startblock=${this.block}` +
+      `&endblock=${this.block}&sort=asc&apikey=${Env.get(EEnvKey.ETHERSCAN_API_KEY)}`
+
+    const { result: internalTransactions } = await Fetch.get(url)
+    return internalTransactions
   }
 }

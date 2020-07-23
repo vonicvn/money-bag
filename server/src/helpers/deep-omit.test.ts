@@ -1,6 +1,6 @@
 import { deepEqual } from 'assert'
-import { TestUtils } from '../../global'
-import { deepOmit } from '../deep-omit'
+import { TestUtils } from '../global'
+import { deepOmit } from './deep-omit'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 

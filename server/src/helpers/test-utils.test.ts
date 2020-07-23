@@ -1,5 +1,5 @@
 import { equal } from 'assert'
-import { TestUtils } from '../test-utils'
+import { TestUtils } from './test-utils'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
