@@ -128,6 +128,7 @@ export class JobExcutor implements IJobExcutor {
       {
         status: EBlockchainJobStatus.PROCESSING,
         excutedAt: new Date(TimeHelper.now()),
+        adminAccountId: adminAccount.adminAccountId,
         hash,
       }
     )

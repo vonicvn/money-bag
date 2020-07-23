@@ -10,7 +10,7 @@ import { IncompleteJobsChecker } from './incomplete-jobs-checker'
 
 export class Scanner extends OneAtMomemnt {
   protected async do() {
-    // await new NewTransactionsLoader().load()
+    await new NewTransactionsLoader().load()
     await new NewJobsCreator().create()
     await new IncompleteJobsChecker().checkAll()
   }
