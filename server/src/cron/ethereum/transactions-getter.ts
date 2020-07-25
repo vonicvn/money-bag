@@ -54,6 +54,8 @@ export class TransactionsGetter {
     if (!shouldParse) return null
 
     const wallet = await Wallet.findOne({ address: toLower(transaction.to) })
+    if (isNil(wallet)) return
+
     const partnerWallet = await PartnerAsset.findOne({
       assetId: EDefaultAssetId.ETH,
       partnerId: wallet.partnerId,
