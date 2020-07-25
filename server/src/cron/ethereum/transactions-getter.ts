@@ -21,6 +21,8 @@ import {
   Fetch,
   Env,
   EEnvKey,
+  BlockchainJob,
+  exists,
 } from '../../global'
 
 export class TransactionsGetter {
@@ -57,6 +59,9 @@ export class TransactionsGetter {
       partnerId: wallet.partnerId,
     })
     if (isNil(partnerWallet)) return null
+
+    // prevent create transfer all ethereum transaction if it is from admin transfer to wallet to call aprrove ERC token request
+    if (exists(await BlockchainJob.findOne({ hash: transaction.hash }))) return
 
     const asset = await Asset.findById(EDefaultAssetId.ETH)
     return {

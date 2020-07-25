@@ -128,7 +128,7 @@ export class JobExcutor implements IJobExcutor {
       .minus(
         new BigNumber(GAS_LIMIT).multipliedBy(gasPrice)
       )
-      .toNumber()
+      .toString()
 
     const hash = await new Promise<string>((resolve, reject) => {
       web3.eth.sendTransaction({

@@ -119,7 +119,7 @@ export class JobExcutor implements IJobExcutor {
       account,
       from: transaction.walletAddress,
       to: (await Partner.findById(transaction.partnerId)).ethereumWallet,
-      value: new BigNumber(transaction.value).multipliedBy(Math.pow(10, decimals)).toNumber(),
+      value: new BigNumber(transaction.value).multipliedBy(new BigNumber(Math.pow(10, decimals))).toString(),
       gasPrice,
     })
     await BlockchainJob.findByIdAndUpdate(
