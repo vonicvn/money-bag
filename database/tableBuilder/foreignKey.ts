@@ -1,4 +1,4 @@
-import { defaultTo } from 'lodash'
+import { defaultTo, isNil } from 'lodash'
 import { CreateTableBuilder } from 'knex'
 import { IAddCascadeForeignKeyOptions } from './metadata'
 
@@ -29,12 +29,13 @@ export const addCascadeForeignKey = (table: CreateTableBuilder, inTable: string,
     foreignKey: `${table._tableName}_${inTable}_id_foreign`,
   })
 
-  const { columnName, notNullable, foreignKey, onDelete, specificType, foreignColumnName } = foreignKeyOptions
+  const { columnName, notNullable, foreignKey, onDelete, specificType, foreignColumnName, defaultValue } = foreignKeyOptions
   const column = specificType
       ? table.specificType(columnName, specificType).unsigned()
       : table.integer(columnName).unsigned()
 
   if (notNullable) column.notNullable()
+  if (!isNil(defaultValue)) column.defaultTo(defaultValue)
 
   const constraint = table
     .foreign(columnName, foreignKey)

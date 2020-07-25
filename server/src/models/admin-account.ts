@@ -5,6 +5,7 @@ export interface IAdminAccount {
   adminAccountId: number
   network: EBlockchainNetwork
   isActive: boolean
+  partnerId: number
   privateKey: string
   publicKey: string
 }

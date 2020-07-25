@@ -16,6 +16,7 @@ export type IAddCascadeForeignKeyOptions = Partial<{
   foreignKey: string
   specificType: string
   foreignColumnName: string
+  defaultValue?: string | number
 }>
 
 export type IForeignKeyReferentialAction = 'CASCADE' | 'NO ACTION' | 'RESTRICT' | 'SET NULL' | 'SET DEFAULT'

@@ -105,7 +105,7 @@ export class JobRetrier implements IJobRetrier {
 export class JobExcutor implements IJobExcutor {
   async excute(job: IBlockchainJob) {
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
-    const adminAccount = await this.getAdminAccount()
+    const adminAccount = await this.getAdminAccount(transaction.partnerId)
     if (isNil(adminAccount)) {
       console.log(`[ASSIGN ADMIN ACCOUNT] WAIT on job ${job.blockchainJobId} because all admin accounts are busy now`)
       return
@@ -133,7 +133,7 @@ export class JobExcutor implements IJobExcutor {
     )
   }
 
-  private async getAdminAccount() {
+  private async getAdminAccount(partnerId: number) {
     const busyAccounts = await BlockchainJob.findAll(
       {
         status: EBlockchainJobStatus.PROCESSING,
@@ -148,6 +148,7 @@ export class JobExcutor implements IJobExcutor {
       {
         isActive: true,
         network: EBlockchainNetwork.ETHEREUM,
+        partnerId,
       },
       builder => builder.whereNotIn('adminAccountId', map(busyAccounts, 'adminAccountId'))
     )
