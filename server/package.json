@@ -53,6 +53,7 @@
   "scripts": {
     "start": "node --require dotenv/config dist/index.js",
     "dev": "nodemon --exec ts-node --require dotenv/config src/index.ts",
+    "play": "nodemon --exec ts-node --require dotenv/config src/play.ts",
     "test": "DOTENV_CONFIG_PATH=test.env mocha 'dist/**/*.test.js' --recursive",
     "coverage-test": "DOTENV_CONFIG_PATH=test.env nyc mocha 'src/**/*.test.ts' --recursive",
     "tslint": "tslint --project tsconfig.json --config tslint.json",

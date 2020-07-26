@@ -88,6 +88,7 @@ export class TransactionsGetter {
     if (!await WalletService.isAddressExisted(toAddress)) return null
     const wallet = await Wallet.findOne({ address: toAddress })
     const asset = await Asset.findOne({ address: log.address.toLowerCase() })
+
     const partnerWallet = await PartnerAsset.findOne({
       assetId: asset.assetId,
       partnerId: wallet.partnerId,
