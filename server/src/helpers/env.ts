@@ -24,12 +24,13 @@ export enum EEnviroment {
 
 export class Env {
   static INFURA_URL = Env.getInfuraURL()
+  static SAFE_NUMBER_OF_COMFIRMATION = Env.getSafeNumberOfConfirmation()
 
   static get(key: EEnvKey) {
     return process.env[key]
   }
 
-  static get SAFE_NUMBER_OF_COMFIRMATION() {
+  static getSafeNumberOfConfirmation() {
     return Number(defaultTo(Env.get(EEnvKey.SAFE_NUMBER_OF_COMFIRMATION), 5))
   }
 

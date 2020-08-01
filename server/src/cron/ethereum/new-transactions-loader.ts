@@ -1,10 +1,12 @@
-import { defaultTo } from 'lodash'
+import { defaultTo, isNil } from 'lodash'
 import {
   Redis,
   ITransaction,
   Transaction,
   web3,
   Env,
+  EEnvKey,
+  EEnviroment
 } from '../../global'
 import {
   TransactionsGetter,
@@ -12,20 +14,34 @@ import {
 
 export class NewTransactionsLoader {
   async load() {
-    const currentBlock = await web3.eth.getBlockNumber()
-    const scannedBlock = defaultTo(
-      await Redis.getJson<number>('ETHEREUM_SCANNED_BLOCK'),
-      currentBlock - Env.SAFE_NUMBER_OF_COMFIRMATION - 1
-    )
-
-    for (
-      let block = scannedBlock + 1;
-      block <= currentBlock - Env.SAFE_NUMBER_OF_COMFIRMATION;
-      block++
-    ) {
+    const { from, to } = await this.getRange()
+    for (let block = from; block <= to; block++) {
       const transactions = await this.scanBlock(block)
       await Transaction.createMany(transactions)
       await Redis.setJson<number>('ETHEREUM_SCANNED_BLOCK', block)
+    }
+  }
+
+  private async getRange() {
+    const currentBlock = await web3.eth.getBlockNumber()
+    const defaultRange = {
+      from: currentBlock - Env.SAFE_NUMBER_OF_COMFIRMATION,
+      to: currentBlock - Env.SAFE_NUMBER_OF_COMFIRMATION,
+    }
+
+    const scanned = await Redis.getJson<number>('ETHEREUM_SCANNED_BLOCK')
+    if (isNil(scanned)) return defaultRange
+
+    const BIG_MISS_BLOCK = 20
+    const shouldSkipBlocks = (
+      Env.get(EEnvKey.NODE_ENV) !== EEnviroment.PRODUCTION &&
+      currentBlock - scanned > BIG_MISS_BLOCK
+    )
+    if (shouldSkipBlocks) return defaultRange
+
+    return {
+      from: scanned + 1,
+      to: currentBlock - Env.SAFE_NUMBER_OF_COMFIRMATION,
     }
   }
 
