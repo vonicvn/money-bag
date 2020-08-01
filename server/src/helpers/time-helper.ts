@@ -1,6 +1,8 @@
 import { Constants } from '../global'
 
 export class TimeHelper {
+  static ONE_DAY = 86400000
+
   public static before(periodInMilis: number, from: Date | number = new Date()) {
     return new Date((new Date(from)).getTime() - periodInMilis)
   }

@@ -4,7 +4,7 @@ import HDWalletProvider from '@truffle/hdwallet-provider'
 
 export const web3 = new Web3(new HDWalletProvider(
   Env.get(EEnvKey.MNEMONIC),
-  Env.get(EEnvKey.INFURA_URL)
+  Env.INFURA_URL
 // tslint:disable-next-line: no-any
 ) as any)
 
@@ -13,7 +13,7 @@ export class Web3InstanceManager {
     return new Web3(
       new HDWalletProvider(
         privateKeyOrMnemonic,
-        Env.get(EEnvKey.INFURA_URL),
+        Env.INFURA_URL,
         0,
         1
       // tslint:disable-next-line: no-any
@@ -25,7 +25,7 @@ export class Web3InstanceManager {
     return new Web3(
       new HDWalletProvider(
         Env.get(EEnvKey.MNEMONIC),
-        Env.get(EEnvKey.INFURA_URL),
+        Env.INFURA_URL,
         index,
         1
       // tslint:disable-next-line: no-any
