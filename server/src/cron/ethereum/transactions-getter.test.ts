@@ -22,11 +22,11 @@ const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
 describe(TEST_TITLE, () => {
   it('#get', async () => {
-    td.replace(web3.eth, 'getBlock', () => ({ transactions: ['transaction1', 'transaction2'] }))
+    td.replace(TransactionsGetter.prototype, 'getBlock', () => ['transaction1', 'transaction2'])
     td.replace(web3.eth, 'getPastLogs', () => (['log1', 'log2']))
 
     td.replace(TransactionsGetter.prototype, 'parseEthereumTransaction')
-    td.replace(Fetch, 'get', () => Value.wrap({ transactions: [] }))
+    td.replace(Fetch, 'get', () => Value.wrap({ result: [] }))
     td
       .when(TransactionsGetter.prototype['parseEthereumTransaction'](Value.wrap('transaction1')))
       .thenResolve({ hash: '0xtransaction1' })
@@ -42,10 +42,10 @@ describe(TEST_TITLE, () => {
       .when(TransactionsGetter.prototype['parseEthereumLog'](Value.wrap('log2')))
       .thenResolve(null)
 
-    // deepEqual(
-    //   await TransactionsGetter.prototype.get(),
-    //   [{ hash: '0xtransaction1' }, { hash: '0xlog1' }]
-    // )
+    deepEqual(
+      await TransactionsGetter.prototype.get(),
+      [{ hash: '0xtransaction1' }, { hash: '0xlog1' }]
+    )
   })
 
   it('#parseEthereumLog case 1: not a token transfer', async () => {
@@ -211,5 +211,11 @@ describe(TEST_TITLE, () => {
       await TransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
       null
     )
+  })
+
+  it('#getBlock', async () => {
+    td.replace(TransactionsGetter.prototype, 'block', 13)
+    td.replace(Fetch, 'get', () => ({ result: { transactions: ['data'] } }))
+    deepEqual(await TransactionsGetter.prototype['getBlock'](), ['data'])
   })
 })

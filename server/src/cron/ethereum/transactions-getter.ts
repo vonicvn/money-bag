@@ -30,7 +30,7 @@ export class TransactionsGetter {
 
   async get() {
     const results = []
-    const { transactions: ethereumTransactions } = await defaultWeb3.eth.getBlock(this.block, true)
+    const ethereumTransactions = await this.getBlock()
     for (const ethereumTransaction of ethereumTransactions) {
       results.push(await this.parseEthereumTransaction(ethereumTransaction))
     }
@@ -69,7 +69,7 @@ export class TransactionsGetter {
     return {
       hash: transaction.hash,
       partnerId: wallet.partnerId,
-      block: transaction.blockNumber,
+      block: Number(transaction.blockNumber),
       value: new BigNumber(transaction.value).div(Math.pow(10, asset.decimals)).toNumber(),
       collectingStatus: ECollectingStatus.WAITING,
       assetId: EDefaultAssetId.ETH,
@@ -98,7 +98,7 @@ export class TransactionsGetter {
     return {
       hash: log.transactionHash,
       partnerId: wallet.partnerId,
-      block: log.blockNumber,
+      block: Number(log.blockNumber),
       value: new BigNumber(log.data).div(Math.pow(10, asset.decimals)).toNumber(),
       collectingStatus: ECollectingStatus.WAITING,
       assetId: asset.assetId,
@@ -117,5 +117,15 @@ export class TransactionsGetter {
 
     const { result: internalTransactions } = await Fetch.get(url)
     return internalTransactions
+  }
+
+  private async getBlock(): Promise<EthereumTransaction[]> {
+    const url = `${Env.get(EEnvKey.ETHERSCAN_API_URL)}` +
+      '/api?module=proxy' +
+      `&action=eth_getBlockByNumber&tag=${this.block.toString(16)}` +
+      `&boolean=true&apikey=${Env.get(EEnvKey.ETHERSCAN_API_KEY)}`
+
+    const { result: { transactions } } = await Fetch.get(url)
+    return transactions
   }
 }
