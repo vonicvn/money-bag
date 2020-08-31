@@ -1,6 +1,8 @@
-import HDWalletProvider from '@truffle/hdwallet-provider'
+import * as bip39 from 'bip39'
 import { ErrorHandler, Wallet, Env, EEnvKey, Redis } from '../global'
 import { defaultTo, toLower } from 'lodash'
+// tslint:disable-next-line: no-require-imports
+const { hdkey } = require('ethereumjs-wallet')
 
 export class WalletService {
   public static isCreatingWallet = false
@@ -27,12 +29,11 @@ export class WalletService {
   }
 
   private async getAddressAtIndex(index: number) {
-    return new HDWalletProvider(
-      Env.get(EEnvKey.MNEMONIC),
-      Env.INFURA_URL,
-      index,
-      1
-    ).getAddress(0)
+    const seed = await bip39.mnemonicToSeed(Env.get(EEnvKey.MNEMONIC))
+    const hdwallet = hdkey.fromMasterSeed(seed)
+    const path = `m/44'/60'/0'/0/`
+    const wallet = hdwallet.derivePath(path + index).getWallet()
+    return '0x' + wallet.getAddress().toString('hex')
   }
 
   private cacheAddressOnRedis(address: string) {
