@@ -127,8 +127,11 @@ export class JobExcutor implements IJobExcutor {
         from: account,
         value,
         to: walletAddress,
-        gasPrice: new BigNumber(gasPrice).multipliedBy(1.3).toNumber(),
         nonce,
+        gasPrice: new BigNumber(gasPrice)
+          .multipliedBy(1.3)
+          .integerValue(BigNumber.ROUND_CEIL)
+          .toNumber(),
       })
         .on('transactionHash', resolve)
         .on('error', reject)
@@ -147,7 +150,11 @@ export class JobExcutor implements IJobExcutor {
   private async getValueToTransfer(tokenAddress: string, account: string) {
     const gasLimitForApproveRequest = await new Erc20Token(tokenAddress).getGasLimitForApproving(account)
     const currentGasPrice = await defaultWeb3.eth.getGasPrice()
-    return new BigNumber(gasLimitForApproveRequest).multipliedBy(currentGasPrice).multipliedBy(1.3).toNumber()
+    return new BigNumber(gasLimitForApproveRequest)
+      .multipliedBy(currentGasPrice)
+      .multipliedBy(1.3)
+      .integerValue(BigNumber.ROUND_CEIL)
+      .toNumber()
   }
 
   private async getAdminAccount(partnerId: number) {
