@@ -124,7 +124,10 @@ export class JobExcutor implements IJobExcutor {
       type: EBlockchainJobType.TRANSFER_ETHEREUM_TO_SEND_APPROVE_REQUEST_ERC20,
     })
     const { value } = await defaultWeb3.eth.getTransaction(hash)
-    return new BigNumber(value).dividedBy(gasLimitForApproveRequest).toNumber()
+    return new BigNumber(value)
+      .dividedBy(gasLimitForApproveRequest)
+      .integerValue(BigNumber.ROUND_DOWN)
+      .toNumber()
   }
 }
 
