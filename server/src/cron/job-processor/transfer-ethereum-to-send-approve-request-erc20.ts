@@ -42,11 +42,13 @@ export class JobCreator implements IJobCreator {
 
 export class JobFinisher implements IJobFinisher {
   async finish(job: IBlockchainJob) {
-    const { blockNumber } = await defaultWeb3.eth.getTransactionReceipt(job.hash)
-    await BlockchainJob.findByIdAndUpdate(
-      job.blockchainJobId,
-      { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
-    )
+    if (job.status !== EBlockchainJobStatus.SKIPPED) {
+      const { blockNumber } = await defaultWeb3.eth.getTransactionReceipt(job.hash)
+      await BlockchainJob.findByIdAndUpdate(
+        job.blockchainJobId,
+        { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
+      )
+    }
 
     const { walletId } = await Transaction.findById(job.transactionId)
     const newJob = await BlockchainJob.create({
@@ -66,6 +68,9 @@ export class JobChecker implements IJobChecker {
   async check(job: IBlockchainJob) {
     if (job.status === EBlockchainJobStatus.JUST_CREATED) {
       return EJobAction.EXCUTE
+    }
+    if (job.status === EBlockchainJobStatus.SKIPPED) {
+      return EJobAction.FINISH
     }
     const status = await this.getEthereumNetworkTransactionStatus(job.hash)
     console.log(`[ETHEREUM STATUS] Job ${job.blockchainJobId} hash ${job.hash} status ${status}`)
@@ -110,10 +115,20 @@ export class JobExcutor implements IJobExcutor {
     const { address: walletAddress } = await Wallet.findById(transaction.walletId)
     const adminAccount = await this.getAdminAccount(transaction.partnerId)
     if (isNil(adminAccount)) {
-      console.log(`[ASSIGN ADMIN ACCOUNT] WAIT on job ${job.blockchainJobId} because all admin accounts are busy now`)
       return
     }
-
+    const isApproved = await new Erc20Token(transaction.assetAddress).isApproved(transaction.walletAddress)
+    if (isApproved) {
+      await BlockchainJob.findByIdAndUpdate(
+        job.blockchainJobId,
+        {
+          status: EBlockchainJobStatus.SKIPPED,
+          excutedAt: new Date(TimeHelper.now()),
+          adminAccountId: adminAccount.adminAccountId,
+        }
+      )
+      return
+    }
     const web3 = Web3InstanceManager.getWeb3ByKey(adminAccount.privateKey)
     const [account] = await web3.eth.getAccounts()
 

@@ -32,6 +32,8 @@ export enum EBlockchainJobStatus {
   FAILED = 'FAILED',
   SUCCESS = 'SUCCESS',
   CANCELED = 'CANCELED',
+  POSTPONED = 'POSTPONED',
+  SKIPPED = 'SKIPPED',
 }
 
 export class BlockchainJob extends createModel<IBlockchainJob>(ETable.BLOCKCHAIN_JOB) {}

@@ -107,7 +107,6 @@ export class JobExcutor implements IJobExcutor {
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
     const adminAccount = await this.getAdminAccount(transaction.partnerId)
     if (isNil(adminAccount)) {
-      console.log(`[ASSIGN ADMIN ACCOUNT] WAIT on job ${job.blockchainJobId} because all admin accounts are busy now`)
       return
     }
 

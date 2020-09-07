@@ -26,12 +26,13 @@ import {
 
 export class JobFinisher implements IJobFinisher {
   async finish(job: IBlockchainJob) {
-    const { blockNumber } = await defaultWeb3.eth.getTransactionReceipt(job.hash)
-    await BlockchainJob.findByIdAndUpdate(
-      job.blockchainJobId,
-      { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
-    )
-
+    if (job.status !== EBlockchainJobStatus.SKIPPED) {
+      const { blockNumber } = await defaultWeb3.eth.getTransactionReceipt(job.hash)
+      await BlockchainJob.findByIdAndUpdate(
+        job.blockchainJobId,
+        { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
+      )
+    }
     const newJob = await BlockchainJob.create({
       transactionId: job.transactionId,
       network: EBlockchainNetwork.ETHEREUM,
@@ -50,6 +51,9 @@ export class JobChecker implements IJobChecker {
       console.log(`[WALLET AVAILABILITY] wallet ${job.walletId} is available? ${isWalletAvailable}`)
       if (isWalletAvailable) return EJobAction.EXCUTE
       return EJobAction.WAIT
+    }
+    if (job.status === EBlockchainJobStatus.SKIPPED) {
+      return EJobAction.FINISH
     }
     const status = await this.getEthereumNetworkTransactionStatus(job.hash)
     console.log(`[ETHEREUM STATUS] Job ${job.blockchainJobId} hash ${job.hash} status ${status}`)
@@ -100,6 +104,17 @@ export class JobRetrier implements IJobRetrier {
 export class JobExcutor implements IJobExcutor {
   async excute(job: IBlockchainJob) {
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
+    const isApproved = await new Erc20Token(transaction.assetAddress).isApproved(transaction.walletAddress)
+    if (isApproved) {
+      await BlockchainJob.findByIdAndUpdate(
+        job.blockchainJobId,
+        {
+          status: EBlockchainJobStatus.SKIPPED,
+          excutedAt: new Date(TimeHelper.now()),
+        }
+      )
+      return
+    }
     const { index } = await Wallet.findById(transaction.walletId)
     const web3 = Web3InstanceManager.getWeb3ByWalletIndex(index)
     const [account] = await web3.eth.getAccounts()
