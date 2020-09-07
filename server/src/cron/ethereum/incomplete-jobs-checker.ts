@@ -17,7 +17,11 @@ export class IncompleteJobsChecker {
   async checkAll() {
     const jobs = await BlockchainJob.findAll({}, builder => {
       return builder
-        .whereNotIn('status', [EBlockchainJobStatus.SUCCESS, EBlockchainJobStatus.CANCELED])
+        .whereNotIn('status', [
+          EBlockchainJobStatus.SUCCESS,
+          EBlockchainJobStatus.CANCELED,
+          EBlockchainJobStatus.SKIPPED,
+        ])
         .orderBy('created')
     })
     for (const job of jobs) {
