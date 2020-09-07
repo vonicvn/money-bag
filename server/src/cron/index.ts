@@ -6,7 +6,7 @@ function createJob(time: string, cb: CronCommand, runOnInit = false) {
   new CronJob(time, cb, null, true, null, undefined, runOnInit).start()
 }
 
-const EVERY_FIFTEEN_SECONDS = '*/15 * * * * *'
+const EVERY_FIFTEEN_SECONDS = '17 * * * * *'
 
 export async function registerCronJobs() {
   const ethereumScanner = new EthereumScanner()

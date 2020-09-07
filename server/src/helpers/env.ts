@@ -1,5 +1,6 @@
 import {
-  defaultTo
+  defaultTo,
+  sample,
 } from 'lodash'
 import { TimeHelper } from './time-helper'
 
@@ -36,7 +37,6 @@ export class Env {
 
   protected static getInfuraURL() {
     const urls = JSON.parse(this.get(EEnvKey.INFURA_URLS)) as string[]
-    const timeForEachUrl = TimeHelper.ONE_DAY / urls.length
-    return urls[Math.floor((TimeHelper.now() % TimeHelper.ONE_DAY) / timeForEachUrl)]
+    return sample(urls)
   }
 }
