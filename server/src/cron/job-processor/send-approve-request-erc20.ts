@@ -103,6 +103,7 @@ export class JobRetrier implements IJobRetrier {
 
 export class JobExcutor implements IJobExcutor {
   async excute(job: IBlockchainJob) {
+    console.log('[START EXCUTE]', job)
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
     const isApproved = await new Erc20Token(transaction.assetAddress).isApproved(transaction.walletAddress)
     if (isApproved) {

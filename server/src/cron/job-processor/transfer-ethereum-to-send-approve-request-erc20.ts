@@ -129,6 +129,8 @@ export class JobExcutor implements IJobExcutor {
       )
       return
     }
+
+    console.log('[START EXCUTE]', job)
     const web3 = Web3InstanceManager.getWeb3ByKey(adminAccount.privateKey)
     const [account] = await web3.eth.getAccounts()
 

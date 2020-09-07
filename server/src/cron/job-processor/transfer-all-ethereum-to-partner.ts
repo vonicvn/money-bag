@@ -114,6 +114,7 @@ export class JobRetrier implements IJobRetrier {
 
 export class JobExcutor implements IJobExcutor {
   async excute(job: IBlockchainJob) {
+    console.log('[START EXCUTE]', job)
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
     const { index, partnerId } = await Wallet.findById(transaction.walletId)
     const web3 = Web3InstanceManager.getWeb3ByWalletIndex(index)

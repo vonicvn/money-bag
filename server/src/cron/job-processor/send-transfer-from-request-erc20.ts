@@ -109,7 +109,7 @@ export class JobExcutor implements IJobExcutor {
     if (isNil(adminAccount)) {
       return
     }
-
+    console.log('[START EXCUTE]', job)
     const web3 = Web3InstanceManager.getWeb3ByKey(adminAccount.privateKey)
     const [account] = await web3.eth.getAccounts()
     const gasPrice = await defaultWeb3.eth.getGasPrice()
