@@ -27,7 +27,9 @@ export class IncompleteJobsChecker {
     for (const job of jobs) {
       const { checker, retrier, finisher, excutor } = await this.getJobProcessor(job)
       const action = await checker.check(job)
-      console.log(`[JOB ACTION] ${action} on job ${job.blockchainJobId} current status ${job.status}`)
+      if (action !== EJobAction.EXCUTE) {
+        console.log(`[JOB ACTION] ${action} on job ${job.blockchainJobId} current status ${job.status}`)
+      }
       if (action === EJobAction.WAIT) continue
       if (action === EJobAction.RETRY) {
         await retrier.retry(job)
