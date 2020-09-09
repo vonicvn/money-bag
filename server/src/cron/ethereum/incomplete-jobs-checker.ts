@@ -22,7 +22,7 @@ export class IncompleteJobsChecker {
           EBlockchainJobStatus.CANCELED,
           EBlockchainJobStatus.SKIPPED,
         ])
-        .orderBy('transactionId')
+        .orderBy('transactionId', 'DESC')
     })
     for (const job of jobs) {
       const { checker, retrier, finisher, excutor } = await this.getJobProcessor(job)
