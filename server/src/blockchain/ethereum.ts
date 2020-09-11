@@ -4,6 +4,7 @@ import {
   EEnvKey,
   ErrorHandler,
   Redis,
+  Constants,
 } from '../global'
 import Web3 from 'web3'
 import HDWalletProvider from '@truffle/hdwallet-provider'
@@ -35,6 +36,8 @@ export class Web3InstanceManager {
       this.INFURA_URL
     // tslint:disable-next-line: no-any
     ) as any)
+    await Redis.set(`INFURA_USED_${this.INFURA_URL}`, 'USED', Constants.ONE_DAY_IN_MILLISECOND)
+    console.log(`Use ${this.INFURA_URL}`)
   }
 
   static getWeb3ByKey(privateKeyOrMnemonic: string): Web3 {
