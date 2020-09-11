@@ -3,7 +3,7 @@ import {
   Redis,
   ITransaction,
   Transaction,
-  web3,
+  Web3InstanceManager,
   Env,
   EEnvKey,
   EEnviroment
@@ -23,7 +23,7 @@ export class NewTransactionsLoader {
   }
 
   private async getRange() {
-    const currentBlock = await web3.eth.getBlockNumber()
+    const currentBlock = await Web3InstanceManager.defaultWeb3.eth.getBlockNumber()
     const defaultRange = {
       from: currentBlock - Env.SAFE_NUMBER_OF_COMFIRMATION,
       to: currentBlock - Env.SAFE_NUMBER_OF_COMFIRMATION,

@@ -10,7 +10,7 @@ import {
   WalletService,
   Wallet,
   PartnerAsset,
-  web3,
+  Web3InstanceManager,
   Asset,
   EDefaultAssetId,
   AssetService,
@@ -23,7 +23,7 @@ const TEST_TITLE = TestUtils.getTestTitle(__filename)
 describe(TEST_TITLE, () => {
   it('#get', async () => {
     td.replace(TransactionsGetter.prototype, 'getBlock', () => ['transaction1', 'transaction2'])
-    td.replace(web3.eth, 'getPastLogs', () => (['log1', 'log2']))
+    td.replace(Web3InstanceManager.defaultWeb3.eth, 'getPastLogs', () => (['log1', 'log2']))
 
     td.replace(TransactionsGetter.prototype, 'parseEthereumTransaction')
     td.replace(Fetch, 'get', () => Value.wrap({ result: [] }))

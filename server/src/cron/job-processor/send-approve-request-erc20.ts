@@ -17,7 +17,6 @@ import {
   Web3InstanceManager,
   Transaction,
   Wallet,
-  web3 as defaultWeb3,
   EEthereumTransactionStatus,
   TimeHelper,
   Env,
@@ -27,7 +26,7 @@ import {
 export class JobFinisher implements IJobFinisher {
   async finish(job: IBlockchainJob) {
     if (job.status !== EBlockchainJobStatus.SKIPPED) {
-      const { blockNumber } = await defaultWeb3.eth.getTransactionReceipt(job.hash)
+      const { blockNumber } = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(job.hash)
       await BlockchainJob.findByIdAndUpdate(
         job.blockchainJobId,
         { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
@@ -71,10 +70,10 @@ export class JobChecker implements IJobChecker {
   }
 
   private async getEthereumNetworkTransactionStatus(transactionHash: string) {
-    const receipt = await defaultWeb3.eth.getTransactionReceipt(transactionHash)
+    const receipt = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(transactionHash)
     if (isNil(receipt)) return EEthereumTransactionStatus.PENDING
     if (receipt.status) {
-      const currentBlock = await defaultWeb3.eth.getBlockNumber()
+      const currentBlock = await Web3InstanceManager.defaultWeb3.eth.getBlockNumber()
       const shouldWaitForMoreConfirmations = currentBlock - receipt.blockNumber < Env.SAFE_NUMBER_OF_COMFIRMATION
       if (shouldWaitForMoreConfirmations) return EEthereumTransactionStatus.WAIT_FOR_MORE_COMFIRMATIONS
       return EEthereumTransactionStatus.SUCCESS
@@ -139,7 +138,7 @@ export class JobExcutor implements IJobExcutor {
       transactionId: job.transactionId,
       type: EBlockchainJobType.TRANSFER_ETHEREUM_TO_SEND_APPROVE_REQUEST_ERC20,
     })
-    const { value } = await defaultWeb3.eth.getTransaction(hash)
+    const { value } = await Web3InstanceManager.defaultWeb3.eth.getTransaction(hash)
     return new BigNumber(value)
       .dividedBy(gasLimitForApproveRequest)
       .integerValue(BigNumber.ROUND_DOWN)

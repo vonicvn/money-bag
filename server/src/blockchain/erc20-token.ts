@@ -7,12 +7,12 @@ import {
   Env,
   EEnvKey,
 } from '../global'
-import { web3 as defaultWeb3 } from './ethereum'
+import { Web3InstanceManager } from './ethereum'
 
 export class Erc20Token {
   tokenContract: Contract
 
-  constructor(private tokenAddress: string, private web3 = defaultWeb3) {
+  constructor(private tokenAddress: string, private web3 = Web3InstanceManager.defaultWeb3) {
     this.tokenContract = new this.web3.eth.Contract(
       tokenAbi,
       this.tokenAddress

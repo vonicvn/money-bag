@@ -19,7 +19,6 @@ import {
   Web3InstanceManager,
   Transaction,
   Partner,
-  web3 as defaultWeb3,
   EEthereumTransactionStatus,
   TimeHelper,
   ECollectingStatus,
@@ -43,7 +42,7 @@ export class JobCreator implements IJobCreator {
 
 export class JobFinisher implements IJobFinisher {
   async finish(job: IBlockchainJob) {
-    const { blockNumber } = await defaultWeb3.eth.getTransactionReceipt(job.hash)
+    const { blockNumber } = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(job.hash)
     await BlockchainJob.findByIdAndUpdate(
       job.blockchainJobId,
       { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
@@ -82,10 +81,10 @@ export class JobChecker implements IJobChecker {
   }
 
   private async getEthereumNetworkTransactionStatus(transactionHash: string) {
-    const receipt = await defaultWeb3.eth.getTransactionReceipt(transactionHash)
+    const receipt = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(transactionHash)
     if (isNil(receipt)) return EEthereumTransactionStatus.PENDING
     if (receipt.status) {
-      const currentBlock = await defaultWeb3.eth.getBlockNumber()
+      const currentBlock = await Web3InstanceManager.defaultWeb3.eth.getBlockNumber()
       const shouldWaitForMoreConfirmations = currentBlock - receipt.blockNumber < Env.SAFE_NUMBER_OF_COMFIRMATION
       if (shouldWaitForMoreConfirmations) return EEthereumTransactionStatus.WAIT_FOR_MORE_COMFIRMATIONS
       return EEthereumTransactionStatus.SUCCESS
@@ -112,7 +111,7 @@ export class JobExcutor implements IJobExcutor {
     console.log('[START EXCUTE]', job)
     const web3 = Web3InstanceManager.getWeb3ByKey(adminAccount.privateKey)
     const [account] = await web3.eth.getAccounts()
-    const gasPrice = await defaultWeb3.eth.getGasPrice()
+    const gasPrice = await Web3InstanceManager.defaultWeb3.eth.getGasPrice()
     const { decimals } = await Asset.findById(transaction.assetId)
     const hash = await new Erc20Token(transaction.assetAddress, web3).transferFrom({
       account,

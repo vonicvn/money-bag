@@ -20,7 +20,6 @@ import {
   Transaction,
   Wallet,
   Partner,
-  web3 as defaultWeb3,
   EEthereumTransactionStatus,
   TimeHelper,
   ECollectingStatus,
@@ -42,7 +41,7 @@ export class JobCreator implements IJobCreator {
 
 export class JobFinisher implements IJobFinisher {
   async finish(job: IBlockchainJob) {
-    const { blockNumber } = await defaultWeb3.eth.getTransactionReceipt(job.hash)
+    const { blockNumber } = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(job.hash)
     await BlockchainJob.findByIdAndUpdate(
       job.blockchainJobId,
       { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
@@ -83,10 +82,10 @@ export class JobChecker implements IJobChecker {
   }
 
   private async getEthereumNetworkTransactionStatus(transactionHash: string) {
-    const receipt = await defaultWeb3.eth.getTransactionReceipt(transactionHash)
+    const receipt = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(transactionHash)
     if (isNil(receipt)) return EEthereumTransactionStatus.PENDING
     if (receipt.status) {
-      const currentBlock = await defaultWeb3.eth.getBlockNumber()
+      const currentBlock = await Web3InstanceManager.defaultWeb3.eth.getBlockNumber()
       const shouldWaitForMoreConfirmations = currentBlock - receipt.blockNumber < Env.SAFE_NUMBER_OF_COMFIRMATION
       if (shouldWaitForMoreConfirmations) return EEthereumTransactionStatus.WAIT_FOR_MORE_COMFIRMATIONS
       return EEthereumTransactionStatus.SUCCESS
@@ -120,9 +119,9 @@ export class JobExcutor implements IJobExcutor {
     const web3 = Web3InstanceManager.getWeb3ByWalletIndex(index)
     const [account] = await web3.eth.getAccounts()
 
-    const gasPrice = await defaultWeb3.eth.getGasPrice()
+    const gasPrice = await Web3InstanceManager.defaultWeb3.eth.getGasPrice()
     const GAS_LIMIT = 21000
-    const nonce = await defaultWeb3.eth.getTransactionCount(account)
+    const nonce = await Web3InstanceManager.defaultWeb3.eth.getTransactionCount(account)
     const { ethereumWallet } = await Partner.findById(partnerId)
     const value = new BigNumber(transaction.value)
       .multipliedBy(Math.pow(10, 18))

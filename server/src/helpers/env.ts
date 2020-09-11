@@ -1,8 +1,6 @@
 import {
   defaultTo,
-  sample,
 } from 'lodash'
-import { TimeHelper } from './time-helper'
 
 export enum EEnvKey {
   DATABASE_URL = 'DATABASE_URL',
@@ -24,7 +22,6 @@ export enum EEnviroment {
 }
 
 export class Env {
-  static INFURA_URL = Env.getInfuraURL()
   static SAFE_NUMBER_OF_COMFIRMATION = Env.getSafeNumberOfConfirmation()
 
   static get(key: EEnvKey) {
@@ -33,10 +30,5 @@ export class Env {
 
   static getSafeNumberOfConfirmation() {
     return Number(defaultTo(Env.get(EEnvKey.SAFE_NUMBER_OF_COMFIRMATION), 5))
-  }
-
-  protected static getInfuraURL() {
-    const urls = JSON.parse(this.get(EEnvKey.INFURA_URLS)) as string[]
-    return sample(urls)
   }
 }

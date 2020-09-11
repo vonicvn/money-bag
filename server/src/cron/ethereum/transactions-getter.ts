@@ -10,7 +10,7 @@ import {
 } from 'web3/node_modules/web3-core'
 import {
   ITransaction,
-  web3 as defaultWeb3,
+  Web3InstanceManager,
   WalletService,
   Wallet,
   EDefaultAssetId,
@@ -35,7 +35,7 @@ export class TransactionsGetter {
       results.push(await this.parseEthereumTransaction(ethereumTransaction))
     }
 
-    const logs = await defaultWeb3.eth.getPastLogs({ fromBlock: this.block, toBlock: this.block })
+    const logs = await Web3InstanceManager.defaultWeb3.eth.getPastLogs({ fromBlock: this.block, toBlock: this.block })
     for (const log of logs) {
       results.push(await this.parseEthereumLog(log))
     }

@@ -19,7 +19,6 @@ import {
   Web3InstanceManager,
   Transaction,
   Wallet,
-  web3 as defaultWeb3,
   EEthereumTransactionStatus,
   TimeHelper,
   Env,
@@ -43,7 +42,7 @@ export class JobCreator implements IJobCreator {
 export class JobFinisher implements IJobFinisher {
   async finish(job: IBlockchainJob) {
     if (job.status !== EBlockchainJobStatus.SKIPPED) {
-      const { blockNumber } = await defaultWeb3.eth.getTransactionReceipt(job.hash)
+      const { blockNumber } = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(job.hash)
       await BlockchainJob.findByIdAndUpdate(
         job.blockchainJobId,
         { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
@@ -88,10 +87,10 @@ export class JobChecker implements IJobChecker {
   }
 
   private async getEthereumNetworkTransactionStatus(transactionHash: string) {
-    const receipt = await defaultWeb3.eth.getTransactionReceipt(transactionHash)
+    const receipt = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(transactionHash)
     if (isNil(receipt)) return EEthereumTransactionStatus.PENDING
     if (receipt.status) {
-      const currentBlock = await defaultWeb3.eth.getBlockNumber()
+      const currentBlock = await Web3InstanceManager.defaultWeb3.eth.getBlockNumber()
       const shouldWaitForMoreConfirmations = currentBlock - receipt.blockNumber < Env.SAFE_NUMBER_OF_COMFIRMATION
       if (shouldWaitForMoreConfirmations) return EEthereumTransactionStatus.WAIT_FOR_MORE_COMFIRMATIONS
       return EEthereumTransactionStatus.SUCCESS
@@ -136,8 +135,8 @@ export class JobExcutor implements IJobExcutor {
 
     const { address: tokenAddress } = await Asset.findById(transaction.assetId)
     const value = await this.getValueToTransfer(tokenAddress, account)
-    const gasPrice = await defaultWeb3.eth.getGasPrice()
-    const nonce = await defaultWeb3.eth.getTransactionCount(account)
+    const gasPrice = await Web3InstanceManager.defaultWeb3.eth.getGasPrice()
+    const nonce = await Web3InstanceManager.defaultWeb3.eth.getTransactionCount(account)
 
     const hash = await new Promise<string>((resolve, reject) => {
       web3.eth.sendTransaction({
@@ -166,7 +165,7 @@ export class JobExcutor implements IJobExcutor {
 
   private async getValueToTransfer(tokenAddress: string, account: string) {
     const gasLimitForApproveRequest = await new Erc20Token(tokenAddress).getGasLimitForApproving(account)
-    const currentGasPrice = await defaultWeb3.eth.getGasPrice()
+    const currentGasPrice = await Web3InstanceManager.defaultWeb3.eth.getGasPrice()
     return new BigNumber(gasLimitForApproveRequest)
       .multipliedBy(currentGasPrice)
       .multipliedBy(1.3)
