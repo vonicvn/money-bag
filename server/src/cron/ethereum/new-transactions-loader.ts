@@ -1,4 +1,4 @@
-import { defaultTo, isNil } from 'lodash'
+import { isNil } from 'lodash'
 import {
   Redis,
   ITransaction,

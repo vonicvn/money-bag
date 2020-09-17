@@ -115,7 +115,7 @@ export class TransactionsGetter {
       `&action=txlistinternal&startblock=${this.block}` +
       `&endblock=${this.block}&sort=asc&apikey=${Env.get(EEnvKey.ETHERSCAN_API_KEY)}`
 
-    const { result: internalTransactions } = await Fetch.get(url)
+    const { result: internalTransactions } = await Fetch.get(url, undefined, 5)
     return internalTransactions
   }
 
@@ -125,7 +125,7 @@ export class TransactionsGetter {
       `&action=eth_getBlockByNumber&tag=${this.block.toString(16)}` +
       `&boolean=true&apikey=${Env.get(EEnvKey.ETHERSCAN_API_KEY)}`
 
-    const { result: { transactions } } = await Fetch.get(url)
+    const { result: { transactions } } = await Fetch.get(url, undefined, 5)
     return transactions
   }
 }
