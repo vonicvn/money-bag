@@ -36,7 +36,7 @@ export class Web3InstanceManager {
       this.INFURA_URL
     // tslint:disable-next-line: no-any
     ) as any)
-    await Redis.set(`INFURA_USED_${this.INFURA_URL}`, 'USED', Constants.ONE_DAY_IN_MILLISECOND)
+    await Redis.set(`INFURA_USED_${this.INFURA_URL}`, 'USED', 86400)
     console.log(`Use ${this.INFURA_URL}`)
   }
 
