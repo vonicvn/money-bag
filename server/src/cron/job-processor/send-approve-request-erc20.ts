@@ -25,13 +25,8 @@ import {
 
 export class JobFinisher implements IJobFinisher {
   async finish(job: IBlockchainJob) {
-    if (job.status !== EBlockchainJobStatus.SKIPPED) {
-      const { blockNumber } = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(job.hash)
-      await BlockchainJob.findByIdAndUpdate(
-        job.blockchainJobId,
-        { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
-      )
-    }
+    if (job.status === EBlockchainJobStatus.PROCESSING) this.finishSuccessJob(job)
+    if (job.status === EBlockchainJobStatus.SKIPPED) this.finishSkippedJob(job)
     const newJob = await BlockchainJob.create({
       transactionId: job.transactionId,
       network: EBlockchainNetwork.ETHEREUM,
@@ -39,6 +34,21 @@ export class JobFinisher implements IJobFinisher {
       type: EBlockchainJobType.SEND_TRANSFER_FROM_REQUEST_ERC20,
     })
     console.log(`[CREATE NEW JOB]: ${JSON.stringify(newJob)}`)
+  }
+
+  async finishSuccessJob(job: IBlockchainJob) {
+    const { blockNumber } = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(job.hash)
+    await BlockchainJob.findByIdAndUpdate(
+      job.blockchainJobId,
+      { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
+    )
+  }
+
+  async finishSkippedJob(job: IBlockchainJob) {
+    await BlockchainJob.findByIdAndUpdate(
+      job.blockchainJobId,
+      { status: EBlockchainJobStatus.CANCELED }
+    )
   }
 }
 

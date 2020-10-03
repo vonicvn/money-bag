@@ -20,7 +20,6 @@ export class IncompleteJobsChecker {
         .whereNotIn('status', [
           EBlockchainJobStatus.SUCCESS,
           EBlockchainJobStatus.CANCELED,
-          EBlockchainJobStatus.SKIPPED,
         ])
         .orderBy('transactionId', 'DESC')
     })
