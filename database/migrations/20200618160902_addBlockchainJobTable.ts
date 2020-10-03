@@ -4,7 +4,7 @@ import { addPrimaryKey, addModified, addCreated, addCascadeForeignKey } from '..
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('blockchain_job', table => {
     addPrimaryKey(table, 'blockchain_job_id')
-    table.enum('status', ['JUST_CREATED', 'PROCESSING', 'FAILED', 'SUCCESS'])
+    table.enum('status', ['JUST_CREATED', 'PROCESSING', 'FAILED', 'SUCCESS', 'SKIPPED', 'CANCELED'])
     addCascadeForeignKey(table, 'transaction', {})
     addCascadeForeignKey(table, 'wallet', { notNullable: false })
     addCascadeForeignKey(table, 'admin_account', { notNullable: false })
