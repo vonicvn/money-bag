@@ -10,10 +10,11 @@ export enum EBlockchainTransactionStatus {
 export interface IBlockchainNetwork {
   getBlockNumber(): Promise<number>
 
-  // tslint:disable-next-line: no-any
   getTransactions(block: number): Promise<ITransactionInput[]>
 
   getTransactionStatus(hash: string): Promise<EBlockchainTransactionStatus>
+
+  getTransactionReceipt(hash: string): Promise<{ blockNumber: number }>
 }
 
 export interface ITransactionInput {

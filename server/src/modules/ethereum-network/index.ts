@@ -1,7 +1,7 @@
-import { isNil } from 'lodash'
-import { Env, Web3InstanceManager } from '../../global'
-import { EBlockchainTransactionStatus, IBlockchainNetwork } from '../blockchain-network.module'
+import { Web3InstanceManager } from '../../global'
+import { IBlockchainNetwork } from '../blockchain-network.module'
 import { TransactionsGetter } from './transaction-getter'
+import { TransactionStatusGetter } from './transaction-status-getter'
 
 export class EthereumNetwork implements IBlockchainNetwork {
   getBlockNumber() {
@@ -13,14 +13,10 @@ export class EthereumNetwork implements IBlockchainNetwork {
   }
 
   async getTransactionStatus(hash: string) {
-    const receipt = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(hash)
-    if (isNil(receipt)) return EBlockchainTransactionStatus.PENDING
-    if (receipt.status) {
-      const currentBlock = await Web3InstanceManager.defaultWeb3.eth.getBlockNumber()
-      const shouldWaitForMoreConfirmations = currentBlock - receipt.blockNumber < Env.SAFE_NUMBER_OF_COMFIRMATION
-      if (shouldWaitForMoreConfirmations) return EBlockchainTransactionStatus.WAIT_FOR_MORE_COMFIRMATIONS
-      return EBlockchainTransactionStatus.SUCCESS
-    }
-    return EBlockchainTransactionStatus.FAILED
+    return new TransactionStatusGetter().get(hash)
+  }
+
+  getTransactionReceipt(hash: string) {
+    return Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(hash)
   }
 }
