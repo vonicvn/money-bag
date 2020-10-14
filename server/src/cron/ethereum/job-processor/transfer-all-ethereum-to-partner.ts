@@ -14,24 +14,23 @@ import {
   BlockchainJob,
   EBlockchainJobType,
   EBlockchainJobStatus,
-  EBlockchainNetwork,
   IBlockchainJob,
-  Web3InstanceManager,
   Transaction,
   Wallet,
   Partner,
-  EEthereumTransactionStatus,
+  EBlockchainTransactionStatus,
   TimeHelper,
   ECollectingStatus,
-  Env,
   IBlockchainNetwork,
 } from '../../../global'
 
 export class JobCreator implements IJobCreator {
+  constructor(public blockchainNetwork: IBlockchainNetwork) {}
+
   async create({ transaction }: IBlockchainJobInput) {
     const job = await BlockchainJob.create({
       transactionId: transaction.transactionId,
-      network: EBlockchainNetwork.ETHEREUM,
+      network: this.blockchainNetwork.network,
       status: EBlockchainJobStatus.JUST_CREATED,
       type: EBlockchainJobType.TRANSFER_ALL_ETHEREUM,
       walletId: transaction.walletId,
@@ -41,8 +40,10 @@ export class JobCreator implements IJobCreator {
 }
 
 export class JobFinisher implements IJobFinisher {
+  constructor(public blockchainNetwork: IBlockchainNetwork) {}
+
   async finish(job: IBlockchainJob) {
-    const { blockNumber } = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(job.hash)
+    const { blockNumber } = await this.blockchainNetwork.getTransactionReceipt(job.hash)
     await BlockchainJob.findByIdAndUpdate(
       job.blockchainJobId,
       { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
@@ -59,6 +60,8 @@ export class JobFinisher implements IJobFinisher {
 }
 
 export class JobChecker implements IJobChecker {
+  constructor(public blockchainNetwork: IBlockchainNetwork) {}
+
   static RETRY_AFTER = 3 * 60 * 1000 // 3 minutes
   async check(job: IBlockchainJob) {
     if (job.status === EBlockchainJobStatus.JUST_CREATED) {
@@ -67,11 +70,11 @@ export class JobChecker implements IJobChecker {
       if (isWalletAvailable) return EJobAction.EXCUTE
       return EJobAction.WAIT
     }
-    const status = await this.getEthereumNetworkTransactionStatus(job.hash)
-    console.log(`[ETHEREUM STATUS] Job ${job.blockchainJobId} hash ${job.hash} status ${status}`)
-    if (status === EEthereumTransactionStatus.SUCCESS) return EJobAction.FINISH
-    if (status === EEthereumTransactionStatus.WAIT_FOR_MORE_COMFIRMATIONS) return EJobAction.WAIT
-    if (status === EEthereumTransactionStatus.PENDING) {
+    const status = await this.blockchainNetwork.getTransactionStatus(job.hash)
+    console.log(`[BLOCKCHAIN STATUS] Job ${job.blockchainJobId} hash ${job.hash} status ${status}`)
+    if (status === EBlockchainTransactionStatus.SUCCESS) return EJobAction.FINISH
+    if (status === EBlockchainTransactionStatus.WAIT_FOR_MORE_COMFIRMATIONS) return EJobAction.WAIT
+    if (status === EBlockchainTransactionStatus.PENDING) {
       const shouldWaitMore = TimeHelper.smallerThan(
         TimeHelper.now(),
         TimeHelper.after(JobChecker.RETRY_AFTER)
@@ -79,19 +82,7 @@ export class JobChecker implements IJobChecker {
       if (shouldWaitMore) return EJobAction.WAIT
       return EJobAction.RETRY
     }
-    if (status === EEthereumTransactionStatus.FAILED) return EJobAction.RETRY
-  }
-
-  private async getEthereumNetworkTransactionStatus(transactionHash: string) {
-    const receipt = await Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(transactionHash)
-    if (isNil(receipt)) return EEthereumTransactionStatus.PENDING
-    if (receipt.status) {
-      const currentBlock = await Web3InstanceManager.defaultWeb3.eth.getBlockNumber()
-      const shouldWaitForMoreConfirmations = currentBlock - receipt.blockNumber < Env.SAFE_NUMBER_OF_COMFIRMATION
-      if (shouldWaitForMoreConfirmations) return EEthereumTransactionStatus.WAIT_FOR_MORE_COMFIRMATIONS
-      return EEthereumTransactionStatus.SUCCESS
-    }
-    return EEthereumTransactionStatus.FAILED
+    if (status === EBlockchainTransactionStatus.FAILED) return EJobAction.RETRY
   }
 
   private async isWalletAvailable(job: IBlockchainJob) {
@@ -113,16 +104,16 @@ export class JobRetrier implements IJobRetrier {
 }
 
 export class JobExcutor implements IJobExcutor {
+  constructor(public blockchainNetwork: IBlockchainNetwork) {}
+
   async excute(job: IBlockchainJob) {
     console.log('[START EXCUTE]', job)
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
     const { index, partnerId } = await Wallet.findById(transaction.walletId)
-    const web3 = Web3InstanceManager.getWeb3ByWalletIndex(index)
-    const [account] = await web3.eth.getAccounts()
-
-    const gasPrice = await Web3InstanceManager.defaultWeb3.eth.getGasPrice()
+    const { privateKey, publicKey } = await this.blockchainNetwork.getKeysByIndex(index)
+    const gasPrice = await this.blockchainNetwork.getGasPrice()
     const GAS_LIMIT = 21000
-    const nonce = await Web3InstanceManager.defaultWeb3.eth.getTransactionCount(account)
+    const nonce = await this.blockchainNetwork.getTransactionCount(publicKey)
     const { ethereumWallet } = await Partner.findById(partnerId)
     const value = new BigNumber(transaction.value)
       .multipliedBy(Math.pow(10, 18))
@@ -131,16 +122,13 @@ export class JobExcutor implements IJobExcutor {
       )
       .toString()
 
-    const hash = await new Promise<string>((resolve, reject) => {
-      web3.eth.sendTransaction({
-        from: account,
-        value,
-        to: ethereumWallet,
-        gasPrice,
-        nonce,
-      })
-        .on('transactionHash', resolve)
-        .on('error', reject)
+    const hash = await this.blockchainNetwork.sendTransaction({
+      fromPrivateKey: privateKey,
+      fromAddress: publicKey,
+      value,
+      nonce,
+      gasPrice,
+      toAddress: ethereumWallet,
     })
     await BlockchainJob.findByIdAndUpdate(
       job.blockchainJobId,
@@ -156,9 +144,9 @@ export class JobExcutor implements IJobExcutor {
 export class JobProcessor implements IJobProcessor {
   constructor(public blockchainNetwork: IBlockchainNetwork) {}
 
-  creator = new JobCreator()
-  finisher = new JobFinisher()
-  checker = new JobChecker()
+  creator = new JobCreator(this.blockchainNetwork)
+  finisher = new JobFinisher(this.blockchainNetwork)
+  checker = new JobChecker(this.blockchainNetwork)
   retrier = new JobRetrier()
-  excutor = new JobExcutor()
+  excutor = new JobExcutor(this.blockchainNetwork)
 }

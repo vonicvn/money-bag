@@ -20,9 +20,20 @@ export interface IBlockchainNetwork {
 
   getTokenContract(tokenAddress: string, privateKey: string): IRCToken
 
-  getPrivateKeyByIndex(index: number): Promise<string>
+  getKeysByIndex(index: number): Promise<{ privateKey: string,  publicKey: string }>
 
   getGasPrice(): Promise<string>
+
+  getTransactionCount(address: string): Promise<number>
+
+  sendTransaction(input: {
+    fromPrivateKey: string,
+    fromAddress: string
+    toAddress: string
+    value: string
+    gasPrice: string
+    nonce: number
+  }): Promise<string>
 }
 
 export interface ITransactionInput {

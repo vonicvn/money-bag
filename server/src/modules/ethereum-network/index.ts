@@ -30,15 +30,51 @@ export class EthereumNetwork implements IBlockchainNetwork {
     return new Erc20Token(tokenAddress, web3)
   }
 
-  async getPrivateKeyByIndex(index: number): Promise<string> {
+  async getKeysByIndex(index: number) {
     const seed = await bip39.mnemonicToSeed(Env.get(EEnvKey.MNEMONIC))
     const hdwallet = hdKey.fromMasterSeed(seed)
     const path = `m/44'/60'/0'/0/`
     const wallet = hdwallet.derivePath(path + index).getWallet()
-    return wallet.getPrivateKey().toString('hex')
+    const publicKey = '0x' + wallet.getAddress().toString('hex')
+    const privateKey = wallet.getPrivateKey().toString('hex')
+    return { publicKey, privateKey }
+  }
+
+  async getTransactionCount(address: string) {
+    return Web3InstanceManager.defaultWeb3.eth.getTransactionCount(address)
   }
 
   getGasPrice() {
     return Web3InstanceManager.defaultWeb3.eth.getGasPrice()
+  }
+
+  sendTransaction(input: {
+    fromPrivateKey: string
+    fromAddress: string
+    toAddress: string
+    value: number
+    gasPrice: string
+    nonce: number
+  }): Promise<string> {
+    const {
+      fromPrivateKey,
+      fromAddress,
+      toAddress,
+      value,
+      gasPrice,
+      nonce,
+    } = input
+    const web3 = Web3InstanceManager.getWeb3ByKey(fromPrivateKey)
+    return new Promise<string>((resolve, reject) => {
+      web3.eth.sendTransaction({
+        from: fromAddress,
+        value,
+        to: toAddress,
+        gasPrice,
+        nonce,
+      })
+        .on('transactionHash', resolve)
+        .on('error', reject)
+    })
   }
 }
