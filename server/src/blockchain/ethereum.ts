@@ -4,7 +4,6 @@ import {
   EEnvKey,
   ErrorHandler,
   Redis,
-  Constants,
 } from '../global'
 import Web3 from 'web3'
 import HDWalletProvider from '@truffle/hdwallet-provider'

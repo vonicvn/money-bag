@@ -11,7 +11,7 @@ import {
   TransferEthereumToSendApproveRequestErc20,
   SendApproveRequestErc20,
   SendTransferFromRequestErc20,
-} from '../job-processor'
+} from './job-processor'
 
 export class IncompleteJobsChecker {
   async checkAll() {

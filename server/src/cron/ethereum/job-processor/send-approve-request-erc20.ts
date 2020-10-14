@@ -21,7 +21,7 @@ import {
   TimeHelper,
   Env,
   Erc20Token,
-} from '../../global'
+} from '../../../global'
 
 export class JobFinisher implements IJobFinisher {
   async finish(job: IBlockchainJob) {

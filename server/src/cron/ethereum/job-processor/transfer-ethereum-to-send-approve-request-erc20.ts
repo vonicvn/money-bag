@@ -25,7 +25,7 @@ import {
   AdminAccount,
   Erc20Token,
   Asset,
-} from '../../global'
+} from '../../../global'
 
 export class JobCreator implements IJobCreator {
   async create({ transaction }: IBlockchainJobInput) {

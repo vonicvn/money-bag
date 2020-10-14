@@ -10,7 +10,7 @@ import {
   IJobProcessor,
   TransferEthereumToSendApproveRequestErc20,
   SendTransferFromRequestErc20,
-} from '../job-processor'
+} from './job-processor'
 
 export class NewJobsCreator {
   async create() {

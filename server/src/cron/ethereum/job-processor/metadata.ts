@@ -1,7 +1,7 @@
 import {
   ITransaction,
   IBlockchainJob,
-} from '../../global'
+} from '../../../global'
 
 export interface IBlockchainJobInput {
   blockchainJob?: IBlockchainJob
