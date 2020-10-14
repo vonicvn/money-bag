@@ -8,6 +8,8 @@ export enum EBlockchainTransactionStatus {
 }
 
 export interface IBlockchainNetwork {
+  network: EBlockchainNetwork
+
   getBlockNumber(): Promise<number>
 
   getTransactions(block: number): Promise<ITransactionInput[]>
@@ -15,6 +17,10 @@ export interface IBlockchainNetwork {
   getTransactionStatus(hash: string): Promise<EBlockchainTransactionStatus>
 
   getTransactionReceipt(hash: string): Promise<{ blockNumber: number }>
+
+  getTokenContract(tokenAddress: string, privateKey: string): IRCToken
+
+  getPrivateKeyByIndex(index: number): Promise<string>
 }
 
 export interface ITransactionInput {
@@ -24,4 +30,12 @@ export interface ITransactionInput {
   assetAddress: string | null
   block: number
   network: EBlockchainNetwork
+}
+
+interface IRCToken {
+  transferFrom(input: { account: string, from: string, to: string, value: string, gasPrice: string }): Promise<string>
+
+  approve(account: string, gasPrice: number): Promise<string>
+
+  isApproved(walletAddress: string): Promise<boolean>
 }

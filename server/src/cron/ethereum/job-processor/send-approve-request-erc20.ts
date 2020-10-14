@@ -21,6 +21,7 @@ import {
   TimeHelper,
   Env,
   Erc20Token,
+  IBlockchainNetwork,
 } from '../../../global'
 
 export class JobFinisher implements IJobFinisher {
@@ -157,6 +158,8 @@ export class JobExcutor implements IJobExcutor {
 }
 
 export class JobProcessor implements IJobProcessor {
+  constructor(public blockchainNetwork: IBlockchainNetwork) {}
+
   finisher = new JobFinisher()
   checker = new JobChecker()
   retrier = new JobRetrier()

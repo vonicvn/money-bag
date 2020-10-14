@@ -26,6 +26,7 @@ import {
   AdminAccount,
   Erc20Token,
   Asset,
+  IBlockchainNetwork,
 } from '../../../global'
 
 export class JobCreator implements IJobCreator {
@@ -154,6 +155,8 @@ export class JobExcutor implements IJobExcutor {
 }
 
 export class JobProcessor implements IJobProcessor {
+  constructor(public blockchainNetwork: IBlockchainNetwork) {}
+
   creator = new JobCreator()
   finisher = new JobFinisher()
   checker = new JobChecker()
