@@ -37,4 +37,8 @@ export class EthereumNetwork implements IBlockchainNetwork {
     const wallet = hdwallet.derivePath(path + index).getWallet()
     return wallet.getPrivateKey().toString('hex')
   }
+
+  getGasPrice() {
+    return Web3InstanceManager.defaultWeb3.eth.getGasPrice()
+  }
 }

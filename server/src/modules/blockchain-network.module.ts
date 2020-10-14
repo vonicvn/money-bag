@@ -16,11 +16,13 @@ export interface IBlockchainNetwork {
 
   getTransactionStatus(hash: string): Promise<EBlockchainTransactionStatus>
 
-  getTransactionReceipt(hash: string): Promise<{ blockNumber: number }>
+  getTransactionReceipt(hash: string): Promise<{ blockNumber: number, status: boolean }>
 
   getTokenContract(tokenAddress: string, privateKey: string): IRCToken
 
   getPrivateKeyByIndex(index: number): Promise<string>
+
+  getGasPrice(): Promise<string>
 }
 
 export interface ITransactionInput {
