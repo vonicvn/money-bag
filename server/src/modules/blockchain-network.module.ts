@@ -34,6 +34,8 @@ export interface IBlockchainNetwork {
     gasPrice: string
     nonce: number
   }): Promise<string>
+
+  getTransaction(hash: string): Promise<{ value: string }>
 }
 
 export interface ITransactionInput {

@@ -52,7 +52,7 @@ export class EthereumNetwork implements IBlockchainNetwork {
     fromPrivateKey: string
     fromAddress: string
     toAddress: string
-    value: number
+    value: string
     gasPrice: string
     nonce: number
   }): Promise<string> {
@@ -76,5 +76,9 @@ export class EthereumNetwork implements IBlockchainNetwork {
         .on('transactionHash', resolve)
         .on('error', reject)
     })
+  }
+
+  getTransaction(hash: string) {
+    return Web3InstanceManager.defaultWeb3.eth.getTransaction(hash)
   }
 }

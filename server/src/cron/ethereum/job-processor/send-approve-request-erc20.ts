@@ -19,6 +19,7 @@ import {
   EBlockchainTransactionStatus,
   TimeHelper,
   IBlockchainNetwork,
+  Erc20Token,
 } from '../../../global'
 
 export class JobFinisher implements IJobFinisher {
@@ -142,7 +143,7 @@ export class JobExcutor implements IJobExcutor {
       transactionId: job.transactionId,
       type: EBlockchainJobType.TRANSFER_ETHEREUM_TO_SEND_APPROVE_REQUEST_ERC20,
     })
-    const { value } = await Web3InstanceManager.defaultWeb3.eth.getTransaction(hash)
+    const { value } = await this.blockchainNetwork.getTransaction(hash)
     return new BigNumber(value)
       .dividedBy(gasLimitForApproveRequest)
       .integerValue(BigNumber.ROUND_DOWN)

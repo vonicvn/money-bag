@@ -24,6 +24,7 @@ import {
   AdminAccount,
   Asset,
   IBlockchainNetwork,
+  Erc20Token,
 } from '../../../global'
 
 export class JobCreator implements IJobCreator {
