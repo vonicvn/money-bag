@@ -14,6 +14,7 @@ export enum EEnvKey {
   ETHERSCAN_API_KEY = 'ETHERSCAN_API_KEY',
   TRON_GRID_URL = 'TRON_GRID_URL',
   TRON_PRIVATE_KEY = 'TRON_PRIVATE_KEY',
+  STOP_SCAN = 'STOP_SCAN',
 }
 
 export enum EEnviroment {
