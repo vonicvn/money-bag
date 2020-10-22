@@ -18,7 +18,7 @@ export interface IBlockchainNetwork {
 
   getTransactionReceipt(hash: string): Promise<{ blockNumber: number, status: boolean }>
 
-  getTokenContract(tokenAddress: string, privateKey: string): IRCToken
+  getTokenContract(tokenAddress: string, privateKey?: string): IRCToken
 
   getKeysByIndex(index: number): Promise<{ privateKey: string,  publicKey: string }>
 
@@ -53,4 +53,6 @@ interface IRCToken {
   approve(account: string, gasPrice: number): Promise<string>
 
   isApproved(walletAddress: string): Promise<boolean>
+
+  getGasLimitForApproving(walletAddress: string): Promise<number>
 }

@@ -1,7 +1,7 @@
 import * as bip39 from 'bip39'
 // tslint:disable-next-line: no-require-imports
 const hdKey = require('ethereumjs-wallet/hdkey')
-import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, Env, EEnvKey } from '../../global'
+import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, Env, EEnvKey, exists } from '../../global'
 import { IBlockchainNetwork } from '../blockchain-network.module'
 import { TransactionsGetter } from './transaction-getter'
 import { TransactionStatusGetter } from './transaction-status-getter'
@@ -25,8 +25,8 @@ export class EthereumNetwork implements IBlockchainNetwork {
     return Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(hash)
   }
 
-  getTokenContract(tokenAddress: string, privateKey: string) {
-    const web3 = Web3InstanceManager.getWeb3ByKey(privateKey)
+  getTokenContract(tokenAddress: string, privateKey: string | null) {
+    const web3 = exists(privateKey) ? Web3InstanceManager.getWeb3ByKey(privateKey) : Web3InstanceManager.defaultWeb3
     return new Erc20Token(tokenAddress, web3)
   }
 

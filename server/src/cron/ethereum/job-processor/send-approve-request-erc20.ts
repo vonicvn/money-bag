@@ -19,7 +19,6 @@ import {
   EBlockchainTransactionStatus,
   TimeHelper,
   IBlockchainNetwork,
-  Erc20Token,
 } from '../../../global'
 
 export class JobFinisher implements IJobFinisher {
@@ -108,7 +107,10 @@ export class JobExcutor implements IJobExcutor {
   async excute(job: IBlockchainJob) {
     console.log('[START EXCUTE]', job)
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
-    const isApproved = await new Erc20Token(transaction.assetAddress).isApproved(transaction.walletAddress)
+    const isApproved = await this
+      .blockchainNetwork
+      .getTokenContract(transaction.assetAddress)
+      .isApproved(transaction.walletAddress)
     if (isApproved) {
       await BlockchainJob.findByIdAndUpdate(
         job.blockchainJobId,
@@ -137,7 +139,9 @@ export class JobExcutor implements IJobExcutor {
 
   private async getGasPrice(job: IBlockchainJob) {
     const transaction = await Transaction.findById(job.transactionId)
-    const gasLimitForApproveRequest = await new Erc20Token(transaction.assetAddress)
+    const gasLimitForApproveRequest = await this
+      .blockchainNetwork
+      .getTokenContract(transaction.assetAddress)
       .getGasLimitForApproving(transaction.walletAddress)
     const { hash } = await BlockchainJob.findOne({
       transactionId: job.transactionId,

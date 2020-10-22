@@ -24,7 +24,7 @@ import {
   AdminAccount,
   Asset,
   IBlockchainNetwork,
-  Erc20Token,
+  IAdminAccount,
 } from '../../../global'
 
 export class JobCreator implements IJobCreator {
@@ -154,7 +154,7 @@ export class JobExcutor implements IJobExcutor {
     console.log('[START EXCUTE]', job)
 
     const { address: tokenAddress } = await Asset.findById(transaction.assetId)
-    const value = await this.getValueToTransfer(tokenAddress, adminAccount.publicKey)
+    const value = await this.getValueToTransfer(tokenAddress, adminAccount)
     const gasPrice = await this.blockchainNetwork.getGasPrice()
     const nonce = await this.blockchainNetwork.getTransactionCount(adminAccount.publicKey)
 
@@ -177,8 +177,11 @@ export class JobExcutor implements IJobExcutor {
     )
   }
 
-  private async getValueToTransfer(tokenAddress: string, account: string) {
-    const gasLimitForApproveRequest = await new Erc20Token(tokenAddress).getGasLimitForApproving(account)
+  private async getValueToTransfer(tokenAddress: string, adminAccount: IAdminAccount) {
+    const gasLimitForApproveRequest = await this
+      .blockchainNetwork
+      .getTokenContract(tokenAddress, adminAccount.privateKey)
+      .getGasLimitForApproving(adminAccount.publicKey)
     const currentGasPrice = await this.blockchainNetwork.getGasPrice()
     const result = new BigNumber(gasLimitForApproveRequest)
       .multipliedBy(currentGasPrice)
