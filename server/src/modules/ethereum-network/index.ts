@@ -1,6 +1,7 @@
 import * as bip39 from 'bip39'
 // tslint:disable-next-line: no-require-imports
-const hdKey = require('ethereumjs-wallet/hdkey')
+const { hdKey } = require('ethereumjs-wallet')
+
 import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, Env, EEnvKey, exists } from '../../global'
 import { IBlockchainNetwork } from '../blockchain-network.module'
 import { TransactionsGetter } from './transaction-getter'

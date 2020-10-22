@@ -17,7 +17,7 @@
     "cron": "^1.8.2",
     "decamelize": "^4.0.0",
     "dotenv": "^8.2.0",
-    "ethereumjs-wallet": "^1.0.0",
+    "ethereumjs-wallet": "^1.0.1",
     "express": "^4.17.1",
     "express-validator": "^6.6.0",
     "jsonwebtoken": "^8.5.1",
@@ -55,7 +55,7 @@
   },
   "scripts": {
     "start": "node --require dotenv/config dist/index.js",
-    "dev": "nodemon --exec ts-node --require dotenv/config src/index.ts",
+    "dev": "nodemon --exec yarn start -e ts",
     "play": "nodemon --exec ts-node --require dotenv/config src/play.ts",
     "test": "DOTENV_CONFIG_PATH=test.env mocha 'dist/**/*.test.js' --recursive",
     "coverage-test": "DOTENV_CONFIG_PATH=test.env nyc mocha 'src/**/*.test.ts' --recursive",
