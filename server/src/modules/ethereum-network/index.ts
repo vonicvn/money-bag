@@ -1,6 +1,6 @@
 import * as bip39 from 'bip39'
 // tslint:disable-next-line: no-require-imports
-const { hdKey } = require('ethereumjs-wallet')
+const { hdkey } = require('ethereumjs-wallet')
 
 import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, Env, EEnvKey, exists } from '../../global'
 import { IBlockchainNetwork } from '../blockchain-network.module'
@@ -33,7 +33,7 @@ export class EthereumNetwork implements IBlockchainNetwork {
 
   async getKeysByIndex(index: number) {
     const seed = await bip39.mnemonicToSeed(Env.get(EEnvKey.MNEMONIC))
-    const hdwallet = hdKey.fromMasterSeed(seed)
+    const hdwallet = hdkey.fromMasterSeed(seed)
     const path = `m/44'/60'/0'/0/`
     const wallet = hdwallet.derivePath(path + index).getWallet()
     const publicKey = '0x' + wallet.getAddress().toString('hex')

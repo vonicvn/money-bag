@@ -4,6 +4,7 @@ import {
   EEnvKey,
   ErrorHandler,
   Redis,
+  EEnviroment,
 } from '../global'
 import Web3 from 'web3'
 import HDWalletProvider from '@truffle/hdwallet-provider'
@@ -20,6 +21,7 @@ export class Web3InstanceManager {
   }
 
   private static async getInfuraKey() {
+    if (Env.get(EEnvKey.NODE_ENV) !== EEnviroment.PRODUCTION) return this.INFURA_URL
     for (const infuraUrl of INFURA_URLS) {
       const used = await Redis.get(`INFURA_USED_${infuraUrl}`)
       if (!used) return infuraUrl
