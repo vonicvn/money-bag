@@ -7,7 +7,6 @@ import {
   Wallet,
   Redis,
   EBlockchainNetwork,
-  BlockchainModule,
 } from '../global'
 import { WalletService } from './wallet.service'
 
@@ -48,7 +47,7 @@ describe(TEST_TITLE, () => {
     td.replace(Wallet, 'findOne', () => Promise.resolve({ index: 10 }))
     td.replace(Wallet, 'create')
     td.replace(Redis, 'setJson')
-    td.replace(BlockchainModule, 'get')
+    td.replace(WalletService.prototype, 'getAddressAtIndex')
 
     td.when(WalletService.prototype['getAddressAtIndex'](11, EBlockchainNetwork.ETHEREUM)).thenResolve('address_index_11')
     td.when(WalletService.prototype['getAddressAtIndex'](12, EBlockchainNetwork.ETHEREUM)).thenResolve('address_index_12')

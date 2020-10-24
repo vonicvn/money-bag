@@ -14,7 +14,10 @@ const INFURA_URLS = JSON.parse(Env.get(EEnvKey.INFURA_URLS)) as string[]
 export class Web3InstanceManager {
   private static INFURA_URL = last(INFURA_URLS)
 
-  private static web3: Web3 = null
+  private static web3: Web3 = new Web3(new HDWalletProvider(
+    Env.get(EEnvKey.MNEMONIC),
+    Web3InstanceManager.INFURA_URL
+  ))
 
   static get defaultWeb3() {
     return this.web3
