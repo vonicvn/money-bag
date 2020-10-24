@@ -12,7 +12,7 @@ import { WalletService } from './wallet.service'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
-describe.only(TEST_TITLE, () => {
+describe(TEST_TITLE, () => {
   it('#createWallet case 1: throw error when isCreatingWallet', async () => {
     WalletService.isCreatingWallet = true
     const error = await new WalletService()
