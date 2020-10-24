@@ -8,7 +8,7 @@
     "@sentry/node": "^5.20.0",
     "@truffle/hdwallet-provider": "^1.0.35",
     "@types/redis": "^2.8.24",
-    "bcrypt": "^4.0.1",
+    "bcrypt": "^5.0.0",
     "bignumber.js": "^9.0.0",
     "bip32": "^2.0.6",
     "bip39": "^3.0.2",
