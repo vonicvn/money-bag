@@ -13,8 +13,8 @@ import {
   Env,
   EEnvKey,
   EBlockchainNetwork,
-} from '../../global'
-import { ITransactionInput } from '../blockchain-network.module'
+  ITransactionInput,
+} from '../../../global'
 
 export class TransactionsGetter {
   constructor(private block: number) {}

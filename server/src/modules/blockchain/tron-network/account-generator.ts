@@ -2,7 +2,7 @@
 import * as bip39 from 'bip39'
 import * as bip32 from 'bip32'
 import TronWeb from 'tronweb'
-import { Env, EEnvKey } from '../../global'
+import { Env, EEnvKey } from '../../../global'
 
 export class AccountGenerator {
   async getByIndex(index: number) {

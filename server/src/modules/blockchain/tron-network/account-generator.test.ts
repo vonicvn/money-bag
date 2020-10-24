@@ -1,5 +1,5 @@
 import { deepStrictEqual } from 'assert'
-import { TestUtils } from '../../global'
+import { TestUtils } from '../../../global'
 import { AccountGenerator } from './account-generator'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)

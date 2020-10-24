@@ -1,6 +1,9 @@
 import { isNil } from 'lodash'
-import { Env, Web3InstanceManager } from '../../global'
-import { EBlockchainTransactionStatus } from '../blockchain-network.module'
+import {
+  Env,
+  Web3InstanceManager,
+  EBlockchainTransactionStatus,
+} from '../../../global'
 
 export class TransactionStatusGetter {
   async get(hash: string) {

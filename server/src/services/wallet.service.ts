@@ -1,14 +1,11 @@
-import * as bip39 from 'bip39'
 import {
   ErrorHandler,
   Wallet,
-  Env,
-  EEnvKey,
   Redis,
   EBlockchainNetwork,
+  BlockchainModule,
 } from '../global'
 import { defaultTo, toLower } from 'lodash'
-const { hdkey } = require('ethereumjs-wallet')
 
 export class WalletService {
   public static isCreatingWallet = false
@@ -35,10 +32,8 @@ export class WalletService {
   }
 
   private async getAddressAtIndex(index: number, network: EBlockchainNetwork) {
-    if (network === EBlockchainNetwork.ETHEREUM) {
-      return new EthereumAddressProvider().getAddressAtIndex(index)
-    }
-    return new TronAddressProvider().getAddressAtIndex(index)
+    const account = await BlockchainModule.get(network).generateAccount(index)
+    return account.address
   }
 
   private cacheAddressOnRedis(address: string) {
@@ -47,15 +42,5 @@ export class WalletService {
 
   static async isAddressExisted(address: string) {
     return defaultTo(await Redis.getJson(`WALLET_${toLower(address)}`), false)
-  }
-}
-
-class EthereumAddressProvider {
-  async getAddressAtIndex(index: number) {
-    const seed = await bip39.mnemonicToSeed(Env.get(EEnvKey.MNEMONIC))
-    const hdwallet = hdkey.fromMasterSeed(seed)
-    const path = `m/44'/60'/0'/0/`
-    const wallet = hdwallet.derivePath(path + index).getWallet()
-    return '0x' + wallet.getAddress().toString('hex')
   }
 }

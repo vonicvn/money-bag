@@ -1,4 +1,4 @@
-import { EBlockchainNetwork } from '../global'
+import { EBlockchainNetwork } from '../../global'
 
 export enum EBlockchainTransactionStatus {
   PENDING = 'PENDING',
@@ -23,6 +23,8 @@ export interface IBlockchainNetwork {
   getGasPrice(): Promise<string>
 
   getTransactionCount(address: string): Promise<number>
+
+  generateAccount(index: number): Promise<{ address: string, privateKey: string }>
 
   sendTransaction(input: {
     fromPrivateKey: string,

@@ -2,8 +2,9 @@ import * as bip39 from 'bip39'
 // tslint:disable-next-line: no-require-imports
 const { hdkey } = require('ethereumjs-wallet')
 
-import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, Env, EEnvKey, exists } from '../../global'
-import { IBlockchainNetwork } from '../blockchain-network.module'
+import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, Env, EEnvKey, exists } from '../../../global'
+import { IBlockchainNetwork } from '../metadata'
+import { AccountGenerator } from './account-generator'
 import { TransactionStatusGetter } from './transaction-status-getter'
 
 export class EthereumNetwork implements IBlockchainNetwork {
@@ -76,5 +77,9 @@ export class EthereumNetwork implements IBlockchainNetwork {
 
   getTransaction(hash: string) {
     return Web3InstanceManager.defaultWeb3.eth.getTransaction(hash)
+  }
+
+  generateAccount(index: number) {
+    return new AccountGenerator().getByIndex(index)
   }
 }

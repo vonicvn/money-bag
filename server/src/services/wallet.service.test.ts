@@ -7,6 +7,7 @@ import {
   Wallet,
   Redis,
   EBlockchainNetwork,
+  BlockchainModule,
 } from '../global'
 import { WalletService } from './wallet.service'
 
@@ -47,7 +48,7 @@ describe(TEST_TITLE, () => {
     td.replace(Wallet, 'findOne', () => Promise.resolve({ index: 10 }))
     td.replace(Wallet, 'create')
     td.replace(Redis, 'setJson')
-    td.replace(WalletService.prototype, 'getAddressAtIndex')
+    td.replace(BlockchainModule, 'get')
 
     td.when(WalletService.prototype['getAddressAtIndex'](11, EBlockchainNetwork.ETHEREUM)).thenResolve('address_index_11')
     td.when(WalletService.prototype['getAddressAtIndex'](12, EBlockchainNetwork.ETHEREUM)).thenResolve('address_index_12')
@@ -66,15 +67,5 @@ describe(TEST_TITLE, () => {
 
     td.verify(Redis.setJson(`WALLET_address_index_11`, true))
     td.verify(Redis.setJson(`WALLET_address_index_12`, true))
-  })
-
-  it('#getAddressAtIndex ETHEREUM', async () => {
-    const address = await WalletService.prototype['getAddressAtIndex'](0, EBlockchainNetwork.ETHEREUM)
-    ok(address.startsWith('0x'))
-  })
-
-  it('#getAddressAtIndex TRON', async () => {
-    const address = await WalletService.prototype['getAddressAtIndex'](1, EBlockchainNetwork.TRON)
-    console.log(address)
   })
 })
