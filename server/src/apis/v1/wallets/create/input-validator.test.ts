@@ -5,7 +5,7 @@ import {
   WalletService,
 } from '../../../../global'
 import { EErrorCode } from './metadata'
-import { equal } from 'assert'
+import { strictEqual } from 'assert'
 import { InputValidator } from './input-validator'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
@@ -21,6 +21,6 @@ describe(TEST_TITLE, () => {
       .validate(Value.NO_MATTER, Value.NO_MATTER)
       .catch(error => error)
 
-    equal(error.code, EErrorCode.WALLET_CREATOR_BUSY)
+    strictEqual(error.code, EErrorCode.WALLET_CREATOR_BUSY)
   })
 })

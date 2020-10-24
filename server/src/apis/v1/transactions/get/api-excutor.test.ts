@@ -1,4 +1,4 @@
-import { deepEqual, equal } from 'assert'
+import { deepEqual, strictEqual } from 'assert'
 import { map } from 'lodash'
 import { TestUtils, Partner, Transaction, Value, Asset, Wallet } from '../../../../global'
 import { ApiExcutor } from './api-excutor'
@@ -47,7 +47,7 @@ describe(TEST_TITLE, () => {
         Value.wrap({ partner: { partnerId: 1 } })
       )
 
-    equal(response.total, 3)
+    strictEqual(response.total, 3)
     deepEqual(map(response.transactions, 'transactionId'), [1, 2])
   })
 
@@ -58,7 +58,7 @@ describe(TEST_TITLE, () => {
         Value.wrap({ partner: { partnerId: 1 } })
       )
 
-    equal(response.total, 2)
+    strictEqual(response.total, 2)
     deepEqual(map(response.transactions, 'transactionId'), [1, 3])
   })
 })

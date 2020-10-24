@@ -15,6 +15,7 @@ export interface IBlockchainJob extends ITimed {
 
 export enum EBlockchainNetwork {
   ETHEREUM = 'ETHEREUM',
+  TRON = 'TRON',
   BITCOIN = 'BITCOIN',
 }
 

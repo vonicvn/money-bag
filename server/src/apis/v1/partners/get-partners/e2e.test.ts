@@ -1,6 +1,6 @@
 import express from 'express'
 import request from 'supertest'
-import { deepEqual, equal } from 'assert'
+import { deepEqual, strictEqual } from 'assert'
 import { TestUtils, RouteLoader, EHttpStatusCode, Partner, deepOmit } from '../../../../global'
 import { Route } from './route'
 
@@ -42,7 +42,7 @@ describe(TEST_TITLE, () => {
         },
       ]
     )
-    equal(response.status, EHttpStatusCode.OK)
+    strictEqual(response.status, EHttpStatusCode.OK)
   })
 
   it(`${TEST_TITLE} Given normal partner api key, it should throw an error`, async () => {
@@ -50,11 +50,11 @@ describe(TEST_TITLE, () => {
       .get('/api/v1/partners')
       .set({ 'X-API-KEY': NORMAL_PARNER_API_KEY })
 
-    equal(
+    strictEqual(
       response.body.code,
       'PERMISSION_DENIED'
     )
-    equal(response.status, EHttpStatusCode.FORBIDDEN)
+    strictEqual(response.status, EHttpStatusCode.FORBIDDEN)
   })
 
   it(`${TEST_TITLE} Given asset of non existed user, it should throw an error`, async () => {
@@ -62,10 +62,10 @@ describe(TEST_TITLE, () => {
       .get('/api/v1/partners')
       .set({ 'X-API-KEY': 'NOT_EXISTED_API_KEY' })
 
-    equal(
+    strictEqual(
       response.body.code,
       'PERMISSION_DENIED'
     )
-    equal(response.status, EHttpStatusCode.FORBIDDEN)
+    strictEqual(response.status, EHttpStatusCode.FORBIDDEN)
   })
 })

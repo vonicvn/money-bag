@@ -1,6 +1,6 @@
 import td from 'testdouble'
 import { TestUtils, ErrorHandler } from '../global'
-import { equal } from 'assert'
+import { strictEqual } from 'assert'
 import { OneAtMomemnt } from './one-at-moment'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
@@ -16,7 +16,7 @@ describe(TEST_TITLE, () => {
     await job.process()
 
     td.verify(job.do())
-    equal(job.isRunning, false)
+    strictEqual(job.isRunning, false)
   })
 
   it(`${TEST_TITLE} dont call #do if it is running`, async () => {
@@ -25,7 +25,7 @@ describe(TEST_TITLE, () => {
     td.replace(job, 'do', td.function())
 
     await job.process()
-    equal(td.explain(job.do).callCount, 0)
+    strictEqual(td.explain(job.do).callCount, 0)
   })
 
   it(`${TEST_TITLE} Finish process even method #do throws error`, async () => {
@@ -37,6 +37,6 @@ describe(TEST_TITLE, () => {
 
     await job.process()
     td.verify(ErrorHandler.handle(sampleError))
-    equal(job.isRunning, false)
+    strictEqual(job.isRunning, false)
   })
 })

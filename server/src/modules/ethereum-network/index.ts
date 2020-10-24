@@ -4,7 +4,6 @@ const { hdkey } = require('ethereumjs-wallet')
 
 import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, Env, EEnvKey, exists } from '../../global'
 import { IBlockchainNetwork } from '../blockchain-network.module'
-import { TransactionsGetter } from './transaction-getter'
 import { TransactionStatusGetter } from './transaction-status-getter'
 
 export class EthereumNetwork implements IBlockchainNetwork {
@@ -12,10 +11,6 @@ export class EthereumNetwork implements IBlockchainNetwork {
 
   getBlockNumber() {
     return Web3InstanceManager.defaultWeb3.eth.getBlockNumber()
-  }
-
-  getTransactions(block: number) {
-    return new TransactionsGetter(block).get()
   }
 
   async getTransactionStatus(hash: string) {

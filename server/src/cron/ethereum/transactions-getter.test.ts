@@ -1,6 +1,6 @@
 import td from 'testdouble'
 import {
-  equal,
+  strictEqual,
   deepEqual,
 } from 'assert'
 import {
@@ -50,7 +50,7 @@ describe(TEST_TITLE, () => {
 
   it('#parseEthereumLog case 1: not a token transfer', async () => {
     const log = Value.wrap({ topics: ['0x_wrong_topic'] })
-    equal(await TransactionsGetter.prototype['parseEthereumLog'](log), null)
+    strictEqual(await TransactionsGetter.prototype['parseEthereumLog'](log), null)
   })
 
   it('#parseEthereumLog case 2: not watched asset', async () => {
@@ -59,7 +59,7 @@ describe(TEST_TITLE, () => {
       topics: ['0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'],
       address: 'not watched asset address',
     })
-    equal(await TransactionsGetter.prototype['parseEthereumLog'](log), null)
+    strictEqual(await TransactionsGetter.prototype['parseEthereumLog'](log), null)
   })
 
   it('#parseEthereumLog case 3: not a watched wallet', async () => {
@@ -73,7 +73,7 @@ describe(TEST_TITLE, () => {
         '0x0000000000000000000000001cbdd8336800dc3fe27daf5fb5188f0502ac1fc7',
       ],
     })
-    equal(await TransactionsGetter.prototype['parseEthereumLog'](log), null)
+    strictEqual(await TransactionsGetter.prototype['parseEthereumLog'](log), null)
   })
 
   it('#parseEthereumLog case 4: merchant does not subscribe for asset', async () => {
@@ -91,7 +91,7 @@ describe(TEST_TITLE, () => {
         '0x000000000000000000000000_watched_address',
       ],
     })
-    equal(await TransactionsGetter.prototype['parseEthereumLog'](log), null)
+    strictEqual(await TransactionsGetter.prototype['parseEthereumLog'](log), null)
   })
 
   it('#parseEthereumLog case 5: create transaction', async () => {
@@ -180,7 +180,7 @@ describe(TEST_TITLE, () => {
 
   it('#parseEthereumTransaction case 2: value = 0', async () => {
     const ethereumTransaction = Value.wrap({ value: '0' })
-    equal(
+    strictEqual(
       await TransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
       null
     )
@@ -189,7 +189,7 @@ describe(TEST_TITLE, () => {
   it('#parseEthereumTransaction case 2: not a watched address', async () => {
     td.replace(WalletService, 'isAddressExisted', () => false)
     const ethereumTransaction = Value.wrap({ value: '100' })
-    equal(
+    strictEqual(
       await TransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
       null
     )
@@ -207,7 +207,7 @@ describe(TEST_TITLE, () => {
       .thenResolve(null)
 
     const ethereumTransaction = Value.wrap({ value: '100', to: '0x_watched_address' })
-    equal(
+    strictEqual(
       await TransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
       null
     )

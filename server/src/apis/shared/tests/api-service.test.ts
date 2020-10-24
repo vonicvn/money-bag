@@ -1,5 +1,5 @@
 import { TestUtils } from '../../../global'
-import { equal } from 'assert'
+import { strictEqual } from 'assert'
 import { ApiService, NullInputGetter, SkippedInputValidator, AbstractApiExcutor } from '../'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
@@ -18,6 +18,6 @@ class DummyApiService extends ApiService<null, null> {
 
 describe(TEST_TITLE, () => {
   it(`${TEST_TITLE} ApiService works`, async () => {
-    equal(await new DummyApiService().setContext(null, null).process(), null)
+    strictEqual(await new DummyApiService().setContext(null, null).process(), null)
   })
 })

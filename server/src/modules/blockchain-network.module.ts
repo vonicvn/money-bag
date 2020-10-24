@@ -12,8 +12,6 @@ export interface IBlockchainNetwork {
 
   getBlockNumber(): Promise<number>
 
-  getTransactions(block: number): Promise<ITransactionInput[]>
-
   getTransactionStatus(hash: string): Promise<EBlockchainTransactionStatus>
 
   getTransactionReceipt(hash: string): Promise<{ blockNumber: number, status: boolean }>
