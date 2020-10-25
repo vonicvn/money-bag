@@ -22,11 +22,11 @@ export class WalletService {
   }
 
   private async create(quantity: number, network: EBlockchainNetwork) {
-    const wallet = await Wallet.findOne({}, builder => builder.orderBy('index', 'DESC'))
+    const wallet = await Wallet.findOne({ network }, builder => builder.orderBy('index', 'DESC'))
     for (let index = 0; index < quantity; index++) {
       const addressIndex = index + defaultTo(wallet, { index: -1 }).index + 1
       const address = toLower(await this.getAddressAtIndex(addressIndex, network))
-      await Wallet.create({ address, index: addressIndex })
+      await Wallet.create({ address, index: addressIndex, network })
       await this.cacheAddressOnRedis(address)
     }
   }

@@ -1,9 +1,10 @@
-import { ITimed, ETable, createModel } from './'
+import { ITimed, ETable, createModel, EBlockchainNetwork } from './'
 
 export interface IWallet extends ITimed {
   walletId: number
   partnerId: number
   address: string
+  network: EBlockchainNetwork
   index: number
 }
 
