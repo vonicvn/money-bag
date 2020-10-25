@@ -10,6 +10,14 @@ export async function seed(knex: Knex): Promise<void> {
     status: 'ENABLED',
   })
 
+  await knex('asset').insert({
+    asset_id: 4,
+    name: 'USDT_TRON',
+    network: 'TRON',
+    address: 'TENQX5zvW6znVKrMXBmcmhj48q7JAWkxzb',
+    decimals: 6,
+  })
+
   await knex('wallet').insert({
     partner_id: 1,
     address: '0xea127b4fdeff1b8d1bfe28799b0d999de00d202e',
