@@ -13,5 +13,5 @@ export async function registerCronJobs() {
   createJob('17 * * * * *', () => ethereumScanner.process(), true)
 
   const tronScanner = new EthereumScanner(EBlockchainNetwork.TRON)
-  createJob('/10 * * * * *', () => tronScanner.process(), true)
+  createJob('*/10 * * * * *', () => tronScanner.process(), true)
 }
