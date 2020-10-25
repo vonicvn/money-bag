@@ -3,8 +3,9 @@ import {
   IBlockchainJob,
   EBlockchainJobStatus,
   EBlockchainJobType,
-  EthereumNetwork,
+  BlockchainModule,
   IBlockchainNetwork,
+  EBlockchainNetwork,
 } from '../../global'
 import {
   TransferAllEthereumProcessor,
@@ -16,6 +17,8 @@ import {
 } from './job-processor'
 
 export class IncompleteJobsChecker {
+  constructor(private network: EBlockchainNetwork) {}
+
   async checkAll() {
     const jobs = await BlockchainJob.findAll({}, builder => {
       return builder
@@ -54,6 +57,6 @@ export class IncompleteJobsChecker {
       [EBlockchainJobType.SEND_APPROVE_REQUEST_ERC20]: SendApproveRequestErc20,
       [EBlockchainJobType.SEND_TRANSFER_FROM_REQUEST_ERC20]: SendTransferFromRequestErc20,
     }
-    return new jobTypeToProcessor[job.type as string](new EthereumNetwork())
+    return new jobTypeToProcessor[job.type as string](BlockchainModule.get(this.network))
   }
 }

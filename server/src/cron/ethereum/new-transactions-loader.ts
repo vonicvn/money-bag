@@ -1,35 +1,37 @@
 import { isNil } from 'lodash'
 import {
   Redis,
-  ITransaction,
   Transaction,
-  Web3InstanceManager,
+  BlockchainModule,
   Env,
   EEnvKey,
-  EEnviroment
+  EEnviroment,
+  EBlockchainNetwork
 } from '../../global'
 import {
   TransactionsGetter,
 } from './transactions-getter'
 
 export class NewTransactionsLoader {
+  constructor(private network: EBlockchainNetwork) {}
+
   async load() {
     const { from, to } = await this.getRange()
     for (let block = from; block <= to; block++) {
-      const transactions = await this.scanBlock(block)
+      const transactions = await new TransactionsGetter(this.network, block).get()
       await Transaction.createMany(transactions)
-      await Redis.setJson<number>('ETHEREUM_SCANNED_BLOCK', block)
+      await Redis.setJson<number>(`${this.network}_SCANNED_BLOCK`, block)
     }
   }
 
   private async getRange() {
-    const currentBlock = await Web3InstanceManager.defaultWeb3.eth.getBlockNumber()
+    const currentBlock = await BlockchainModule.get(this.network).getBlockNumber()
     const defaultRange = {
       from: currentBlock - Env.SAFE_NUMBER_OF_COMFIRMATION,
       to: currentBlock - Env.SAFE_NUMBER_OF_COMFIRMATION,
     }
 
-    const scanned = await Redis.getJson<number>('ETHEREUM_SCANNED_BLOCK')
+    const scanned = await Redis.getJson<number>(`${this.network}_SCANNED_BLOCK`)
     if (isNil(scanned)) return defaultRange
 
     const BIG_MISS_BLOCK = 20
@@ -43,10 +45,5 @@ export class NewTransactionsLoader {
       from: scanned + 1,
       to: currentBlock - Env.SAFE_NUMBER_OF_COMFIRMATION,
     }
-  }
-
-  private async scanBlock(block: number): Promise<Partial<ITransaction>[]> {
-    console.log(`[ETHEREUM SCAN BLOCK] ${block}`)
-    return new TransactionsGetter(block).get()
   }
 }

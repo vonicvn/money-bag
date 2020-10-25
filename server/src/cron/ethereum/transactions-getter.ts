@@ -23,12 +23,14 @@ import {
   EEnvKey,
   BlockchainJob,
   exists,
+  EBlockchainNetwork,
 } from '../../global'
 
 export class TransactionsGetter {
-  constructor(private block: number) {}
+  constructor(private network: EBlockchainNetwork, private block: number) {}
 
   async get() {
+    console.log(`[${this.network} SCAN BLOCK] ${this.block}`)
     const results = []
     const ethereumTransactions = await this.getBlock()
     for (const ethereumTransaction of ethereumTransactions) {
