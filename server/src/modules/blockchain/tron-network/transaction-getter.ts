@@ -30,7 +30,7 @@ export class TransactionsGetter {
   constructor(private block: number) {}
 
   async get(): Promise<ITransactionInput[]> {
-    const url = `${Env.get(EEnvKey.TRON_GRID_URL)}/v1/blocks/${this.block}/events?only_confirmed=true`
+    const url = `${Env.get(EEnvKey.TRON_GRID_URL)}/v1/blocks/${this.block}/events?only_confirmed=false`
     const response = await Fetch.get<IBlockResponse>(url)
     return chain(response.data).map(this.getTransactionInputByEvent).compact().value()
   }
