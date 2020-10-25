@@ -1,6 +1,6 @@
 import td from 'testdouble'
 import {
-  deepStrictEqual, ok, strictEqual,
+  strictEqual,
 } from 'assert'
 import {
   TestUtils,

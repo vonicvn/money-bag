@@ -25,7 +25,7 @@ export class NewTransactionsLoader {
 
   async load() {
     const { from, to } = await this.getRange()
-    for (let block = 9160766; block <= 9160766; block++) {
+    for (let block = from; block <= to; block++) {
       console.log(`SCAN ${this.network} block ${block}`)
       const transactionInputs = await BlockchainModule.get(this.network).getTransactionInputs(block)
       await Transaction.createMany(await this.filter(transactionInputs))
