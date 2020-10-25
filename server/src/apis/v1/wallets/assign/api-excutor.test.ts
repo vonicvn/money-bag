@@ -5,7 +5,7 @@ import {
   Partner,
 } from '../../../../global'
 import { ApiExcutor } from './api-excutor'
-import { deepEqual } from 'assert'
+import { deepStrictEqual } from 'assert'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
@@ -38,7 +38,7 @@ describe(TEST_TITLE, () => {
     const wallets = await Wallet.findAll({}, builder => {
       return builder.select('walletId', 'partnerId').orderBy('walletId')
     })
-    deepEqual(wallets, [
+    deepStrictEqual(wallets, [
       { walletId: 1, partnerId: 1 },
       { walletId: 2, partnerId: 1 },
       { walletId: 3, partnerId: null },

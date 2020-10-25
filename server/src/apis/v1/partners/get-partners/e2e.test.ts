@@ -1,6 +1,6 @@
 import express from 'express'
 import request from 'supertest'
-import { deepEqual, strictEqual } from 'assert'
+import { deepStrictEqual, strictEqual } from 'assert'
 import { TestUtils, RouteLoader, EHttpStatusCode, Partner, deepOmit } from '../../../../global'
 import { Route } from './route'
 
@@ -25,7 +25,7 @@ describe(TEST_TITLE, () => {
       .get('/api/v1/partners')
       .set({ 'X-API-KEY': ADMIN_API_KEY })
 
-    deepEqual(
+    deepStrictEqual(
       deepOmit(response.body, ['created', 'modified', 'bitcoinWallet', 'ethereumWallet']),
       [
         {

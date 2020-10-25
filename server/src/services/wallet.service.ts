@@ -10,7 +10,7 @@ import { defaultTo, toLower } from 'lodash'
 export class WalletService {
   public static isCreatingWallet = false
 
-  async createWallet(quantity: number, network = EBlockchainNetwork.ETHEREUM) {
+  async createWallet(quantity: number, network: EBlockchainNetwork) {
     if (WalletService.isCreatingWallet) throw new Error('SERVICE_NOT_AVAILABLE')
     WalletService.isCreatingWallet = true
     try {

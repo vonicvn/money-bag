@@ -2,7 +2,7 @@ import { pick } from 'lodash'
 import td from 'testdouble'
 import express from 'express'
 import request from 'supertest'
-import { deepEqual } from 'assert'
+import { deepStrictEqual } from 'assert'
 import {
   TestUtils, EHttpStatusCode, EEnviroment, EMethod, IRoute,
   makeSure, Env, ErrorHandler, BaseApiService,
@@ -44,7 +44,7 @@ describe(TEST_TITLE, () => {
 
     // success case
     const response1 = await request(app).get('/add').query({ a: 1, b: 2 })
-    deepEqual(
+    deepStrictEqual(
       pick(response1, 'body', 'status'),
       {
         body: { result: 3 },
@@ -54,7 +54,7 @@ describe(TEST_TITLE, () => {
 
     // handled error
     const response2 = await request(app).get('/add').query({ a: 1 })
-    deepEqual(
+    deepStrictEqual(
       pick(response2, 'body', 'status'),
       {
         body: { code: 'INVALID_PARA_B', message: 'Parameter B is invalid' },
@@ -64,7 +64,7 @@ describe(TEST_TITLE, () => {
 
     // unhandled error in dev envs
     const response3 = await request(app).get('/add').query({ b: 2 })
-    deepEqual(
+    deepStrictEqual(
       pick(response3, 'body', 'status'),
       {
         body: { message: 'INVALID_PARAM_A' },
@@ -76,7 +76,7 @@ describe(TEST_TITLE, () => {
     // unhandled error in prod env
     td.replace(Env, 'get', () => EEnviroment.PRODUCTION)
     const response4 = await request(app).get('/add').query({ b: 2 })
-    deepEqual(
+    deepStrictEqual(
       pick(response4, 'body', 'status'),
       {
         body: { message: 'INTERNAL_SERVER_ERROR' },
@@ -86,7 +86,7 @@ describe(TEST_TITLE, () => {
 
     // invalid route
     const response5 = await request(app).get('/invalid-route')
-    deepEqual(
+    deepStrictEqual(
       pick(response5, 'body', 'status'),
       {
         body: { code: 'INVALID_ROUTE', message: 'Requested route does not exist' },

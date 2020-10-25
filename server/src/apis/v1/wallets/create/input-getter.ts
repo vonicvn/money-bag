@@ -4,6 +4,9 @@ import { IInput } from './metadata'
 
 export class InputGetter implements IAbstractInputGetter<IInput> {
   getInput(req: IRequest) {
-    return { quantity: Number(req.body.quantity) }
+    return {
+      quantity: Number(req.body.quantity),
+      network: req.body.network,
+    }
   }
 }

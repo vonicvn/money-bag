@@ -1,6 +1,6 @@
 import td from 'testdouble'
 import {
-  deepEqual,
+  deepStrictEqual,
 } from 'assert'
 import {
   TestUtils,
@@ -20,7 +20,7 @@ describe(`${TEST_TITLE} #getRange`, () => {
     td.replace(Web3InstanceManager.defaultWeb3.eth, 'getBlockNumber', () => 110)
     td.replace(Env, 'SAFE_NUMBER_OF_COMFIRMATION',  5)
 
-    deepEqual(
+    deepStrictEqual(
       await NewTransactionsLoader.prototype['getRange'](),
       { from: 101, to: 105 }
     )
@@ -31,7 +31,7 @@ describe(`${TEST_TITLE} #getRange`, () => {
     td.replace(Web3InstanceManager.defaultWeb3.eth, 'getBlockNumber', () => 110)
     td.replace(Env, 'SAFE_NUMBER_OF_COMFIRMATION',  5)
 
-    deepEqual(
+    deepStrictEqual(
       await NewTransactionsLoader.prototype['getRange'](),
       { from: 105, to: 105 }
     )
@@ -42,7 +42,7 @@ describe(`${TEST_TITLE} #getRange`, () => {
     td.replace(Web3InstanceManager.defaultWeb3.eth, 'getBlockNumber', () => 1005)
     td.replace(Env, 'SAFE_NUMBER_OF_COMFIRMATION',  5)
 
-    deepEqual(
+    deepStrictEqual(
       await NewTransactionsLoader.prototype['getRange'](),
       { from: 1000, to: 1000 }
     )
@@ -54,7 +54,7 @@ describe(`${TEST_TITLE} #getRange`, () => {
     td.replace(Env, 'SAFE_NUMBER_OF_COMFIRMATION',  5)
     td.replace(Env, 'get', () => EEnviroment.PRODUCTION)
 
-    deepEqual(
+    deepStrictEqual(
       await NewTransactionsLoader.prototype['getRange'](),
       { from: 101, to: 1000 }
     )

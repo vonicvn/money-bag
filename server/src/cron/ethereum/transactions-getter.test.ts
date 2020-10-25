@@ -1,7 +1,7 @@
 import td from 'testdouble'
 import {
   strictEqual,
-  deepEqual,
+  deepStrictEqual,
 } from 'assert'
 import {
   ECollectingStatus,
@@ -42,7 +42,7 @@ describe(TEST_TITLE, () => {
       .when(TransactionsGetter.prototype['parseEthereumLog'](Value.wrap('log2')))
       .thenResolve(null)
 
-    deepEqual(
+    deepStrictEqual(
       await TransactionsGetter.prototype.get(),
       [{ hash: '0xtransaction1' }, { hash: '0xlog1' }]
     )
@@ -127,7 +127,7 @@ describe(TEST_TITLE, () => {
       .when(PartnerAsset.findOne({ assetId: 2, partnerId: 1 }))
       .thenResolve({})
 
-    deepEqual(
+    deepStrictEqual(
       await TransactionsGetter.prototype['parseEthereumLog'](log),
       {
         hash: log.transactionHash,
@@ -162,7 +162,7 @@ describe(TEST_TITLE, () => {
       assetId: EDefaultAssetId.ETH,
       blockNumber: 9999,
     })
-    deepEqual(
+    deepStrictEqual(
       await TransactionsGetter.prototype['parseEthereumTransaction'](ethereumTransaction),
       {
         assetId: 1,
@@ -216,6 +216,6 @@ describe(TEST_TITLE, () => {
   it('#getBlock', async () => {
     td.replace(TransactionsGetter.prototype, 'block', 13)
     td.replace(Fetch, 'get', () => ({ result: { transactions: ['data'] } }))
-    deepEqual(await TransactionsGetter.prototype['getBlock'](), ['data'])
+    deepStrictEqual(await TransactionsGetter.prototype['getBlock'](), ['data'])
   })
 })

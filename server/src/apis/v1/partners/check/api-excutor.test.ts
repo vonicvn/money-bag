@@ -1,4 +1,4 @@
-import { deepEqual } from 'assert'
+import { deepStrictEqual } from 'assert'
 import { TestUtils, Partner, deepOmit, Value } from '../../../../global'
 import { ApiExcutor } from './api-excuter'
 
@@ -13,7 +13,7 @@ describe(TEST_TITLE, () => {
     const response = await new ApiExcutor()
       .excute(null, Value.wrap({ partner: { partnerId: 1 } }))
 
-    deepEqual(
+    deepStrictEqual(
       deepOmit(response, ['created', 'modified', 'bitcoinWallet', 'ethereumWallet']),
       {
         partnerId: 1,

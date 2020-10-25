@@ -1,16 +1,16 @@
 import { TestUtils } from '../../../../global'
 import { InputGetter } from './input-getter'
-import { deepEqual } from 'assert'
+import { deepStrictEqual } from 'assert'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
 describe(TEST_TITLE, () => {
   it(`${TEST_TITLE} InputGetter works`, async () => {
-    deepEqual(
+    deepStrictEqual(
       new InputGetter().getInput({
-        body: { quantity: '2 ' },
+        body: { quantity: '2 ', network: 'TRON' },
       }),
-      { quantity: 2 }
+      { quantity: 2, network: 'TRON' }
     )
   })
 })

@@ -16,7 +16,7 @@ describe(TEST_TITLE, () => {
   it('#createWallet case 1: throw error when isCreatingWallet', async () => {
     WalletService.isCreatingWallet = true
     const error = await new WalletService()
-      .createWallet(Value.NO_MATTER)
+      .createWallet(Value.NO_MATTER, EBlockchainNetwork.ETHEREUM)
       .catch(error => error)
     ok(error instanceof Error)
     strictEqual(WalletService.isCreatingWallet, true)
@@ -26,7 +26,7 @@ describe(TEST_TITLE, () => {
     WalletService.isCreatingWallet = false
     td.replace(WalletService.prototype, 'create')
     td.replace(ErrorHandler, 'handle')
-    await new WalletService().createWallet(123)
+    await new WalletService().createWallet(123, EBlockchainNetwork.ETHEREUM)
 
     td.verify(WalletService.prototype['create'](123, EBlockchainNetwork.ETHEREUM))
     strictEqual(td.explain(ErrorHandler.handle).callCount, 0)
@@ -38,7 +38,7 @@ describe(TEST_TITLE, () => {
     td.replace(WalletService.prototype, 'create', () => Promise.reject('_an_error_'))
     td.replace(ErrorHandler, 'handle')
 
-    await new WalletService().createWallet(123)
+    await new WalletService().createWallet(123, EBlockchainNetwork.ETHEREUM)
     td.verify(ErrorHandler.handle(Value.wrap('_an_error_')))
     strictEqual(WalletService.isCreatingWallet, false)
   })

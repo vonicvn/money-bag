@@ -1,4 +1,4 @@
-import { deepEqual, strictEqual } from 'assert'
+import { deepStrictEqual, strictEqual } from 'assert'
 import { map } from 'lodash'
 import { TestUtils, Partner, Transaction, Value, Asset, Wallet } from '../../../../global'
 import { ApiExcutor } from './api-excutor'
@@ -48,7 +48,7 @@ describe(TEST_TITLE, () => {
       )
 
     strictEqual(response.total, 3)
-    deepEqual(map(response.transactions, 'transactionId'), [1, 2])
+    deepStrictEqual(map(response.transactions, 'transactionId'), [1, 2])
   })
 
   it(`${TEST_TITLE} ApiExcutor works with assetId`, async () => {
@@ -59,6 +59,6 @@ describe(TEST_TITLE, () => {
       )
 
     strictEqual(response.total, 2)
-    deepEqual(map(response.transactions, 'transactionId'), [1, 3])
+    deepStrictEqual(map(response.transactions, 'transactionId'), [1, 3])
   })
 })
