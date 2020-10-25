@@ -3,8 +3,10 @@ import {
   TestUtils,
   Value,
   BlockchainModule,
+  EBlockchainNetwork,
 } from '../../../../../global'
 import { ApiExcutor } from './api-excutor'
+import { NewTransactionsLoader } from '../../../../../cron/ethereum/new-transactions-loader'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
@@ -18,6 +20,13 @@ describe(TEST_TITLE, () => {
   })
 
   it(`${TEST_TITLE} ApiExcutor works`, async () => {
-    await new ApiExcutor().excute({ blockNumber: 2 }, Value.NO_MATTER)
+    td.replace(NewTransactionsLoader.prototype, 'scan')
+    await new ApiExcutor()
+      .excute(
+        { blockNumber: 2, network: EBlockchainNetwork.TRON },
+        Value.NO_MATTER
+      )
+
+    td.verify(NewTransactionsLoader.prototype.scan(2))
   })
 })

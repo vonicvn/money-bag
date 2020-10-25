@@ -6,6 +6,7 @@ export class InputGetter implements IAbstractInputGetter<IInput> {
   getInput(req: IRequest) {
     return {
       blockNumber: Number(req.body.blockNumber),
+      network: req.body.network,
     }
   }
 }

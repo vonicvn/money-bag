@@ -26,14 +26,18 @@ export class NewTransactionsLoader {
   async load() {
     const { from, to } = await this.getRange()
     for (let block = from; block <= to; block++) {
-      console.log(`SCAN ${this.network} block ${block}`)
-      const transactionInputs = await BlockchainModule.get(this.network).getTransactionInputs(block)
-      await Transaction.createMany(await this.filter(transactionInputs))
-      await Redis.setJson<number>(`${this.network}_SCANNED_BLOCK`, block)
+      await this.scan(block)
     }
   }
 
-  async filter(transactionInputs: ITransactionInput[]): Promise<Partial<ITransaction>[]> {
+  async scan(block: number) {
+    console.log(`SCAN ${this.network} block ${block}`)
+    const transactionInputs = await BlockchainModule.get(this.network).getTransactionInputs(block)
+    await Transaction.createMany(await this.filter(transactionInputs))
+    await Redis.setJson<number>(`${this.network}_SCANNED_BLOCK`, block)
+  }
+
+  private async filter(transactionInputs: ITransactionInput[]): Promise<Partial<ITransaction>[]> {
     const result: Partial<ITransaction>[] = []
     for (const transactionInput of transactionInputs) {
       const { value, hash, assetAddress, block, network, toAddress } = transactionInput
