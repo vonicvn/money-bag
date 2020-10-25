@@ -1,5 +1,6 @@
 import {
   compact,
+  defaultTo,
   toLower,
 } from 'lodash'
 import {
@@ -54,7 +55,7 @@ export class TransactionsGetter {
     const isTransferLog = log.topics[0] === '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     if (!isTransferLog) return null
 
-    const toAddress = `0x${log.topics[2].substring(26)}`
+    const toAddress = `0x${defaultTo(log.topics[2], '').substring(26)}`
     return {
       hash: log.transactionHash,
       block: Number(log.blockNumber),
