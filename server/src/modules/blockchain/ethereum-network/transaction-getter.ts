@@ -60,7 +60,7 @@ export class TransactionsGetter {
       hash: log.transactionHash,
       block: Number(log.blockNumber),
       value: log.data,
-      assetAddress: log.address.toLowerCase(),
+      assetAddress: log.address,
       toAddress,
       network: EBlockchainNetwork.ETHEREUM,
     }
