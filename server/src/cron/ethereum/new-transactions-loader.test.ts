@@ -9,12 +9,19 @@ import {
   Redis,
   Env,
   EEnviroment,
+  EBlockchainNetwork,
 } from '../../global'
 import { NewTransactionsLoader } from './new-transactions-loader'
 
 const TEST_TITLE = TestUtils.getTestTitle(__filename)
 
 describe(`${TEST_TITLE} #getRange`, () => {
+  beforeEach(() => td.replace(
+    NewTransactionsLoader.prototype,
+    'network',
+    EBlockchainNetwork.ETHEREUM
+  ))
+
   it('Return from saved range to current range minus safe confirmations', async () => {
     td.replace(Redis, 'get', () => 100)
     td.replace(Web3InstanceManager.defaultWeb3.eth, 'getBlockNumber', () => 110)
