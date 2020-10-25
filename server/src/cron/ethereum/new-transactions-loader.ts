@@ -36,7 +36,7 @@ export class NewTransactionsLoader {
     const result: Partial<ITransaction>[] = []
     for (const transactionInput of transactionInputs) {
       const { value, hash, assetAddress, block, network, toAddress } = transactionInput
-      if (value === 0) continue
+      if (Number(value) === 0) continue
       if (!await AssetService.isAssetExisted(assetAddress)) return null
       if (!await WalletService.isAddressExisted(toAddress)) continue
       const wallet = await Wallet.findOne({ address: toAddress, network })

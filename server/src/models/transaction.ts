@@ -1,4 +1,4 @@
-import { ITimed, ETable, createModel } from './'
+import { ITimed, ETable, createModel, EBlockchainNetwork } from './'
 
 export enum ECollectingStatus {
   WAITING = 'WAITING',
@@ -20,6 +20,7 @@ export interface ITransaction extends ITimed {
   walletId: number
   walletAddress: string
   collectingStatus: ECollectingStatus
+  network: EBlockchainNetwork
 
   collectingHash: string
   collectingBlock: number

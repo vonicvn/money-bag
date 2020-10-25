@@ -45,7 +45,7 @@ export class TransactionsGetter {
       hash: transaction.hash,
       toAddress: toLower(transaction.to),
       block: Number(transaction.blockNumber),
-      value: new BigNumber(transaction.value).toNumber(),
+      value: transaction.value,
       assetAddress: null,
       network: EBlockchainNetwork.ETHEREUM,
     }
@@ -59,7 +59,7 @@ export class TransactionsGetter {
     return {
       hash: log.transactionHash,
       block: Number(log.blockNumber),
-      value: new BigNumber(log.data).toNumber(),
+      value: log.data,
       assetAddress: log.address.toLowerCase(),
       toAddress,
       network: EBlockchainNetwork.ETHEREUM,

@@ -42,7 +42,7 @@ export interface IBlockchainNetwork {
 
 export interface ITransactionInput {
   toAddress: string
-  value: number
+  value: string
   hash: string
   assetAddress: string | null
   block: number

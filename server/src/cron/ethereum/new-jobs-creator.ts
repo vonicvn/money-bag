@@ -18,7 +18,10 @@ export class NewJobsCreator {
   constructor(private network: EBlockchainNetwork) {}
 
   async create() {
-    const transactions = await Transaction.findAll({ collectingStatus: ECollectingStatus.WAITING })
+    const transactions = await Transaction.findAll({
+      collectingStatus: ECollectingStatus.WAITING,
+      network: EBlockchainNetwork.ETHEREUM,
+    })
     for (const transaction of transactions) {
       const { creator } = await this.getJobProcessor(transaction)
       await creator.create({ transaction })
