@@ -41,5 +41,9 @@ export async function seed(knex: Knex): Promise<void> {
       partner_id: 1,
       asset_id: 2,
     },
+    {
+      partner_id: 1,
+      asset_id: 4,
+    },
   ])
 }

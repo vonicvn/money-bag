@@ -43,7 +43,7 @@ export class TransactionsGetter {
       assetAddress: log.contract_address,
       hash: log.transaction_id,
       value: log.result.value,
-      toAddress: TronWeb.address.fromHex(log.result.to),
+      toAddress: TronWeb.address.fromHex(log.result.to).toLowerCase(),
     }
   }
 }

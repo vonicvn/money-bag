@@ -25,7 +25,8 @@ export class NewTransactionsLoader {
 
   async load() {
     const { from, to } = await this.getRange()
-    for (let block = from; block <= to; block++) {
+    for (let block = 9160766; block <= 9160766; block++) {
+      console.log(`SCAN ${this.network} block ${block}`)
       const transactionInputs = await BlockchainModule.get(this.network).getTransactionInputs(block)
       await Transaction.createMany(await this.filter(transactionInputs))
       await Redis.setJson<number>(`${this.network}_SCANNED_BLOCK`, block)
@@ -45,6 +46,7 @@ export class NewTransactionsLoader {
         assetId: asset.assetId,
         partnerId: wallet.partnerId,
       })
+      console.log({partnerWallet})
       // prevent create transfer all ethereum transaction if it is from admin transfer to wallet to call aprrove ERC token request
       if (exists(await BlockchainJob.findOne({ hash }))) continue
       if (isNil(partnerWallet)) continue
@@ -59,6 +61,7 @@ export class NewTransactionsLoader {
         assetName: asset.name,
         walletAddress: wallet.address,
         walletId: wallet.walletId,
+        network,
       })
     }
     return result
