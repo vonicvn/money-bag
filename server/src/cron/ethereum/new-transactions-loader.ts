@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import { isNil } from 'lodash'
 import {
   Redis,
@@ -6,11 +7,18 @@ import {
   Env,
   EEnvKey,
   EEnviroment,
-  EBlockchainNetwork
+  EBlockchainNetwork,
+  ITransactionInput,
+  ITransaction,
+  WalletService,
+  Wallet,
+  Asset,
+  PartnerAsset,
+  AssetService,
+  ECollectingStatus,
+  exists,
+  BlockchainJob,
 } from '../../global'
-import {
-  TransactionsGetter,
-} from './transactions-getter'
 
 export class NewTransactionsLoader {
   constructor(private network: EBlockchainNetwork) {}
@@ -18,10 +26,42 @@ export class NewTransactionsLoader {
   async load() {
     const { from, to } = await this.getRange()
     for (let block = from; block <= to; block++) {
-      const transactions = await new TransactionsGetter(this.network, block).get()
-      await Transaction.createMany(transactions)
+      const transactionInputs = await BlockchainModule.get(this.network).getTransactionInputs(block)
+      await Transaction.createMany(await this.filter(transactionInputs))
       await Redis.setJson<number>(`${this.network}_SCANNED_BLOCK`, block)
     }
+  }
+
+  async filter(transactionInputs: ITransactionInput[]): Promise<Partial<ITransaction>[]> {
+    const result: Partial<ITransaction>[] = []
+    for (const transactionInput of transactionInputs) {
+      const { value, hash, assetAddress, block, network, toAddress } = transactionInput
+      if (value === 0) continue
+      if (!await AssetService.isAssetExisted(assetAddress)) return null
+      if (!await WalletService.isAddressExisted(toAddress)) continue
+      const wallet = await Wallet.findOne({ address: toAddress, network })
+      const asset = await Asset.findOne({ address: assetAddress, network })
+      const partnerWallet = await PartnerAsset.findOne({
+        assetId: asset.assetId,
+        partnerId: wallet.partnerId,
+      })
+      // prevent create transfer all ethereum transaction if it is from admin transfer to wallet to call aprrove ERC token request
+      if (exists(await BlockchainJob.findOne({ hash }))) continue
+      if (isNil(partnerWallet)) continue
+      result.push({
+        hash,
+        partnerId: wallet.partnerId,
+        block: block,
+        value: new BigNumber(value).div(Math.pow(10, asset.decimals)).toNumber(),
+        collectingStatus: ECollectingStatus.WAITING,
+        assetId: asset.assetId,
+        assetAddress: asset.address,
+        assetName: asset.name,
+        walletAddress: wallet.address,
+        walletId: wallet.walletId,
+      })
+    }
+    return result
   }
 
   private async getRange() {

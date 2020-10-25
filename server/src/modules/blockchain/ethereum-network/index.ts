@@ -5,10 +5,15 @@ const { hdkey } = require('ethereumjs-wallet')
 import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, Env, EEnvKey, exists } from '../../../global'
 import { IBlockchainNetwork } from '../metadata'
 import { AccountGenerator } from './account-generator'
+import { TransactionsGetter } from './transaction-getter'
 import { TransactionStatusGetter } from './transaction-status-getter'
 
 export class EthereumNetwork implements IBlockchainNetwork {
   network = EBlockchainNetwork.ETHEREUM
+
+  getTransactionInputs(blockNumber: number) {
+    return new TransactionsGetter(blockNumber).get()
+  }
 
   getBlockNumber() {
     return Web3InstanceManager.defaultWeb3.eth.getBlockNumber()

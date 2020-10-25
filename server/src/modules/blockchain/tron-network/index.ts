@@ -6,9 +6,14 @@ import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, Env, EEnvKey, exis
 import { AccountGenerator } from './account-generator'
 import { IBlockchainNetwork } from '../metadata'
 import { TransactionStatusGetter } from './transaction-status-getter'
+import { TransactionsGetter } from './transaction-getter'
 
 export class TronNetwork implements IBlockchainNetwork {
   network = EBlockchainNetwork.TRON
+
+  getTransactionInputs(blockNumber: number) {
+    return new TransactionsGetter(blockNumber).get()
+  }
 
   getBlockNumber() {
     return Web3InstanceManager.defaultWeb3.eth.getBlockNumber()

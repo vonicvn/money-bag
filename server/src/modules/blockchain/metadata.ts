@@ -10,6 +10,8 @@ export enum EBlockchainTransactionStatus {
 export interface IBlockchainNetwork {
   network: EBlockchainNetwork
 
+  getTransactionInputs(blockNumber: number): Promise<ITransactionInput[]>
+
   getBlockNumber(): Promise<number>
 
   getTransactionStatus(hash: string): Promise<EBlockchainTransactionStatus>
