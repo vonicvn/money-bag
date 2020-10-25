@@ -57,11 +57,13 @@ describe(TEST_TITLE, () => {
     td.verify(Wallet.create({
       address: 'address_index_11',
       index: 11,
+      network: EBlockchainNetwork.ETHEREUM,
     }))
 
     td.verify(Wallet.create({
       address: 'address_index_12',
       index: 12,
+      network: EBlockchainNetwork.ETHEREUM,
     }))
 
     td.verify(Redis.setJson(`WALLET_address_index_11`, true))

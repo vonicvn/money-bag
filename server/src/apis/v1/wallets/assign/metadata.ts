@@ -1,6 +1,11 @@
+import {
+  EBlockchainNetwork,
+} from '../../../../global'
+
 export interface IInput {
   quantity: number
   partnerId: number
+  network: EBlockchainNetwork
 }
 
 export type IOutput = void

@@ -5,6 +5,7 @@ import {
   mustExist,
   EHttpStatusCode,
   AbstractInputValidator,
+  EBlockchainNetwork,
 } from '../../../../global'
 import {
   IInput,
@@ -22,7 +23,11 @@ export class InputValidator extends AbstractInputValidator<IInput> {
       }
     )
 
-    const availableWalletCount = await Wallet.count({ partnerId: null })
+    const availableWalletCount = await Wallet.count({
+      partnerId: null,
+      network: this.input.network,
+    })
+
     makeSure(
       availableWalletCount > this.input.quantity,
       {

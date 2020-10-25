@@ -1,3 +1,4 @@
+import { toPlainObject } from 'lodash'
 import { TestUtils, TestPartnerContextBuilder } from '../../../global'
 import { deepStrictEqual } from 'assert'
 import { PartnerContextManager } from '../partner-context'
@@ -14,11 +15,11 @@ describe(TEST_TITLE, () => {
 
   it(`${TEST_TITLE} PartnerContextManager works with invalid token`, async () => {
     const partnerContext = await PartnerContextManager.getPartnerContext({ headers: { 'X-API-KEY': `NON_EXISTS_API_KEY` } })
-    deepStrictEqual(partnerContext, { partner: null })
+    deepStrictEqual(toPlainObject(partnerContext), { partner: null })
   })
 
   it(`${TEST_TITLE} PartnerContextManager works with no token`, async () => {
     const partnerContext = await PartnerContextManager.getPartnerContext({ headers: {} })
-    deepStrictEqual(partnerContext, { partner: null })
+    deepStrictEqual(toPlainObject(partnerContext), { partner: null })
   })
 })

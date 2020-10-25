@@ -3,6 +3,7 @@ import {
   Value,
   Wallet,
   Partner,
+  EBlockchainNetwork,
 } from '../../../../global'
 import { ApiExcutor } from './api-excutor'
 import { deepStrictEqual } from 'assert'
@@ -34,7 +35,10 @@ describe(TEST_TITLE, () => {
   })
 
   it(`${TEST_TITLE} ApiExcutor works`, async () => {
-    await new ApiExcutor().excute({ quantity: 2, partnerId: 1 }, Value.NO_MATTER)
+    await new ApiExcutor().excute(
+      { quantity: 2, partnerId: 1, network: EBlockchainNetwork.ETHEREUM },
+      Value.NO_MATTER
+    )
     const wallets = await Wallet.findAll({}, builder => {
       return builder.select('walletId', 'partnerId').orderBy('walletId')
     })

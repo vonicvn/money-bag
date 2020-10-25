@@ -7,6 +7,7 @@ export class InputGetter implements IAbstractInputGetter<IInput> {
     return {
       quantity: Number(req.body.quantity),
       partnerId: Number(req.body.partnerId),
+      network: req.body.network,
     }
   }
 }

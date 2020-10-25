@@ -5,12 +5,17 @@ import { IInput, IOutput } from './metadata'
 
 export class ApiExcutor extends AbstractApiExcutor<IInput, IOutput> {
   async process(): Promise<IOutput> {
-    const wallets = await Wallet.findAll({ partnerId: null }, builder => {
-      return builder
-        .select('walletId')
-        .orderBy('walletId')
-        .limit(this.input.quantity)
-    })
+    const wallets = await Wallet.findAll(
+      {
+        partnerId: null,
+        network: this.input.network,
+      }, builder => {
+        return builder
+          .select('walletId')
+          .orderBy('walletId')
+          .limit(this.input.quantity)
+      }
+    )
 
     await Wallet.updateMany(
       {},
