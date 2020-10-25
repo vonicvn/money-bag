@@ -21,7 +21,6 @@ export class TransactionsGetter {
   async get(): Promise<ITransactionInput[]> {
     const results = []
     const ethereumTransactions = await this.getBlock()
-    console.log(ethereumTransactions)
     for (const ethereumTransaction of ethereumTransactions) {
       results.push(await this.parseEthereumTransaction(ethereumTransaction))
     }
