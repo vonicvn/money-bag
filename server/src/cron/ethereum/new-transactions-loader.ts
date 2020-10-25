@@ -46,7 +46,6 @@ export class NewTransactionsLoader {
         assetId: asset.assetId,
         partnerId: wallet.partnerId,
       })
-      console.log({partnerWallet})
       // prevent create transfer all ethereum transaction if it is from admin transfer to wallet to call aprrove ERC token request
       if (exists(await BlockchainJob.findOne({ hash }))) continue
       if (isNil(partnerWallet)) continue
