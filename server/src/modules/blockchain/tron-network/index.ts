@@ -1,3 +1,4 @@
+import TronWeb from 'tronweb'
 import * as bip39 from 'bip39'
 // tslint:disable-next-line: no-require-imports
 const { hdkey } = require('ethereumjs-wallet')
@@ -9,14 +10,20 @@ import { TransactionStatusGetter } from './transaction-status-getter'
 import { TransactionsGetter } from './transaction-getter'
 
 export class TronNetwork implements IBlockchainNetwork {
+  static tronWeb = new TronWeb({
+    fullHost: Env.get(EEnvKey.TRON_GRID_URL),
+    privateKey: Env.get(EEnvKey.TRON_PRIVATE_KEY),
+  })
+
   network = EBlockchainNetwork.TRON
 
   getTransactionInputs(blockNumber: number) {
     return new TransactionsGetter(blockNumber).get()
   }
 
-  getBlockNumber() {
-    return Web3InstanceManager.defaultWeb3.eth.getBlockNumber()
+  async getBlockNumber() {
+    const currentBlock = await TronNetwork.tronWeb.trx.getCurrentBlock()
+    return currentBlock.block_header.raw_data.number
   }
 
   async getTransactionStatus(hash: string) {

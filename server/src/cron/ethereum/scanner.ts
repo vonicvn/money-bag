@@ -5,7 +5,7 @@ import { IncompleteJobsChecker } from './incomplete-jobs-checker'
 import { EBlockchainNetwork } from '../../global'
 
 export class Scanner extends OneAtMomemnt {
-  constructor(private network = EBlockchainNetwork.ETHEREUM) {
+  constructor(private network: EBlockchainNetwork) {
     super()
   }
 
