@@ -27,6 +27,7 @@ export class NewTransactionsLoader {
     const { from, to } = await this.getRange()
     for (let block = from; block <= to; block++) {
       await this.scan(block)
+      await Redis.setJson<number>(`${this.network}_SCANNED_BLOCK`, block)
     }
   }
 
@@ -34,16 +35,21 @@ export class NewTransactionsLoader {
     console.log(`SCAN ${this.network} block ${block}`)
     const transactionInputs = await BlockchainModule.get(this.network).getTransactionInputs(block)
     await Transaction.createMany(await this.filter(transactionInputs))
-    await Redis.setJson<number>(`${this.network}_SCANNED_BLOCK`, block)
   }
 
   private async filter(transactionInputs: ITransactionInput[]): Promise<Partial<ITransaction>[]> {
     const result: Partial<ITransaction>[] = []
+    console.log(`[DEBUG 0] ${transactionInputs.length}`)
     for (const transactionInput of transactionInputs) {
       const { value, hash, assetAddress, block, network, toAddress } = transactionInput
+      console.log('[DEBUG] 1')
       if (Number(value) === 0) continue
+      console.log('[DEBUG] 2')
       if (!await AssetService.isAssetExisted(assetAddress)) return null
+      console.log('[DEBUG] 3')
+      console.log(transactionInput)
       if (!await WalletService.isAddressExisted(toAddress)) continue
+      console.log('[DEBUG] 4')
       const wallet = await Wallet.findOne({ address: toAddress, network })
       const asset = await Asset.findOne({ address: assetAddress, network })
       const partnerWallet = await PartnerAsset.findOne({
@@ -52,7 +58,9 @@ export class NewTransactionsLoader {
       })
       // prevent create transfer all ethereum transaction if it is from admin transfer to wallet to call aprrove ERC token request
       if (exists(await BlockchainJob.findOne({ hash }))) continue
+      console.log('[DEBUG] 5')
       if (isNil(partnerWallet)) continue
+      console.log('[DEBUG] 6')
       result.push({
         hash,
         partnerId: wallet.partnerId,
