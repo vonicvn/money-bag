@@ -31,7 +31,6 @@ jobs:
       - run: cd server && yarn install
       - run: cd server && yarn tslint
       - run: cd server && yarn coverage-test
-      - run: cd server && yarn report
 
       # save caches
       - save_cache:
