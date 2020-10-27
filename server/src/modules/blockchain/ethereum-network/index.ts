@@ -1,4 +1,4 @@
-import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, Env, EEnvKey, exists } from '../../../global'
+import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, exists } from '../../../global'
 import { IBlockchainNetwork } from '../metadata'
 import { AccountGenerator } from './account-generator'
 import { TransactionsGetter } from './transaction-getter'
