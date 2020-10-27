@@ -95,6 +95,10 @@
     "check-coverage": true,
     "exclude": [
       "src/**/*.test.ts"
-    ]
+    ],
+    "branches": 10,
+    "lines": 10,
+    "functions": 10,
+    "statements": 10
   }
 }

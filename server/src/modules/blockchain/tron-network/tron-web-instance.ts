@@ -1,5 +1,4 @@
-import TronWeb from 'tronweb'
-import { Env, EEnvKey } from '../../../global'
+import { Env, EEnvKey, TronWeb } from '../../../global'
 
 export class TronWebInstance {
   static default = new TronWeb({

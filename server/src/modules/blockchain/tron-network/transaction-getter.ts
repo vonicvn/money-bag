@@ -1,4 +1,3 @@
-import TronWeb from 'tronweb'
 import {
   chain,
 } from 'lodash'
@@ -8,6 +7,7 @@ import {
   EEnvKey,
   EBlockchainNetwork,
   ITransactionInput,
+  TronWeb,
 } from '../../../global'
 
 interface ILog {

@@ -10,11 +10,6 @@
     "strict": true,
     "strictNullChecks": false,
     "baseUrl": "./",
-    "paths": {
-      "*": [
-        "./typescript/*"
-      ]
-    },
     "esModuleInterop": true,
     "skipLibCheck": true
   },
