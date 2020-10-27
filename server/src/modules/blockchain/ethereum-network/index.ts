@@ -27,7 +27,7 @@ export class EthereumNetwork implements IBlockchainNetwork {
     return Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(hash)
   }
 
-  getTokenContract(tokenAddress: string, privateKey: string | null) {
+  getTokenContract(tokenAddress: string, privateKey?: string) {
     const web3 = exists(privateKey) ? Web3InstanceManager.getWeb3ByKey(privateKey) : Web3InstanceManager.defaultWeb3
     return new Erc20Token(tokenAddress, web3)
   }
