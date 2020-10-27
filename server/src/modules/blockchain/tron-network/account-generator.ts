@@ -9,10 +9,10 @@ export class AccountGenerator {
     const node = bip32.fromSeed(seed)
     const child = node.derivePath(`m/44'/195'/${index}'/0/0`)
     const privateKey = child.privateKey.toString('hex')
-    const address = TronWeb.address.fromPrivateKey(privateKey)
+    const publicKey = TronWeb.address.fromPrivateKey(privateKey)
     return {
       privateKey,
-      address,
+      publicKey,
     }
   }
 }

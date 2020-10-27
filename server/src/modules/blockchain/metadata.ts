@@ -26,8 +26,6 @@ export interface IBlockchainNetwork {
 
   getTransactionCount(address: string): Promise<number>
 
-  generateAccount(index: number): Promise<{ address: string, privateKey: string }>
-
   sendTransaction(input: {
     fromPrivateKey: string,
     fromAddress: string

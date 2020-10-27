@@ -8,6 +8,7 @@ import { IBlockchainNetwork } from '../metadata'
 import { TransactionStatusGetter } from './transaction-status-getter'
 import { TransactionsGetter } from './transaction-getter'
 import { TronWebInstance } from './tron-web-instance'
+import { Trc20Token } from './trc20-token'
 
 export class TronNetwork implements IBlockchainNetwork {
   network = EBlockchainNetwork.TRON
@@ -30,18 +31,11 @@ export class TronNetwork implements IBlockchainNetwork {
   }
 
   getTokenContract(tokenAddress: string, privateKey?: string) {
-    const web3 = exists(privateKey) ? Web3InstanceManager.getWeb3ByKey(privateKey) : Web3InstanceManager.defaultWeb3
-    return new Erc20Token(tokenAddress, web3)
+    return new Trc20Token(tokenAddress, privateKey)
   }
 
   async getKeysByIndex(index: number) {
-    const seed = await bip39.mnemonicToSeed(Env.get(EEnvKey.MNEMONIC))
-    const hdwallet = hdkey.fromMasterSeed(seed)
-    const path = `m/44'/60'/0'/0/`
-    const wallet = hdwallet.derivePath(path + index).getWallet()
-    const publicKey = '0x' + wallet.getAddress().toString('hex')
-    const privateKey = wallet.getPrivateKey().toString('hex')
-    return { publicKey, privateKey }
+    return new AccountGenerator().getByIndex(index)
   }
 
   async getTransactionCount(address: string) {
@@ -84,9 +78,5 @@ export class TronNetwork implements IBlockchainNetwork {
 
   getTransaction(hash: string) {
     return Web3InstanceManager.defaultWeb3.eth.getTransaction(hash)
-  }
-
-  generateAccount(index: number) {
-    return new AccountGenerator().getByIndex(index)
   }
 }
