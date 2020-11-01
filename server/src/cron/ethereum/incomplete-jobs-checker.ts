@@ -20,7 +20,7 @@ export class IncompleteJobsChecker {
   constructor(private network: EBlockchainNetwork) {}
 
   async checkAll() {
-    const jobs = await BlockchainJob.findAll({}, builder => {
+    const jobs = await BlockchainJob.findAll({ network: this.network }, builder => {
       return builder
         .whereNotIn('status', [
           EBlockchainJobStatus.SUCCESS,
