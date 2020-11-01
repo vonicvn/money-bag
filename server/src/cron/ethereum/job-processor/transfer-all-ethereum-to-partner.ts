@@ -113,7 +113,6 @@ export class JobExcutor implements IJobExcutor {
     const { privateKey, publicKey } = await this.blockchainNetwork.getKeysByIndex(index)
     const gasPrice = await this.blockchainNetwork.getGasPrice()
     const GAS_LIMIT = 21000
-    const nonce = await this.blockchainNetwork.getTransactionCount(publicKey)
     const { ethereumWallet } = await Partner.findById(partnerId)
     const value = new BigNumber(transaction.value)
       .multipliedBy(Math.pow(10, 18))
@@ -126,8 +125,6 @@ export class JobExcutor implements IJobExcutor {
       fromPrivateKey: privateKey,
       fromAddress: publicKey,
       value,
-      nonce,
-      gasPrice,
       toAddress: ethereumWallet,
     })
     await BlockchainJob.findByIdAndUpdate(

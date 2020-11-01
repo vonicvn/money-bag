@@ -1,4 +1,4 @@
-import { Env, EEnvKey } from '../../../global'
+import { Env, EEnvKey, IBlockchainJob } from '../../../global'
 import { TronWebInstance } from './tron-web-instance'
 
 export class Trc20Token {
@@ -28,5 +28,9 @@ export class Trc20Token {
 
   async getGasLimitForApproving(account: string): Promise<number> {
     return 0
+  }
+
+  public async getCoinAmountForApproving(job: IBlockchainJob): Promise<string> {
+    return '0'
   }
 }

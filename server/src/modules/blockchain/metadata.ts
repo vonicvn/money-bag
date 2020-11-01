@@ -1,4 +1,4 @@
-import { EBlockchainNetwork } from '../../global'
+import { EBlockchainNetwork, IBlockchainJob } from '../../global'
 
 export enum EBlockchainTransactionStatus {
   PENDING = 'PENDING',
@@ -31,8 +31,6 @@ export interface IBlockchainNetwork {
     fromAddress: string
     toAddress: string
     value: string
-    gasPrice: string
-    nonce: number
   }): Promise<string>
 
   getTransaction(hash: string): Promise<{ value: string }>
@@ -55,4 +53,6 @@ interface IRCToken {
   isApproved(walletAddress: string): Promise<boolean>
 
   getGasLimitForApproving(walletAddress: string): Promise<number>
+
+  getCoinAmountForApproving(job: IBlockchainJob): Promise<string>
 }

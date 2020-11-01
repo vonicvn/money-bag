@@ -154,16 +154,14 @@ export class JobExcutor implements IJobExcutor {
     console.log('[START EXCUTE]', job)
 
     const { address: tokenAddress } = await Asset.findById(transaction.assetId)
-    const value = await this.getValueToTransfer(tokenAddress, adminAccount)
-    const gasPrice = await this.blockchainNetwork.getGasPrice()
-    const nonce = await this.blockchainNetwork.getTransactionCount(adminAccount.publicKey)
+    const value = await this.blockchainNetwork
+      .getTokenContract(tokenAddress)
+      .getCoinAmountForApproving(job)
 
     const hash = await this.blockchainNetwork.sendTransaction({
       fromPrivateKey: adminAccount.privateKey,
       fromAddress: adminAccount.publicKey,
       value,
-      nonce,
-      gasPrice,
       toAddress: walletAddress,
     })
     await BlockchainJob.findByIdAndUpdate(

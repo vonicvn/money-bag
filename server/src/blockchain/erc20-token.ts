@@ -6,8 +6,13 @@ import {
 import {
   Env,
   EEnvKey,
+  ITransaction,
+  IBlockchainJob,
+  EBlockchainJobType,
 } from '../global'
 import { Web3InstanceManager } from './ethereum'
+import { Transaction } from 'src/models'
+import BigNumber from 'bignumber.js'
 
 export class Erc20Token {
   tokenContract: Contract
@@ -17,6 +22,17 @@ export class Erc20Token {
       tokenAbi,
       this.tokenAddress
     )
+  }
+
+  public async getCoinAmountForApproving(job: IBlockchainJob): Promise<string> {
+    const gasPrice = await Web3InstanceManager.defaultWeb3.eth.getGasPrice()
+    const transaction = await Transaction.findById(job.transactionId)
+    const gasLimit = await this.getGasLimitForApproving(transaction.walletAddress)
+    return new BigNumber(gasLimit)
+      .multipliedBy(gasPrice)
+      .multipliedBy(1.3)
+      .integerValue(BigNumber.ROUND_CEIL)
+      .toString()
   }
 
   getGasLimitForApproving(account: string): Promise<number> {
@@ -32,7 +48,6 @@ export class Erc20Token {
 
   public async transferFrom(input: { account: string, from: string, to: string, value: string, gasPrice: string }): Promise<string> {
     const { account, from, to, value, gasPrice } = input
-    const nonce = await this.web3.eth.getTransactionCount(account)
     const spender = new this.web3.eth.Contract(
       spenderAbi,
       Env.get(EEnvKey.SPENDER_CONTRACT_ADDRESS)
@@ -46,14 +61,13 @@ export class Erc20Token {
           to,
           value
         )
-        .send({ from: account, gasPrice, nonce })
+        .send({ from: account, gasPrice })
         .on('transactionHash', resolve)
         .on('error', reject)
     })
   }
 
   public async approve(account: string, gasPrice: number): Promise<string> {
-    const nonce = await this.web3.eth.getTransactionCount(account)
     return new Promise<string>((resolve, reject) => {
       return this
         .tokenContract
@@ -62,7 +76,7 @@ export class Erc20Token {
           Env.get(EEnvKey.SPENDER_CONTRACT_ADDRESS),
           '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
         )
-        .send({ from: account, gasPrice, nonce })
+        .send({ from: account, gasPrice })
         .on('transactionHash', resolve)
         .on('error', reject)
     })

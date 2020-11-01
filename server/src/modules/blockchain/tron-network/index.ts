@@ -48,7 +48,6 @@ export class TronNetwork implements IBlockchainNetwork {
     toAddress: string
     value: string
     gasPrice: string
-    nonce: number
   }): Promise<string> {
     const {
       fromPrivateKey,
@@ -56,7 +55,6 @@ export class TronNetwork implements IBlockchainNetwork {
       toAddress,
       value,
       gasPrice,
-      nonce,
     } = input
     const web3 = Web3InstanceManager.getWeb3ByKey(fromPrivateKey)
     return new Promise<string>((resolve, reject) => {
@@ -65,7 +63,6 @@ export class TronNetwork implements IBlockchainNetwork {
         value,
         to: toAddress,
         gasPrice,
-        nonce,
       })
         .on('transactionHash', resolve)
         .on('error', reject)
