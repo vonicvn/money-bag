@@ -1,4 +1,4 @@
-import { EBlockchainNetwork, IBlockchainJob } from '../../global'
+import { EBlockchainNetwork, IBlockchainJob, IPartner } from '../../global'
 
 export enum EBlockchainTransactionStatus {
   PENDING = 'PENDING',
@@ -34,6 +34,8 @@ export interface IBlockchainNetwork {
   }): Promise<string>
 
   getTransaction(hash: string): Promise<{ value: string }>
+
+  getSafe(partner: IPartner): string
 }
 
 export interface ITransactionInput {

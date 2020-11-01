@@ -1,4 +1,4 @@
-import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, exists } from '../../../global'
+import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, exists, IPartner } from '../../../global'
 import { IBlockchainNetwork } from '../metadata'
 import { AccountGenerator } from './account-generator'
 import { TransactionsGetter } from './transaction-getter'
@@ -70,4 +70,6 @@ export class EthereumNetwork implements IBlockchainNetwork {
   getTransaction(hash: string) {
     return Web3InstanceManager.defaultWeb3.eth.getTransaction(hash)
   }
+
+  getSafe(partner: IPartner) { return partner.ethereumWallet }
 }

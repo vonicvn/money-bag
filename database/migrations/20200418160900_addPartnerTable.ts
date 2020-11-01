@@ -9,6 +9,7 @@ export async function up(knex: Knex): Promise<void> {
       .unique()
     table.string('ethereum_wallet', 256)
     table.string('bitcoin_wallet', 256)
+    table.string('tron_wallet', 256)
     table
       .string('api_key', 256)
       .unique()

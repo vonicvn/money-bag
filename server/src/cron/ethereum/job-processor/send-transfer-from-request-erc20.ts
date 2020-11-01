@@ -110,7 +110,7 @@ export class JobExcutor implements IJobExcutor {
     const hash = await token.transferFrom({
       account: adminAccount.publicKey,
       from: transaction.walletAddress,
-      to: (await Partner.findById(transaction.partnerId)).ethereumWallet,
+      to: this.blockchainNetwork.getSafe(await Partner.findById(transaction.partnerId)),
       value: new BigNumber(transaction.value).multipliedBy(new BigNumber(Math.pow(10, decimals))).toString(),
       gasPrice,
     })

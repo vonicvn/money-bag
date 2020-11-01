@@ -7,6 +7,7 @@ export interface IPartner extends ITimed {
   isAdmin: boolean
   ethereumWallet?: string
   bitcoinWallet?: string
+  tronWallet?: string
   status: 'ENABLED' | 'DISABLED'
 }
 

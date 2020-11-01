@@ -1,5 +1,5 @@
 import { isNil } from 'lodash'
-import { Web3InstanceManager, EBlockchainNetwork, Env } from '../../../global'
+import { Web3InstanceManager, EBlockchainNetwork, Env, IPartner } from '../../../global'
 import { AccountGenerator } from './account-generator'
 import { EBlockchainTransactionStatus, IBlockchainNetwork } from '../metadata'
 import { TransactionsGetter } from './transaction-getter'
@@ -80,4 +80,6 @@ export class TronNetwork implements IBlockchainNetwork {
   getTransaction(hash: string) {
     return Web3InstanceManager.defaultWeb3.eth.getTransaction(hash)
   }
+
+  getSafe(partner: IPartner) { return partner.tronWallet }
 }
