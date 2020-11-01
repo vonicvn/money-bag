@@ -1,3 +1,4 @@
+import { isNil } from 'lodash'
 import { Web3InstanceManager, EBlockchainNetwork } from '../../../global'
 import { AccountGenerator } from './account-generator'
 import { IBlockchainNetwork } from '../metadata'
@@ -22,8 +23,13 @@ export class TronNetwork implements IBlockchainNetwork {
     return new TransactionStatusGetter().get(hash)
   }
 
-  getTransactionReceipt(hash: string) {
-    return Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(hash)
+  async getTransactionReceipt(hash: string) {
+    const response = await TronWebInstance.default.trx.getTransactionInfo(hash)
+    if (isNil(response.receipt)) return null
+    const isSuccess = isNil(response.receipt.result) || response.receipt.result === 'SUCCESS'
+    return isSuccess ?
+      { status: true, blockNumber: response.blockNumber } :
+      { status: false, blockNumber: response.blockNumber }
   }
 
   getTokenContract(tokenAddress: string, privateKey?: string) {
@@ -42,31 +48,26 @@ export class TronNetwork implements IBlockchainNetwork {
     return Web3InstanceManager.defaultWeb3.eth.getGasPrice()
   }
 
-  sendTransaction(input: {
+  async sendTransaction(input: {
     fromPrivateKey: string
     fromAddress: string
     toAddress: string
     value: string
-    gasPrice: string
   }): Promise<string> {
     const {
       fromPrivateKey,
       fromAddress,
       toAddress,
       value,
-      gasPrice,
     } = input
-    const web3 = Web3InstanceManager.getWeb3ByKey(fromPrivateKey)
-    return new Promise<string>((resolve, reject) => {
-      web3.eth.sendTransaction({
-        from: fromAddress,
-        value,
-        to: toAddress,
-        gasPrice,
-      })
-        .on('transactionHash', resolve)
-        .on('error', reject)
-    })
+    const tronWeb = TronWebInstance.getByPrivateKey(fromPrivateKey)
+    const transaction = await tronWeb.transactionBuilder.sendTrx(toAddress, value, fromAddress)
+    const signed = await tronWeb.trx.sign(
+      transaction,
+      fromPrivateKey
+    )
+    await tronWeb.trx.sendRawTransaction(signed)
+    return transaction.txID
   }
 
   getTransaction(hash: string) {

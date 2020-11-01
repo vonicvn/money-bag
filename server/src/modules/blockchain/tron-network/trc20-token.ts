@@ -16,11 +16,11 @@ export class Trc20Token {
 
   public async isApproved(walletAddress: string) {
     const contract = await this.getTokenContract()
-    const allowance = await contract.allowance(
+    const { remaining } = await contract.allowance(
       walletAddress,
       Env.get(EEnvKey.TRON_SPENDER_CONTRACT_ADDRESS)
-    )
-    return Number(allowance) !== 0
+    ).call()
+    return remaining.toNumber() !== 0
   }
 
   public async approve(_: IBlockchainJob): Promise<string> {
@@ -47,6 +47,6 @@ export class Trc20Token {
   }
 
   public async getCoinAmountForApproving(job: IBlockchainJob): Promise<string> {
-    return '22561'
+    return '225610'
   }
 }

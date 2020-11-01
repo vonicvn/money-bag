@@ -16,7 +16,7 @@ export interface IBlockchainNetwork {
 
   getTransactionStatus(hash: string): Promise<EBlockchainTransactionStatus>
 
-  getTransactionReceipt(hash: string): Promise<{ blockNumber: number, status: boolean }>
+  getTransactionReceipt(hash: string): Promise<{ blockNumber: number, status: boolean } | null>
 
   getTokenContract(tokenAddress: string, privateKey?: string): IRCToken
 
