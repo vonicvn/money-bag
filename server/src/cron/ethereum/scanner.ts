@@ -10,7 +10,7 @@ export class Scanner extends OneAtMomemnt {
   }
 
   protected async do() {
-    await new NewTransactionsLoader(this.network).load()
+    // await new NewTransactionsLoader(this.network).load()
     await new NewJobsCreator(this.network).create()
     await new IncompleteJobsChecker(this.network).checkAll()
   }

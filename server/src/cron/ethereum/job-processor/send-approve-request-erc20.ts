@@ -1,5 +1,4 @@
 import { isNil } from 'lodash'
-import BigNumber from 'bignumber.js'
 import {
   IJobProcessor,
   IJobChecker,
@@ -29,7 +28,7 @@ export class JobFinisher implements IJobFinisher {
     if (job.status === EBlockchainJobStatus.SKIPPED) this.finishSkippedJob(job)
     const newJob = await BlockchainJob.create({
       transactionId: job.transactionId,
-      network: EBlockchainNetwork.ETHEREUM,
+      network: this.blockchainNetwork.network,
       status: EBlockchainJobStatus.JUST_CREATED,
       type: EBlockchainJobType.SEND_TRANSFER_FROM_REQUEST_ERC20,
     })

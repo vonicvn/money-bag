@@ -9,8 +9,8 @@ function createJob(time: string, cb: CronCommand, runOnInit = false) {
 
 export async function registerCronJobs() {
   if (Env.get(EEnvKey.STOP_SCAN) === 'true') return
-  const ethereumScanner = new EthereumScanner(EBlockchainNetwork.ETHEREUM)
-  createJob('17 * * * * *', () => ethereumScanner.process(), true)
+  // const ethereumScanner = new EthereumScanner(EBlockchainNetwork.ETHEREUM)
+  // createJob('17 * * * * *', () => ethereumScanner.process(), true)
 
   const tronScanner = new EthereumScanner(EBlockchainNetwork.TRON)
   createJob('*/10 * * * * *', () => tronScanner.process(), true)

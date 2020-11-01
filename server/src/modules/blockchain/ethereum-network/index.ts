@@ -20,6 +20,7 @@ export class EthereumNetwork implements IBlockchainNetwork {
   }
 
   getTransactionReceipt(hash: string) {
+    console.log({ etherHash: hash })
     return Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(hash)
   }
 

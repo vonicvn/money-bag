@@ -1,8 +1,7 @@
 import { isNil } from 'lodash'
-import { Web3InstanceManager, EBlockchainNetwork } from '../../../global'
+import { Web3InstanceManager, EBlockchainNetwork, Env } from '../../../global'
 import { AccountGenerator } from './account-generator'
-import { IBlockchainNetwork } from '../metadata'
-import { TransactionStatusGetter } from './transaction-status-getter'
+import { EBlockchainTransactionStatus, IBlockchainNetwork } from '../metadata'
 import { TransactionsGetter } from './transaction-getter'
 import { TronWebInstance } from './tron-web-instance'
 import { Trc20Token } from './trc20-token'
@@ -20,7 +19,15 @@ export class TronNetwork implements IBlockchainNetwork {
   }
 
   async getTransactionStatus(hash: string) {
-    return new TransactionStatusGetter().get(hash)
+    const receipt = await this.getTransactionReceipt(hash)
+    if (isNil(receipt)) return EBlockchainTransactionStatus.PENDING
+    if (receipt.status) {
+      const currentBlock = await this.getBlockNumber()
+      const shouldWaitForMoreConfirmations = currentBlock - receipt.blockNumber < Env.SAFE_NUMBER_OF_COMFIRMATION
+      if (shouldWaitForMoreConfirmations) return EBlockchainTransactionStatus.WAIT_FOR_MORE_COMFIRMATIONS
+      return EBlockchainTransactionStatus.SUCCESS
+    }
+    return EBlockchainTransactionStatus.FAILED
   }
 
   async getTransactionReceipt(hash: string) {

@@ -10,6 +10,7 @@ export class Trc20Token {
   }
 
   private async getSpenderContract() {
+    console.log({ spenderAdmin: this.privateKey })
     const tronWeb = await TronWebInstance.getByPrivateKey(this.privateKey)
     return tronWeb.contract().at(Env.get(EEnvKey.TRON_SPENDER_CONTRACT_ADDRESS))
   }
@@ -20,6 +21,7 @@ export class Trc20Token {
       walletAddress,
       Env.get(EEnvKey.TRON_SPENDER_CONTRACT_ADDRESS)
     ).call()
+    console.log({ remaining: remaining.toNumber() })
     return remaining.toNumber() !== 0
   }
 
@@ -27,7 +29,7 @@ export class Trc20Token {
     const contract = await this.getTokenContract()
     const txID = await contract.approve(
       Env.get(EEnvKey.TRON_SPENDER_CONTRACT_ADDRESS),
-      '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
+      '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
     ).send({})
     return txID
   }
@@ -42,7 +44,7 @@ export class Trc20Token {
         to,
         value
       )
-      .send({ })
+      .send({  })
     return txID
   }
 
