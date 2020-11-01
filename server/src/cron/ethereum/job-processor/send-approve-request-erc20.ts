@@ -1,5 +1,4 @@
 import { isNil } from 'lodash'
-import BigNumber from 'bignumber.js'
 import {
   IJobProcessor,
   IJobChecker,
@@ -12,7 +11,6 @@ import {
   BlockchainJob,
   EBlockchainJobType,
   EBlockchainJobStatus,
-  EBlockchainNetwork,
   IBlockchainJob,
   Transaction,
   Wallet,
@@ -29,7 +27,7 @@ export class JobFinisher implements IJobFinisher {
     if (job.status === EBlockchainJobStatus.SKIPPED) this.finishSkippedJob(job)
     const newJob = await BlockchainJob.create({
       transactionId: job.transactionId,
-      network: EBlockchainNetwork.ETHEREUM,
+      network: this.blockchainNetwork.network,
       status: EBlockchainJobStatus.JUST_CREATED,
       type: EBlockchainJobType.SEND_TRANSFER_FROM_REQUEST_ERC20,
     })
@@ -122,11 +120,10 @@ export class JobExcutor implements IJobExcutor {
       return
     }
     const { index } = await Wallet.findById(transaction.walletId)
-    const { privateKey, publicKey } = await this.blockchainNetwork.getKeysByIndex(index)
-    const gasPrice = await this.getGasPrice(job)
+    const { privateKey } = await this.blockchainNetwork.getKeysByIndex(index)
     const hash = await this.blockchainNetwork
       .getTokenContract(transaction.assetAddress, privateKey)
-      .approve(publicKey, gasPrice)
+      .approve(job)
     await BlockchainJob.findByIdAndUpdate(
       job.blockchainJobId,
       {
@@ -135,23 +132,6 @@ export class JobExcutor implements IJobExcutor {
         hash,
       }
     )
-  }
-
-  private async getGasPrice(job: IBlockchainJob) {
-    const transaction = await Transaction.findById(job.transactionId)
-    const gasLimitForApproveRequest = await this
-      .blockchainNetwork
-      .getTokenContract(transaction.assetAddress)
-      .getGasLimitForApproving(transaction.walletAddress)
-    const { hash } = await BlockchainJob.findOne({
-      transactionId: job.transactionId,
-      type: EBlockchainJobType.TRANSFER_ETHEREUM_TO_SEND_APPROVE_REQUEST_ERC20,
-    })
-    const { value } = await this.blockchainNetwork.getTransaction(hash)
-    return new BigNumber(value)
-      .dividedBy(gasLimitForApproveRequest)
-      .integerValue(BigNumber.ROUND_DOWN)
-      .toNumber()
   }
 }
 

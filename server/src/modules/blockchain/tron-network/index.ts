@@ -1,13 +1,10 @@
-import * as bip39 from 'bip39'
-// tslint:disable-next-line: no-require-imports
-const { hdkey } = require('ethereumjs-wallet')
-
-import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, Env, EEnvKey, exists } from '../../../global'
+import { isNil } from 'lodash'
+import { Web3InstanceManager, EBlockchainNetwork, Env } from '../../../global'
 import { AccountGenerator } from './account-generator'
-import { IBlockchainNetwork } from '../metadata'
-import { TransactionStatusGetter } from './transaction-status-getter'
+import { EBlockchainTransactionStatus, IBlockchainNetwork } from '../metadata'
 import { TransactionsGetter } from './transaction-getter'
 import { TronWebInstance } from './tron-web-instance'
+import { Trc20Token } from './trc20-token'
 
 export class TronNetwork implements IBlockchainNetwork {
   network = EBlockchainNetwork.TRON
@@ -22,26 +19,32 @@ export class TronNetwork implements IBlockchainNetwork {
   }
 
   async getTransactionStatus(hash: string) {
-    return new TransactionStatusGetter().get(hash)
+    const receipt = await this.getTransactionReceipt(hash)
+    if (isNil(receipt)) return EBlockchainTransactionStatus.PENDING
+    if (receipt.status) {
+      const currentBlock = await this.getBlockNumber()
+      const shouldWaitForMoreConfirmations = currentBlock - receipt.blockNumber < Env.SAFE_NUMBER_OF_COMFIRMATION
+      if (shouldWaitForMoreConfirmations) return EBlockchainTransactionStatus.WAIT_FOR_MORE_COMFIRMATIONS
+      return EBlockchainTransactionStatus.SUCCESS
+    }
+    return EBlockchainTransactionStatus.FAILED
   }
 
-  getTransactionReceipt(hash: string) {
-    return Web3InstanceManager.defaultWeb3.eth.getTransactionReceipt(hash)
+  async getTransactionReceipt(hash: string) {
+    const response = await TronWebInstance.default.trx.getTransactionInfo(hash)
+    if (isNil(response.receipt)) return null
+    const isSuccess = isNil(response.receipt.result) || response.receipt.result === 'SUCCESS'
+    return isSuccess ?
+      { status: true, blockNumber: response.blockNumber } :
+      { status: false, blockNumber: response.blockNumber }
   }
 
   getTokenContract(tokenAddress: string, privateKey?: string) {
-    const web3 = exists(privateKey) ? Web3InstanceManager.getWeb3ByKey(privateKey) : Web3InstanceManager.defaultWeb3
-    return new Erc20Token(tokenAddress, web3)
+    return new Trc20Token(tokenAddress, privateKey)
   }
 
   async getKeysByIndex(index: number) {
-    const seed = await bip39.mnemonicToSeed(Env.get(EEnvKey.MNEMONIC))
-    const hdwallet = hdkey.fromMasterSeed(seed)
-    const path = `m/44'/60'/0'/0/`
-    const wallet = hdwallet.derivePath(path + index).getWallet()
-    const publicKey = '0x' + wallet.getAddress().toString('hex')
-    const privateKey = wallet.getPrivateKey().toString('hex')
-    return { publicKey, privateKey }
+    return new AccountGenerator().getByIndex(index)
   }
 
   async getTransactionCount(address: string) {
@@ -52,41 +55,29 @@ export class TronNetwork implements IBlockchainNetwork {
     return Web3InstanceManager.defaultWeb3.eth.getGasPrice()
   }
 
-  sendTransaction(input: {
+  async sendTransaction(input: {
     fromPrivateKey: string
     fromAddress: string
     toAddress: string
     value: string
-    gasPrice: string
-    nonce: number
   }): Promise<string> {
     const {
       fromPrivateKey,
       fromAddress,
       toAddress,
       value,
-      gasPrice,
-      nonce,
     } = input
-    const web3 = Web3InstanceManager.getWeb3ByKey(fromPrivateKey)
-    return new Promise<string>((resolve, reject) => {
-      web3.eth.sendTransaction({
-        from: fromAddress,
-        value,
-        to: toAddress,
-        gasPrice,
-        nonce,
-      })
-        .on('transactionHash', resolve)
-        .on('error', reject)
-    })
+    const tronWeb = TronWebInstance.getByPrivateKey(fromPrivateKey)
+    const transaction = await tronWeb.transactionBuilder.sendTrx(toAddress, value, fromAddress)
+    const signed = await tronWeb.trx.sign(
+      transaction,
+      fromPrivateKey
+    )
+    await tronWeb.trx.sendRawTransaction(signed)
+    return transaction.txID
   }
 
   getTransaction(hash: string) {
     return Web3InstanceManager.defaultWeb3.eth.getTransaction(hash)
-  }
-
-  generateAccount(index: number) {
-    return new AccountGenerator().getByIndex(index)
   }
 }

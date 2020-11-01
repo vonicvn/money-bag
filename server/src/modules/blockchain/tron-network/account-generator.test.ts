@@ -11,7 +11,7 @@ describe(TEST_TITLE, () => {
       account,
       {
         privateKey: 'd4da3b52009e596222e592804482663255a18267bdb30023a9b316d611a14bd8',
-        address: 'TSbCqgnJ8a81DFVKHZYgsRTZ7Gaa7wGcWQ',
+        publicKey: 'TSbCqgnJ8a81DFVKHZYgsRTZ7Gaa7wGcWQ',
       }
     )
   })

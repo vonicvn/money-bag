@@ -1,8 +1,4 @@
-import * as bip39 from 'bip39'
-// tslint:disable-next-line: no-require-imports
-const { hdkey } = require('ethereumjs-wallet')
-
-import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, Env, EEnvKey, exists } from '../../../global'
+import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, exists } from '../../../global'
 import { IBlockchainNetwork } from '../metadata'
 import { AccountGenerator } from './account-generator'
 import { TransactionsGetter } from './transaction-getter'
@@ -33,13 +29,7 @@ export class EthereumNetwork implements IBlockchainNetwork {
   }
 
   async getKeysByIndex(index: number) {
-    const seed = await bip39.mnemonicToSeed(Env.get(EEnvKey.MNEMONIC))
-    const hdwallet = hdkey.fromMasterSeed(seed)
-    const path = `m/44'/60'/0'/0/`
-    const wallet = hdwallet.derivePath(path + index).getWallet()
-    const publicKey = '0x' + wallet.getAddress().toString('hex')
-    const privateKey = wallet.getPrivateKey().toString('hex')
-    return { publicKey, privateKey }
+    return new AccountGenerator().getByIndex(index)
   }
 
   async getTransactionCount(address: string) {
@@ -56,7 +46,6 @@ export class EthereumNetwork implements IBlockchainNetwork {
     toAddress: string
     value: string
     gasPrice: string
-    nonce: number
   }): Promise<string> {
     const {
       fromPrivateKey,
@@ -64,7 +53,6 @@ export class EthereumNetwork implements IBlockchainNetwork {
       toAddress,
       value,
       gasPrice,
-      nonce,
     } = input
     const web3 = Web3InstanceManager.getWeb3ByKey(fromPrivateKey)
     return new Promise<string>((resolve, reject) => {
@@ -73,7 +61,6 @@ export class EthereumNetwork implements IBlockchainNetwork {
         value,
         to: toAddress,
         gasPrice,
-        nonce,
       })
         .on('transactionHash', resolve)
         .on('error', reject)
@@ -82,9 +69,5 @@ export class EthereumNetwork implements IBlockchainNetwork {
 
   getTransaction(hash: string) {
     return Web3InstanceManager.defaultWeb3.eth.getTransaction(hash)
-  }
-
-  generateAccount(index: number) {
-    return new AccountGenerator().getByIndex(index)
   }
 }

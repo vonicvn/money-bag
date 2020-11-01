@@ -1,5 +1,4 @@
 import { isNil, map } from 'lodash'
-import BigNumber from 'bignumber.js'
 import {
   IJobProcessor,
   IJobCreator,
@@ -14,7 +13,6 @@ import {
   BlockchainJob,
   EBlockchainJobType,
   EBlockchainJobStatus,
-  EBlockchainNetwork,
   IBlockchainJob,
   Transaction,
   Wallet,
@@ -24,7 +22,6 @@ import {
   AdminAccount,
   Asset,
   IBlockchainNetwork,
-  IAdminAccount,
 } from '../../../global'
 
 export class JobCreator implements IJobCreator {
@@ -33,7 +30,7 @@ export class JobCreator implements IJobCreator {
   async create({ transaction }: IBlockchainJobInput) {
     const job = await BlockchainJob.create({
       transactionId: transaction.transactionId,
-      network: EBlockchainNetwork.ETHEREUM,
+      network: this.blockchainNetwork.network,
       status: EBlockchainJobStatus.JUST_CREATED,
       type: EBlockchainJobType.TRANSFER_ETHEREUM_TO_SEND_APPROVE_REQUEST_ERC20,
     })
@@ -51,7 +48,7 @@ export class JobFinisher implements IJobFinisher {
     const { walletId } = await Transaction.findById(job.transactionId)
     const newJob = await BlockchainJob.create({
       transactionId: job.transactionId,
-      network: EBlockchainNetwork.ETHEREUM,
+      network: this.blockchainNetwork.network,
       status: EBlockchainJobStatus.JUST_CREATED,
       type: EBlockchainJobType.SEND_APPROVE_REQUEST_ERC20,
       walletId,
@@ -132,9 +129,7 @@ export class JobExcutor implements IJobExcutor {
     const transaction = await Transaction.findOne({ transactionId: job.transactionId })
     const { address: walletAddress } = await Wallet.findById(transaction.walletId)
     const adminAccount = await this.getAdminAccount(transaction.partnerId)
-    if (isNil(adminAccount)) {
-      return
-    }
+    if (isNil(adminAccount)) return
     const isApproved = await this.blockchainNetwork
       .getTokenContract(transaction.assetAddress, adminAccount.privateKey)
       .isApproved(transaction.walletAddress)
@@ -154,16 +149,14 @@ export class JobExcutor implements IJobExcutor {
     console.log('[START EXCUTE]', job)
 
     const { address: tokenAddress } = await Asset.findById(transaction.assetId)
-    const value = await this.getValueToTransfer(tokenAddress, adminAccount)
-    const gasPrice = await this.blockchainNetwork.getGasPrice()
-    const nonce = await this.blockchainNetwork.getTransactionCount(adminAccount.publicKey)
+    const value = await this.blockchainNetwork
+      .getTokenContract(tokenAddress)
+      .getCoinAmountForApproving(job)
 
     const hash = await this.blockchainNetwork.sendTransaction({
       fromPrivateKey: adminAccount.privateKey,
       fromAddress: adminAccount.publicKey,
       value,
-      nonce,
-      gasPrice,
       toAddress: walletAddress,
     })
     await BlockchainJob.findByIdAndUpdate(
@@ -177,26 +170,11 @@ export class JobExcutor implements IJobExcutor {
     )
   }
 
-  private async getValueToTransfer(tokenAddress: string, adminAccount: IAdminAccount) {
-    const gasLimitForApproveRequest = await this
-      .blockchainNetwork
-      .getTokenContract(tokenAddress, adminAccount.privateKey)
-      .getGasLimitForApproving(adminAccount.publicKey)
-    const currentGasPrice = await this.blockchainNetwork.getGasPrice()
-    const result = new BigNumber(gasLimitForApproveRequest)
-      .multipliedBy(currentGasPrice)
-      .multipliedBy(1.3)
-      .integerValue(BigNumber.ROUND_CEIL)
-      .toNumber()
-
-    return String(result)
-  }
-
   private async getAdminAccount(partnerId: number) {
     const busyAccounts = await BlockchainJob.findAll(
       {
         status: EBlockchainJobStatus.PROCESSING,
-        network: EBlockchainNetwork.ETHEREUM,
+        network: this.blockchainNetwork.network,
       },
       builder => builder
         .whereNot({ adminAccountId: null })
@@ -206,7 +184,7 @@ export class JobExcutor implements IJobExcutor {
     return AdminAccount.findOne(
       {
         isActive: true,
-        network: EBlockchainNetwork.ETHEREUM,
+        network: this.blockchainNetwork.network,
         partnerId,
       },
       builder => builder.whereNotIn('adminAccountId', map(busyAccounts, 'adminAccountId'))

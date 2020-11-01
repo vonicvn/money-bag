@@ -37,7 +37,6 @@ export class NewJobsCreator {
 
   private async getJobProcessor(transaction: ITransaction): Promise<IJobProcessor> {
     if (transaction.assetId === EDefaultAssetId.ETH) return new TransferAllEthereumProcessor(this.blockchainModule)
-    if (transaction.assetId === EDefaultAssetId.BTC) return new TransferAllEthereumProcessor(this.blockchainModule)
     return this.getJobProcessorForErc20(transaction)
   }
 

@@ -32,8 +32,8 @@ export class WalletService {
   }
 
   private async getAddressAtIndex(index: number, network: EBlockchainNetwork) {
-    const account = await BlockchainModule.get(network).generateAccount(index)
-    return account.address
+    const account = await BlockchainModule.get(network).getKeysByIndex(index)
+    return account.publicKey
   }
 
   private cacheAddressOnRedis(address: string) {
