@@ -48,7 +48,7 @@ export interface ITransactionInput {
 interface IRCToken {
   transferFrom(input: { account: string, from: string, to: string, value: string, gasPrice: string }): Promise<string>
 
-  approve(account: string, gasPrice: number): Promise<string>
+  approve(job: IBlockchainJob): Promise<string>
 
   isApproved(walletAddress: string): Promise<boolean>
 

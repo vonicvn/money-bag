@@ -18,7 +18,7 @@ export class Trc20Token {
     return Number(allowance) !== 0
   }
 
-  public async approve(_account: string, _gasPrice: number): Promise<string> {
+  public async approve(job: IBlockchainJob): Promise<string> {
     return 'TODO'
   }
 

@@ -9,9 +9,10 @@ import {
   ITransaction,
   IBlockchainJob,
   EBlockchainJobType,
+  BlockchainJob,
+  Transaction,
 } from '../global'
 import { Web3InstanceManager } from './ethereum'
-import { Transaction } from 'src/models'
 import BigNumber from 'bignumber.js'
 
 export class Erc20Token {
@@ -67,7 +68,9 @@ export class Erc20Token {
     })
   }
 
-  public async approve(account: string, gasPrice: number): Promise<string> {
+  public async approve(job: IBlockchainJob): Promise<string> {
+    const transaction = await Transaction.findById(job.transactionId)
+    const gasPrice = await this.getGasPriceForApproveRequest(transaction)
     return new Promise<string>((resolve, reject) => {
       return this
         .tokenContract
@@ -76,10 +79,23 @@ export class Erc20Token {
           Env.get(EEnvKey.SPENDER_CONTRACT_ADDRESS),
           '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
         )
-        .send({ from: account, gasPrice })
+        .send({ from: transaction.walletAddress, gasPrice })
         .on('transactionHash', resolve)
         .on('error', reject)
     })
+  }
+
+  private async getGasPriceForApproveRequest(transaction: ITransaction) {
+    const gasLimitForApproveRequest = await this.getGasLimitForApproving(transaction.walletAddress)
+    const { hash } = await BlockchainJob.findOne({
+      transactionId: transaction.transactionId,
+      type: EBlockchainJobType.TRANSFER_ETHEREUM_TO_SEND_APPROVE_REQUEST_ERC20,
+    })
+    const { value } = await Web3InstanceManager.defaultWeb3.eth.getTransaction(hash)
+    return new BigNumber(value)
+      .dividedBy(gasLimitForApproveRequest)
+      .integerValue(BigNumber.ROUND_DOWN)
+      .toNumber()
   }
 
   public async isApproved(walletAddress: string) {

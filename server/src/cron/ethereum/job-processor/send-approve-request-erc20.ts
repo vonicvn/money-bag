@@ -122,11 +122,10 @@ export class JobExcutor implements IJobExcutor {
       return
     }
     const { index } = await Wallet.findById(transaction.walletId)
-    const { privateKey, publicKey } = await this.blockchainNetwork.getKeysByIndex(index)
-    const gasPrice = await this.getGasPrice(job)
+    const { privateKey } = await this.blockchainNetwork.getKeysByIndex(index)
     const hash = await this.blockchainNetwork
       .getTokenContract(transaction.assetAddress, privateKey)
-      .approve(publicKey, gasPrice)
+      .approve(job)
     await BlockchainJob.findByIdAndUpdate(
       job.blockchainJobId,
       {
