@@ -1,3 +1,4 @@
+import { defaultTo } from 'lodash'
 import { Env, EEnvKey, IBlockchainJob } from '../../../global'
 import { TronWebInstance } from './tron-web-instance'
 
@@ -16,11 +17,12 @@ export class Trc20Token {
 
   public async isApproved(walletAddress: string) {
     const contract = await this.getTokenContract()
-    const { remaining } = await contract.allowance(
+    const response = await contract.allowance(
       walletAddress,
       Env.get(EEnvKey.TRON_SPENDER_CONTRACT_ADDRESS)
     ).call()
-    return remaining.toNumber() !== 0
+
+    return defaultTo(response.remaining, response).toNumber() !== 0
   }
 
   public async approve(_: IBlockchainJob): Promise<string> {

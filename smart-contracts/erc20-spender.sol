@@ -27,7 +27,7 @@ contract Manageable {
 
 contract Erc20Spender is Manageable {
 
-    function transferFrom(address tokenAddress, address from, address to, uint256 value) public {
+    function transferFrom(address tokenAddress, address from, address to, uint256 value) public onlyAdmins {
         ERC20Token(tokenAddress).transferFrom(from, to, value);
     }
     
