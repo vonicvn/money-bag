@@ -175,21 +175,6 @@ export class JobExcutor implements IJobExcutor {
     )
   }
 
-  private async getValueToTransfer(tokenAddress: string, adminAccount: IAdminAccount) {
-    const gasLimitForApproveRequest = await this
-      .blockchainNetwork
-      .getTokenContract(tokenAddress, adminAccount.privateKey)
-      .getGasLimitForApproving(adminAccount.publicKey)
-    const currentGasPrice = await this.blockchainNetwork.getGasPrice()
-    const result = new BigNumber(gasLimitForApproveRequest)
-      .multipliedBy(currentGasPrice)
-      .multipliedBy(1.3)
-      .integerValue(BigNumber.ROUND_CEIL)
-      .toNumber()
-
-    return String(result)
-  }
-
   private async getAdminAccount(partnerId: number) {
     const busyAccounts = await BlockchainJob.findAll(
       {

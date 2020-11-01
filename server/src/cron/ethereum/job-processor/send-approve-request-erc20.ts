@@ -135,23 +135,6 @@ export class JobExcutor implements IJobExcutor {
       }
     )
   }
-
-  private async getGasPrice(job: IBlockchainJob) {
-    const transaction = await Transaction.findById(job.transactionId)
-    const gasLimitForApproveRequest = await this
-      .blockchainNetwork
-      .getTokenContract(transaction.assetAddress)
-      .getGasLimitForApproving(transaction.walletAddress)
-    const { hash } = await BlockchainJob.findOne({
-      transactionId: job.transactionId,
-      type: EBlockchainJobType.TRANSFER_ETHEREUM_TO_SEND_APPROVE_REQUEST_ERC20,
-    })
-    const { value } = await this.blockchainNetwork.getTransaction(hash)
-    return new BigNumber(value)
-      .dividedBy(gasLimitForApproveRequest)
-      .integerValue(BigNumber.ROUND_DOWN)
-      .toNumber()
-  }
 }
 
 export class JobProcessor implements IJobProcessor {

@@ -36,7 +36,7 @@ export class Erc20Token {
       .toString()
   }
 
-  getGasLimitForApproving(account: string): Promise<number> {
+  private getGasLimitForApproving(account: string): Promise<number> {
     return this
       .tokenContract
       .methods

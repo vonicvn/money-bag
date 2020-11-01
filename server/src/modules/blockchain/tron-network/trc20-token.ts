@@ -26,10 +26,6 @@ export class Trc20Token {
     return 'TODO'
   }
 
-  async getGasLimitForApproving(account: string): Promise<number> {
-    return 0
-  }
-
   public async getCoinAmountForApproving(job: IBlockchainJob): Promise<string> {
     return '0'
   }

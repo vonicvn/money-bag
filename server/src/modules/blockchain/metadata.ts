@@ -52,7 +52,5 @@ interface IRCToken {
 
   isApproved(walletAddress: string): Promise<boolean>
 
-  getGasLimitForApproving(walletAddress: string): Promise<number>
-
   getCoinAmountForApproving(job: IBlockchainJob): Promise<string>
 }
