@@ -22,7 +22,7 @@ export class Trc20Token {
       Env.get(EEnvKey.TRON_SPENDER_CONTRACT_ADDRESS)
     ).call()
 
-    return defaultTo(response.remaining, response).toNumber() !== 0
+    return defaultTo(response.remaining, response).toString() !== '0'
   }
 
   public async approve(_: IBlockchainJob): Promise<string> {
