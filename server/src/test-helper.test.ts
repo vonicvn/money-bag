@@ -1,5 +1,14 @@
 import td from 'testdouble'
-import { knex, Partner, Wallet, Asset, Transaction, Redis } from './global'
+import {
+  knex,
+  Partner,
+  Wallet,
+  Asset,
+  Transaction,
+  BlockchainJob,
+  Redis,
+  Withdrawal,
+} from './global'
 import { RedisBoostrap } from './bootstrap'
 
 beforeEach(async () => {
@@ -9,6 +18,8 @@ beforeEach(async () => {
   // keep 3 initial asset
   await Asset.deleteMany({}, builder => builder.whereNotIn('assetId', [1, 2, 3]))
   await Transaction.deleteMany({})
+  await Withdrawal.deleteMany({})
+  await BlockchainJob.deleteMany({})
   await Redis.flushall()
   await new RedisBoostrap().bootstrap()
 })

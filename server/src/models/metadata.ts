@@ -11,4 +11,5 @@ export enum ETable {
   PARTNER_ASSET = 'partner_asset',
   BLOCKCHAIN_JOB = 'blockchain_job',
   ADMIN_ACCOUNT = 'admin_account',
+  WITHDRAWAL = 'withdrawal',
 }
