@@ -82,4 +82,8 @@ export class TronNetwork implements IBlockchainNetwork {
   }
 
   getSafe(partner: IPartner) { return partner.tronWallet }
+
+  async getHotWallet(partnerId: number) {
+    return { async transfer() { return '' } }
+  }
 }

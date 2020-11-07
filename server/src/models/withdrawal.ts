@@ -20,6 +20,7 @@ export interface IWithdrawal extends ITimed {
   value: number
   assetId: number
   status: EWithdrawalStatus
+  toAddress: string
 }
 
 export class Withdrawal extends createModel<IWithdrawal>(ETable.WITHDRAWAL) {}

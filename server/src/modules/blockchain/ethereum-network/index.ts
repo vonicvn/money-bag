@@ -72,4 +72,8 @@ export class EthereumNetwork implements IBlockchainNetwork {
   }
 
   getSafe(partner: IPartner) { return partner.ethereumWallet }
+
+  async getHotWallet(partnerId: number, privateKey: string) {
+    return { async transfer() { return '' } }
+  }
 }

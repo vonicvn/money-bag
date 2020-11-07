@@ -1,4 +1,4 @@
-import { isNil } from 'lodash'
+import { isNil, map } from 'lodash'
 import BigNumber from 'bignumber.js'
 import {
   IJobProcessor,
@@ -15,25 +15,23 @@ import {
   EBlockchainJobType,
   EBlockchainJobStatus,
   IBlockchainJob,
-  Transaction,
-  Wallet,
-  Partner,
   EBlockchainTransactionStatus,
   TimeHelper,
-  ECollectingStatus,
   IBlockchainNetwork,
+  AdminAccount,
+  EAdminAccountType,
 } from '../../../global'
+import { Asset, EWithdrawalStatus, Withdrawal } from 'src/models'
 
 export class JobCreator implements IJobCreator {
   constructor(public blockchainNetwork: IBlockchainNetwork) {}
 
-  async create({ transaction }: IBlockchainJobInput) {
+  async create({ withdrawal }: IBlockchainJobInput) {
     const job = await BlockchainJob.create({
-      transactionId: transaction.transactionId,
+      transactionId: withdrawal.withdrawalId,
       network: this.blockchainNetwork.network,
       status: EBlockchainJobStatus.JUST_CREATED,
-      type: EBlockchainJobType.TRANSFER_ALL_ETHEREUM,
-      walletId: transaction.walletId,
+      type: EBlockchainJobType.WITHDRAW_FROM_HOT_WALLET,
     })
     console.log(`[CREATE NEW JOB]: ${JSON.stringify(job)}`)
   }
@@ -48,12 +46,11 @@ export class JobFinisher implements IJobFinisher {
       job.blockchainJobId,
       { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
     )
-    await Transaction.findByIdAndUpdate(
+    await Withdrawal.findByIdAndUpdate(
       job.transactionId,
       {
-        collectingStatus: ECollectingStatus.SUCCESS,
-        collectingBlock: blockNumber,
-        collectingHash: job.hash,
+        status: EWithdrawalStatus.SUCCESS,
+        hash: job.hash,
       }
     )
   }
@@ -65,10 +62,7 @@ export class JobChecker implements IJobChecker {
   static RETRY_AFTER = 3 * 60 * 1000 // 3 minutes
   async check(job: IBlockchainJob) {
     if (job.status === EBlockchainJobStatus.JUST_CREATED) {
-      const isWalletAvailable = await this.isWalletAvailable(job)
-      console.log(`[WALLET AVAILABILITY] wallet ${job.walletId} is available? ${isWalletAvailable}`)
-      if (isWalletAvailable) return EJobAction.EXCUTE
-      return EJobAction.WAIT
+      return EJobAction.EXCUTE
     }
     const status = await this.blockchainNetwork.getTransactionStatus(job.hash)
     console.log(`[BLOCKCHAIN STATUS] Job ${job.blockchainJobId} hash ${job.hash} status ${status}`)
@@ -83,15 +77,6 @@ export class JobChecker implements IJobChecker {
       return EJobAction.RETRY
     }
     if (status === EBlockchainTransactionStatus.FAILED) return EJobAction.RETRY
-  }
-
-  private async isWalletAvailable(job: IBlockchainJob) {
-    const transaction = await Transaction.findById(job.transactionId)
-    const blockingJob = await BlockchainJob.findOne({
-      walletId: transaction.walletId,
-      status: EBlockchainJobStatus.PROCESSING,
-    })
-    return isNil(blockingJob)
   }
 }
 
@@ -108,32 +93,52 @@ export class JobExcutor implements IJobExcutor {
 
   async excute(job: IBlockchainJob) {
     console.log('[START EXCUTE]', job)
-    const transaction = await Transaction.findOne({ transactionId: job.transactionId })
-    const { index, partnerId } = await Wallet.findById(transaction.walletId)
-    const { privateKey, publicKey } = await this.blockchainNetwork.getKeysByIndex(index)
-    const gasPrice = await this.blockchainNetwork.getGasPrice()
-    const GAS_LIMIT = 21000
-    const { ethereumWallet } = await Partner.findById(partnerId)
-    const value = new BigNumber(transaction.value)
-      .multipliedBy(Math.pow(10, 18))
-      .minus(
-        new BigNumber(GAS_LIMIT).multipliedBy(gasPrice)
-      )
-      .toString()
+    const withdrawal = await Withdrawal.findById(job.transactionId)
+    const adminAccount = await this.getAdminAccount(withdrawal.partnerId)
+    if (isNil(adminAccount)) return
 
-    const hash = await this.blockchainNetwork.sendTransaction({
-      fromPrivateKey: privateKey,
-      fromAddress: publicKey,
-      value,
-      toAddress: ethereumWallet,
-    })
+    const hotWallet = await this.blockchainNetwork
+      .getHotWallet(
+        withdrawal.partnerId,
+        adminAccount.privateKey
+      )
+    const asset = await Asset.findById(withdrawal.assetId)
+    const hash = await hotWallet.transfer(
+      withdrawal.requestId,
+      asset.address,
+      new BigNumber(withdrawal.value).multipliedBy(Math.pow(10, asset.decimals)).toString(),
+      withdrawal.toAddress
+    )
     await BlockchainJob.findByIdAndUpdate(
       job.blockchainJobId,
       {
         status: EBlockchainJobStatus.PROCESSING,
+        adminAccountId: adminAccount.adminAccountId,
         excutedAt: new Date(TimeHelper.now()),
         hash,
       }
+    )
+  }
+
+  private async getAdminAccount(partnerId: number) {
+    const busyAccounts = await BlockchainJob.findAll(
+      {
+        status: EBlockchainJobStatus.PROCESSING,
+        network: this.blockchainNetwork.network,
+      },
+      builder => builder
+        .whereNot({ adminAccountId: null })
+        .select('adminAccountId')
+    )
+
+    return AdminAccount.findOne(
+      {
+        isActive: true,
+        network: this.blockchainNetwork.network,
+        partnerId,
+        type: EAdminAccountType.WITHDRAW,
+      },
+      builder => builder.whereNotIn('adminAccountId', map(busyAccounts, 'adminAccountId'))
     )
   }
 }

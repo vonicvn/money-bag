@@ -36,6 +36,8 @@ export interface IBlockchainNetwork {
   getTransaction(hash: string): Promise<{ value: string }>
 
   getSafe(partner: IPartner): string
+
+  getHotWallet(partnerId: number, privateKey: string): Promise<IHotWallet>
 }
 
 export interface ITransactionInput {
@@ -55,4 +57,8 @@ interface IRCToken {
   isApproved(walletAddress: string): Promise<boolean>
 
   getCoinAmountForApproving(job: IBlockchainJob): Promise<string>
+}
+
+interface IHotWallet {
+  transfer(requestId: number, tokenAddress: string, value: string, toAddress: string): Promise<string>
 }
