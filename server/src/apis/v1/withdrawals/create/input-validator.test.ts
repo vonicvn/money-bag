@@ -13,18 +13,18 @@ const TEST_TITLE = TestUtils.getTestTitle(__filename)
 describe(TEST_TITLE, () => {
   it('Works', async () => {
     await new InputValidator().validate(
-      { requestId: '1', assetId: 1, value: 1 },
+      { requestId: 1, assetId: 1, value: 1 },
       Value.wrap({ partner: { partnerId: 1 } })
     )
   })
 
   it('Prevent duplicated', async () => {
     await Partner.create({ partnerId: 1 })
-    await Withdrawal.create({ requestId: '1', assetId: 1, value: 1, partnerId: 1 })
+    await Withdrawal.create({ requestId: 1, assetId: 1, value: 1, partnerId: 1 })
 
     const error = await new InputValidator()
       .validate(
-        { requestId: '1', assetId: 1, value: 1 },
+        { requestId: 1, assetId: 1, value: 1 },
         Value.wrap({ partner: { partnerId: 1 } })
       )
       .catch(error => error)
@@ -37,7 +37,7 @@ describe(TEST_TITLE, () => {
 
     const error = await new InputValidator()
       .validate(
-        { requestId: '1', assetId: 10000000, value: 1 },
+        { requestId: 1, assetId: 10000000, value: 1 },
         Value.wrap({ partner: { partnerId: 1 } })
       )
       .catch(error => error)

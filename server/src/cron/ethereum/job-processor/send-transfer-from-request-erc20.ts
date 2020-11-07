@@ -24,6 +24,7 @@ import {
   Asset,
   IBlockchainNetwork,
   EBlockchainTransactionStatus,
+  EAdminAccountType,
 } from '../../../global'
 
 export class JobCreator implements IJobCreator {
@@ -141,6 +142,7 @@ export class JobExcutor implements IJobExcutor {
       {
         isActive: true,
         network: this.blockchainNetwork.network,
+        type: EAdminAccountType.DEPOSIT,
         partnerId,
       },
       builder => builder.whereNotIn('adminAccountId', map(busyAccounts, 'adminAccountId'))

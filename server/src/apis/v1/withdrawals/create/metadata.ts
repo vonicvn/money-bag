@@ -3,7 +3,7 @@ import {
 } from '../../../../global'
 
 export interface IInput {
-  requestId: string
+  requestId: number
   value: number
   assetId: number
 }

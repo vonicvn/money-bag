@@ -10,7 +10,7 @@ describe(TEST_TITLE, () => {
       new InputGetter().getInput({
         body: { requestId: ' 1 ', value: 100, assetId: 1 },
       }),
-      { requestId: '1', value: 100, assetId: 1 }
+      { requestId: 1, value: 100, assetId: 1 }
     )
   })
 })

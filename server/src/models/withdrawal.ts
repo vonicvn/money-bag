@@ -15,7 +15,7 @@ export enum EWithdrawalStatus {
 export interface IWithdrawal extends ITimed {
   withdrawalId: number
   partnerId: number
-  requestId: string
+  requestId: number
   hash: string
   value: number
   assetId: number

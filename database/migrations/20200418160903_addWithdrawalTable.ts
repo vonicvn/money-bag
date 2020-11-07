@@ -17,7 +17,7 @@ export async function up(knex: Knex): Promise<void> {
       .defaultTo('WAITING')
       .notNullable()
     table.string('hash', 256)
-    table.string('request_id', 16)
+    table.bigInteger('request_id')
     table.unique(['partner_id', 'request_id'])
     addCreated(table, knex)
   })
