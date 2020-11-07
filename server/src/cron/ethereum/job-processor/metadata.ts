@@ -1,5 +1,6 @@
 import {
   ITransaction,
+  IWithdrawal,
   IBlockchainJob,
   IBlockchainNetwork,
 } from '../../../global'
@@ -7,6 +8,7 @@ import {
 export interface IBlockchainJobInput {
   blockchainJob?: IBlockchainJob
   transaction?: ITransaction
+  withdrawal?: IWithdrawal
 }
 
 export interface IJobCreator {

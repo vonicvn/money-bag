@@ -7,6 +7,7 @@ import {
   Transaction,
   BlockchainJob,
   Redis,
+  HotWallet,
   Withdrawal,
 } from './global'
 import { RedisBoostrap } from './bootstrap'
@@ -20,6 +21,7 @@ beforeEach(async () => {
   await Transaction.deleteMany({})
   await Withdrawal.deleteMany({})
   await BlockchainJob.deleteMany({})
+  await HotWallet.deleteMany({})
   await Redis.flushall()
   await new RedisBoostrap().bootstrap()
 })

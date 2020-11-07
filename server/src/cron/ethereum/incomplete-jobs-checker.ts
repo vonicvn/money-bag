@@ -14,6 +14,7 @@ import {
   TransferEthereumToSendApproveRequestErc20,
   SendApproveRequestErc20,
   SendTransferFromRequestErc20,
+  WithdrawFromHotWallet,
 } from './job-processor'
 
 export class IncompleteJobsChecker {
@@ -56,6 +57,7 @@ export class IncompleteJobsChecker {
       [EBlockchainJobType.TRANSFER_ETHEREUM_TO_SEND_APPROVE_REQUEST_ERC20]: TransferEthereumToSendApproveRequestErc20,
       [EBlockchainJobType.SEND_APPROVE_REQUEST_ERC20]: SendApproveRequestErc20,
       [EBlockchainJobType.SEND_TRANSFER_FROM_REQUEST_ERC20]: SendTransferFromRequestErc20,
+      [EBlockchainJobType.WITHDRAW_FROM_HOT_WALLET]: WithdrawFromHotWallet,
     }
     return new jobTypeToProcessor[job.type as string](BlockchainModule.get(this.network))
   }

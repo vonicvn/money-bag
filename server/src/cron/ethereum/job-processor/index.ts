@@ -3,3 +3,4 @@ export { JobProcessor as TransferAllEthereumProcessor } from './transfer-all-eth
 export { JobProcessor as TransferEthereumToSendApproveRequestErc20 } from './transfer-ethereum-to-send-approve-request-erc20'
 export { JobProcessor as SendApproveRequestErc20 } from './send-approve-request-erc20'
 export { JobProcessor as SendTransferFromRequestErc20 } from './send-transfer-from-request-erc20'
+export { JobProcessor as WithdrawFromHotWallet } from './withdraw-from-hot-wallet'
