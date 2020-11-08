@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import { Contract } from 'web3-eth/node_modules/web3-eth-contract'
 import {
   tokenAbi,
@@ -13,7 +14,6 @@ import {
   Transaction,
 } from '../global'
 import { Web3InstanceManager } from './ethereum'
-import BigNumber from 'bignumber.js'
 
 export class Erc20Token {
   tokenContract: Contract

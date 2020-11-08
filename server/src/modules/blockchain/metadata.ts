@@ -1,4 +1,4 @@
-import { EBlockchainNetwork, IBlockchainJob, IPartner } from '../../global'
+import { EBlockchainNetwork, IBlockchainJob, IPartner, IAsset } from '../../global'
 
 export enum EBlockchainTransactionStatus {
   PENDING = 'PENDING',
@@ -37,7 +37,7 @@ export interface IBlockchainNetwork {
 
   getSafe(partner: IPartner): string
 
-  getHotWallet(partnerId: number, privateKey: string): Promise<IHotWallet>
+  getHotWallet(partnerId: number, privateKey: string): Promise<IHotWalletContract>
 }
 
 export interface ITransactionInput {
@@ -59,6 +59,6 @@ interface IRCToken {
   getCoinAmountForApproving(job: IBlockchainJob): Promise<string>
 }
 
-interface IHotWallet {
-  transfer(requestId: number, tokenAddress: string, value: string, toAddress: string): Promise<string>
+export interface IHotWalletContract {
+  transfer(requestId: number, asset: IAsset, value: number, toAddress: string): Promise<string>
 }

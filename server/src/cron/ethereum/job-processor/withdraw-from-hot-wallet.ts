@@ -105,8 +105,8 @@ export class JobExcutor implements IJobExcutor {
     const asset = await Asset.findById(withdrawal.assetId)
     const hash = await hotWallet.transfer(
       withdrawal.requestId,
-      asset.address,
-      new BigNumber(withdrawal.value).multipliedBy(Math.pow(10, asset.decimals)).toString(),
+      asset,
+      withdrawal.value,
       withdrawal.toAddress
     )
     await BlockchainJob.findByIdAndUpdate(

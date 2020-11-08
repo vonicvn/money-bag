@@ -1,6 +1,14 @@
-import { Web3InstanceManager, Erc20Token, EBlockchainNetwork, exists, IPartner } from '../../../global'
+import {
+  Web3InstanceManager,
+  Erc20Token,
+  EBlockchainNetwork,
+  exists,
+  IPartner,
+  HotWallet,
+} from '../../../global'
 import { IBlockchainNetwork } from '../metadata'
 import { AccountGenerator } from './account-generator'
+import { HotWalletContract } from './hot-wallet-contract'
 import { TransactionsGetter } from './transaction-getter'
 import { TransactionStatusGetter } from './transaction-status-getter'
 
@@ -74,6 +82,9 @@ export class EthereumNetwork implements IBlockchainNetwork {
   getSafe(partner: IPartner) { return partner.ethereumWallet }
 
   async getHotWallet(partnerId: number, privateKey: string) {
-    return { async transfer() { return '' } }
+    return new HotWalletContract(
+      (await HotWallet.findOne({ network: EBlockchainNetwork.ETHEREUM, partnerId })).address,
+      privateKey
+    )
   }
 }
