@@ -1,5 +1,4 @@
 import { isNil, map } from 'lodash'
-import BigNumber from 'bignumber.js'
 import {
   IJobProcessor,
   IJobCreator,

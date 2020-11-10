@@ -6,6 +6,7 @@ export interface IInput {
   requestId: number
   value: number
   assetId: number
+  toAddress: string
 }
 
 export type IOutput = IWithdrawal

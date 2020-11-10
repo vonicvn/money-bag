@@ -8,9 +8,9 @@ describe(TEST_TITLE, () => {
   it('Works', async () => {
     deepStrictEqual(
       new InputGetter().getInput({
-        body: { requestId: ' 1 ', value: 100, assetId: 1 },
+        body: { requestId: ' 1 ', value: 100, assetId: 1, toAddress: '0x0' },
       }),
-      { requestId: 1, value: 100, assetId: 1 }
+      { requestId: 1, value: 100, assetId: 1, toAddress: '0x0' }
     )
   })
 })

@@ -8,6 +8,7 @@ export class InputGetter implements IAbstractInputGetter<IInput> {
       requestId: parseInt(req.body.requestId),
       value: Number(req.body.value),
       assetId: Number(req.body.assetId),
+      toAddress: String(req.body.toAddress),
     }
   }
 }

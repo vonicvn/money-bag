@@ -13,7 +13,7 @@ const TEST_TITLE = TestUtils.getTestTitle(__filename)
 describe(TEST_TITLE, () => {
   it('Works', async () => {
     await new InputValidator().validate(
-      { requestId: 1, assetId: 1, value: 1 },
+      { requestId: 1, assetId: 1, value: 1, toAddress: '0x0' },
       Value.wrap({ partner: { partnerId: 1 } })
     )
   })
@@ -24,7 +24,7 @@ describe(TEST_TITLE, () => {
 
     const error = await new InputValidator()
       .validate(
-        { requestId: 1, assetId: 1, value: 1 },
+        { requestId: 1, assetId: 1, value: 1, toAddress: '0x0' },
         Value.wrap({ partner: { partnerId: 1 } })
       )
       .catch(error => error)
@@ -37,7 +37,7 @@ describe(TEST_TITLE, () => {
 
     const error = await new InputValidator()
       .validate(
-        { requestId: 1, assetId: 10000000, value: 1 },
+        { requestId: 1, assetId: 10000000, value: 1, toAddress: '0x0' },
         Value.wrap({ partner: { partnerId: 1 } })
       )
       .catch(error => error)
