@@ -19,8 +19,10 @@ import {
   IBlockchainNetwork,
   AdminAccount,
   EAdminAccountType,
+  Asset,
+  EWithdrawalStatus,
+  Withdrawal,
 } from '../../../global'
-import { Asset, EWithdrawalStatus, Withdrawal } from 'src/models'
 
 export class JobCreator implements IJobCreator {
   constructor(public blockchainNetwork: IBlockchainNetwork) {}

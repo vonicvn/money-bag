@@ -1,4 +1,4 @@
-import { IWithdrawal } from 'src/models'
+import { IWithdrawal } from '../../../../global'
 
 export interface IInput {
   withdrawalId: number
