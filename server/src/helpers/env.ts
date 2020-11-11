@@ -16,6 +16,7 @@ export enum EEnvKey {
   TRON_PRIVATE_KEY = 'TRON_PRIVATE_KEY',
   TRON_SPENDER_CONTRACT_ADDRESS = 'TRON_SPENDER_CONTRACT_ADDRESS',
   STOP_SCAN = 'STOP_SCAN',
+  DISABLED_FEATURES = 'DISABLED_FEATURES',
 }
 
 export enum EEnviroment {
@@ -23,6 +24,10 @@ export enum EEnviroment {
   TEST = 'test',
   DEVELOPMENT = 'development',
   PRODUCTION = 'production',
+}
+
+export enum ESwitchableFeature {
+  SCAN_NEW_TRANSACTION = 'SCAN_NEW_TRANSACTION',
 }
 
 export class Env {
@@ -34,5 +39,9 @@ export class Env {
 
   static getSafeNumberOfConfirmation() {
     return Number(defaultTo(Env.get(EEnvKey.SAFE_NUMBER_OF_COMFIRMATION), 5))
+  }
+
+  static isFeatureDisabled(feature: ESwitchableFeature) {
+    return defaultTo(Env.get(EEnvKey.DISABLED_FEATURES), '').includes(String(feature))
   }
 }

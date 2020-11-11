@@ -1,4 +1,3 @@
-import { body } from 'express-validator'
 import { EMethod, createService, OnlyPartnerRoute } from '../../../shared'
 import { ApiExcutor } from './api-excutor'
 import { InputGetter } from './input-getter'

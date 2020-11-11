@@ -18,12 +18,14 @@ import {
   ECollectingStatus,
   exists,
   BlockchainJob,
+  ESwitchableFeature,
 } from '../../global'
 
 export class NewTransactionsLoader {
   constructor(private network: EBlockchainNetwork) {}
 
   async load() {
+    if (Env.isFeatureDisabled(ESwitchableFeature.SCAN_NEW_TRANSACTION)) return
     const { from, to } = await this.getRange()
     for (let block = from; block <= to; block++) {
       await this.scan(block)
