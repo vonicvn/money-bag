@@ -28,6 +28,7 @@ export enum EEnviroment {
 
 export enum ESwitchableFeature {
   SCAN_NEW_TRANSACTION = 'SCAN_NEW_TRANSACTION',
+  WITHDRAW_TO_HOT_WALLET = 'WITHDRAW_TO_HOT_WALLET',
 }
 
 export class Env {

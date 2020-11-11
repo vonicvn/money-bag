@@ -22,6 +22,8 @@ import {
   Asset,
   EWithdrawalStatus,
   Withdrawal,
+  Env,
+  ESwitchableFeature,
 } from '../../../global'
 
 export class JobCreator implements IJobCreator {
@@ -93,6 +95,7 @@ export class JobExcutor implements IJobExcutor {
   constructor(public blockchainNetwork: IBlockchainNetwork) {}
 
   async excute(job: IBlockchainJob) {
+    if (Env.isFeatureDisabled(ESwitchableFeature.WITHDRAW_TO_HOT_WALLET)) return
     console.log('[START EXCUTE]', job)
     const withdrawal = await Withdrawal.findById(job.transactionId)
     const adminAccount = await this.getAdminAccount(withdrawal.partnerId)
