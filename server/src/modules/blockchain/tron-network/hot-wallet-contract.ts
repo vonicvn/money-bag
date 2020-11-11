@@ -38,7 +38,7 @@ export class HotWalletContract implements IHotWalletContract {
 
   private async ensureHasEnoughMoney(asset: IAsset, value: number) {
     const { balance: balanceInWei } = await this.contract.getBalances(asset.address).call()
-    const balance = new BigNumber(balanceInWei).dividedBy(Math.pow(10, asset.decimals)).toNumber()
+    const balance = new BigNumber(balanceInWei._hex).dividedBy(Math.pow(10, asset.decimals)).toNumber()
     if (value <= balance) return
     throw new Error(`HOT_WALLET_OUT_OF_MONEY Hot wallet ${this.address} is out of token ${asset.name}`)
   }

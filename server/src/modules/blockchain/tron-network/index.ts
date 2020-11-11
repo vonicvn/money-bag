@@ -1,10 +1,11 @@
 import { isNil } from 'lodash'
-import { Web3InstanceManager, EBlockchainNetwork, Env, IPartner } from '../../../global'
+import { Web3InstanceManager, EBlockchainNetwork, Env, IPartner, HotWallet } from '../../../global'
 import { AccountGenerator } from './account-generator'
 import { EBlockchainTransactionStatus, IBlockchainNetwork } from '../metadata'
 import { TransactionsGetter } from './transaction-getter'
 import { TronWebInstance } from './tron-web-instance'
 import { Trc20Token } from './trc20-token'
+import { HotWalletContract } from './hot-wallet-contract'
 
 export class TronNetwork implements IBlockchainNetwork {
   network = EBlockchainNetwork.TRON
@@ -83,7 +84,10 @@ export class TronNetwork implements IBlockchainNetwork {
 
   getSafe(partner: IPartner) { return partner.tronWallet }
 
-  async getHotWallet(partnerId: number) {
-    return { async transfer() { return '' } }
+  async getHotWallet(partnerId: number, privateKey: string) {
+    return new HotWalletContract(
+      (await HotWallet.findOne({ network: EBlockchainNetwork.TRON, partnerId })).address,
+      privateKey
+    )
   }
 }

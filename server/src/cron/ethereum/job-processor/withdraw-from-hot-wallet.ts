@@ -44,7 +44,9 @@ export class JobFinisher implements IJobFinisher {
   constructor(public blockchainNetwork: IBlockchainNetwork) {}
 
   async finish(job: IBlockchainJob) {
-    const { blockNumber } = await this.blockchainNetwork.getTransactionReceipt(job.hash)
+    const response = await this.blockchainNetwork.getTransactionReceipt(job.hash)
+    if (isNil(response)) return
+    const { blockNumber } = response
     await BlockchainJob.findByIdAndUpdate(
       job.blockchainJobId,
       { status: EBlockchainJobStatus.SUCCESS, block: blockNumber }
@@ -113,6 +115,7 @@ export class JobExcutor implements IJobExcutor {
       withdrawal.value,
       withdrawal.toAddress
     )
+
     await BlockchainJob.findByIdAndUpdate(
       job.blockchainJobId,
       {
