@@ -5,7 +5,7 @@ import { ApiExcutor } from './api-excutor'
 import { InputValidator } from './input-validator'
 
 export class Route extends OnlyPartnerRoute {
-  path = '/api/v1/wallets'
+  path = '/api/v1/withdrawals/:withdrawalId'
   method = EMethod.GET
   Service = createService(InputGetter, InputValidator, ApiExcutor)
   getMidlewares() {
