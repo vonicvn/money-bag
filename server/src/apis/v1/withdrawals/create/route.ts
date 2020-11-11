@@ -10,7 +10,6 @@ export class Route extends OnlyPartnerRoute {
   Service = createService(InputGetter, InputValidator, ApiExcutor)
   getMidlewares() {
     return super.getMidlewares().concat([
-      body('quantity').isInt().exists(),
     ])
   }
 }
