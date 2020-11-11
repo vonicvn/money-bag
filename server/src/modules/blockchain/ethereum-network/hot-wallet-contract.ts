@@ -1,3 +1,4 @@
+import Web3 from 'web3'
 import BigNumber from 'bignumber.js'
 import { Web3InstanceManager, IAsset } from '../../../global'
 import { Contract } from 'web3-eth/node_modules/web3-eth-contract'
@@ -6,16 +7,18 @@ import { hotWalletAbi } from './hot-wallet-abi'
 
 export class HotWalletContract implements IHotWalletContract {
   contract: Contract
+  web3: Web3
 
   constructor(private address: string, privateKey: string) {
-    const web3 = Web3InstanceManager.getWeb3ByKey(privateKey)
-    this.contract = new web3.eth.Contract(
+    this.web3 = Web3InstanceManager.getWeb3ByKey(privateKey)
+    this.contract = new this.web3.eth.Contract(
       hotWalletAbi,
       address
     )
   }
 
   async transfer(requestId: number, asset: IAsset, value: number, toAddress: string) {
+    const [from] = await this.web3.eth.getAccounts()
     await this.ensureHasEnoughMoney(asset, value)
     const valueInWei = new BigNumber(value)
       .multipliedBy(Math.pow(10, asset.decimals))
@@ -28,7 +31,7 @@ export class HotWalletContract implements IHotWalletContract {
         valueInWei,
         toAddress
       )
-        .send({})
+        .send({ from })
         .on('transactionHash', resolve)
         .on('error', reject)
     })
@@ -36,7 +39,7 @@ export class HotWalletContract implements IHotWalletContract {
   }
 
   private async ensureHasEnoughMoney(asset: IAsset, value: number) {
-    const { balance: balanceInWei } = await this.contract.methods.getBalances(asset.address).call()
+    const balanceInWei = await this.contract.methods.getBalances(asset.address).call()
     const balance = new BigNumber(balanceInWei).dividedBy(Math.pow(10, asset.decimals)).toNumber()
     if (value <= balance) return
     throw new Error(`HOT_WALLET_OUT_OF_MONEY Hot wallet ${this.address} is out of token ${asset.name}`)
