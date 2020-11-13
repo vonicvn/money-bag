@@ -33,7 +33,7 @@ export class JobCreator implements IJobCreator {
   async create({ transaction }: IBlockchainJobInput) {
     const job = await BlockchainJob.create({
       transactionId: transaction.transactionId,
-      network: EBlockchainNetwork.ETHEREUM,
+      network: this.blockchainNetwork.network,
       status: EBlockchainJobStatus.JUST_CREATED,
       type: EBlockchainJobType.SEND_TRANSFER_FROM_REQUEST_ERC20,
     })
