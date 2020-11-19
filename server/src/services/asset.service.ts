@@ -1,5 +1,5 @@
 import { Redis } from '../global'
-import { defaultTo, toLower } from 'lodash'
+import { defaultTo, isNull, toLower } from 'lodash'
 
 export class AssetService {
   static async cacheAssetOnRedis(address: string) {
@@ -7,6 +7,7 @@ export class AssetService {
   }
 
   static async isAssetExisted(address: string) {
+    if (isNull(address)) return true
     return defaultTo(await Redis.getJson(`ASSET_${toLower(address)}`), false)
   }
 }
