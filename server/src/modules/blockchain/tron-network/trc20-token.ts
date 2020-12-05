@@ -49,6 +49,6 @@ export class Trc20Token {
   }
 
   public async getCoinAmountForApproving(job: IBlockchainJob): Promise<string> {
-    return '240000'
+    return '1000000'
   }
 }
