@@ -10,7 +10,7 @@ const seedsDirectory = path.join(databaseDirectory, 'seeds')
 
 const knexConfig: Config = {
   client: 'postgresql',
-  connection: process.env.DATABASE_URL,
+  connection: `${process.env.DATABASE_URL}?ssl=${process.env.PGSSLMODE === 'require'}`,
   pool: {
     min: 1,
     max: 1,

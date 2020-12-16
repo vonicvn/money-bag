@@ -15,7 +15,7 @@ pg.types.setTypeParser(PG_BIGINT_OID, parseInt)
 
 export const knex = Knex({
   client: 'postgresql',
-  connection: Env.get(EEnvKey.DATABASE_URL),
+  connection: `${Env.get(EEnvKey.DATABASE_URL)}?ssl=${process.env.PGSSLMODE === 'require'}`,
   pool: {
     min: 1,
     max: 20,
