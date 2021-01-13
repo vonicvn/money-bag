@@ -1,7 +1,24 @@
+import url from 'url'
 import redis from 'redis'
 import { promisify } from 'util'
+import { split } from 'lodash'
 
-const redisClient = redis.createClient(process.env.REDIS_URL)
+const {
+  port,
+  hostname,
+  auth,
+} = url.parse(process.env.REDIS_URL)
+
+const redisClient = redis.createClient({
+  port: Number(port),
+  host: hostname,
+  password: split(auth, ':')[1],
+  tls: hostname === 'localhost' ? undefined : {
+    rejectUnauthorized: false,
+    requestCert: false,
+    agent: false,
+  },
+})
 
 export class Redis {
   static set(key: string, value: string, seconds = 0) {

@@ -8,9 +8,12 @@ const databaseDirectory = __dirname
 const migrationDirectory = path.join(databaseDirectory, 'migrations')
 const seedsDirectory = path.join(databaseDirectory, 'seeds')
 
+const baseUrl = process.env.DATABASE_URL
+const connection = baseUrl.concat(baseUrl.includes('localhost') ? '' : '?ssl=require')
+
 const knexConfig: Config = {
   client: 'postgresql',
-  connection: `${process.env.DATABASE_URL}?ssl=${process.env.PGSSLMODE === 'require'}`,
+  connection,
   pool: {
     min: 1,
     max: 1,

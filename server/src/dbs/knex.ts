@@ -13,9 +13,12 @@ const PG_BIGINT_OID = 20
 pg.types.setTypeParser(PG_DECIMAL_OID, parseFloat)
 pg.types.setTypeParser(PG_BIGINT_OID, parseInt)
 
+const baseUrl = Env.get(EEnvKey.DATABASE_URL)
+const connection = baseUrl.concat(baseUrl.includes('localhost') ? '' : '?ssl=require')
+
 export const knex = Knex({
   client: 'postgresql',
-  connection: `${Env.get(EEnvKey.DATABASE_URL)}?ssl=${process.env.PGSSLMODE === 'require'}`,
+  connection,
   pool: {
     min: 1,
     max: 20,
