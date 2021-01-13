@@ -1,7 +1,23 @@
+import url from 'url'
 import redis from 'redis'
 import { promisify } from 'util'
 
-const redisClient = redis.createClient(process.env.REDIS_URL)
+const {
+  port,
+  hostname,
+  auth,
+} = url.parse(process.env.REDIS_URL)
+
+const redisClient = redis.createClient({
+  port: Number(port) + 1,
+  host: hostname,
+  password: auth.split(':')[1],
+  tls: {
+    rejectUnauthorized: false,
+    requestCert: true,
+    agent: false,
+  },
+})
 
 export class Redis {
   static set(key: string, value: string, seconds = 0) {
