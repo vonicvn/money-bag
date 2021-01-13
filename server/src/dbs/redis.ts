@@ -9,7 +9,7 @@ const {
 } = url.parse(process.env.REDIS_URL)
 
 const redisClient = redis.createClient({
-  port: Number(port) + 1,
+  port: Number(port),
   host: hostname,
   password: auth.split(':')[1],
   tls: {
