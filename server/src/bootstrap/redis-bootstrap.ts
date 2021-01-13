@@ -25,8 +25,8 @@ export class RedisBoostrap implements IBootstrapable {
 
   private async loadWallets() {
     console.log('Load wallets')
-    const assets = await Asset.findAll({}, builder => builder.whereNot({ address: null }))
-    for (const asset of assets) await AssetService.cacheAssetOnRedis(asset.address)
+    const wallets = await Wallet.findAll({}, builder => builder.select('address'))
+    for (const wallet of wallets) await WalletService.prototype.cacheAddressOnRedis(wallet.address)
     console.log('Done Loading wallets')
   }
 

@@ -36,7 +36,7 @@ export class WalletService {
     return account.publicKey
   }
 
-  private cacheAddressOnRedis(address: string) {
+  cacheAddressOnRedis(address: string) {
     return Redis.setJson(`WALLET_${toLower(address)}`, true)
   }
 
