@@ -19,6 +19,8 @@ interface ILog {
     from: string
     to: string
     value: string
+    wad: string
+    dst: string
   }
 }
 
@@ -42,8 +44,8 @@ export class TransactionsGetter {
       network: EBlockchainNetwork.TRON,
       assetAddress: log.contract_address,
       hash: log.transaction_id,
-      value: log.result.value,
-      toAddress: TronWeb.address.fromHex(log.result.to),
+      value: log.result.value || log.result.wad,
+      toAddress: TronWeb.address.fromHex(log.result.to || log.result.dst),
     }
   }
 }
