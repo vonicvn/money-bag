@@ -23,7 +23,7 @@
     "express-validator": "^6.6.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.20.15",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
     "pg": "7",
     "redis": "^3.0.2",
