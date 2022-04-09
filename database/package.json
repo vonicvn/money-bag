@@ -16,7 +16,7 @@
     "dotenv": "^6.2.0",
     "knex": "^0.19.5",
     "lodash": "^4.17.19",
-    "moment": "^2.18.1",
+    "moment": "^2.29.2",
     "pg": "^7.11.0"
   },
   "devDependencies": {
